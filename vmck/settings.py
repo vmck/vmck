@@ -71,3 +71,5 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
+
+NOMAD_URL = os.environ.get('NOMAD_URL', 'http://localhost:4646')
