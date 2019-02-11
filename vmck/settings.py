@@ -73,3 +73,4 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 NOMAD_URL = os.environ.get('NOMAD_URL', 'http://localhost:4646')
+FACTORY_HOME = os.environ.get('FACTORY_HOME')
