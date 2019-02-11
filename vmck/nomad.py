@@ -59,3 +59,14 @@ def create_job():
 def kill(job_id):
     result = response(requests.delete(f'{api}/job/{job_id}'))
     print(result)
+
+
+def alloc(job_id):
+    allocs = response(requests.get(f'{api}/job/{job_id}/allocations'))
+    alloc_ids = [
+        a['ID']
+        for a in sorted(allocs, key=lambda a: a['CreateTime'])
+    ]
+    if not alloc_ids:
+        raise RuntimeError(f"No allocs found for job {job_id}")
+    return(alloc_ids[-1])
