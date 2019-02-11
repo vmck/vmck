@@ -54,3 +54,8 @@ def create_job():
     job_spec = nomad_job(job_id)
     result = response(requests.post(f'{api}/jobs', json=job_spec))
     print(result)
+
+
+def kill(job_id):
+    result = response(requests.delete(f'{api}/job/{job_id}'))
+    print(result)
