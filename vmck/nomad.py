@@ -26,7 +26,7 @@ def jobs():
     return response(requests.get(f'{api}/jobs'))
 
 
-def nomad_job(job_id):
+def nomad_job(job_id, artifacts):
     job_name = f'VMCK job {job_id}'
     argv = [factory_bin, 'run', 'echo', 'hello', 'world!']
 
@@ -37,6 +37,13 @@ def nomad_job(job_id):
             'command': argv[0],
             'args': argv[1:],
         },
+        'artifacts': [
+            {
+                'getterSource': a['source'],
+                'relativeDest': a['destination'],
+            }
+            for a in artifacts
+        ],
     }
 
     task_group = {
@@ -55,10 +62,10 @@ def nomad_job(job_id):
     }
 
 
-def create_job():
+def create_job(artifacts=[]):
     job_id = str(int(time()))
     print('Job ID:', job_id)
-    job_spec = nomad_job(job_id)
+    job_spec = nomad_job(job_id, artifacts)
     result = response(requests.post(f'{api}/jobs', json=job_spec))
     print(result)
 
