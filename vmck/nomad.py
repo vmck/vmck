@@ -6,6 +6,7 @@ from urllib.parse import urljoin
 
 api = urljoin(settings.NOMAD_URL, 'v1')
 factory_bin = str(Path(settings.FACTORY_HOME) / 'factory')
+task_name = 'vm'
 
 
 def response(res):
@@ -30,7 +31,7 @@ def nomad_job(job_id):
     argv = [factory_bin, 'run', 'echo', 'hello', 'world!']
 
     run_task = {
-        'name': 'vm',
+        'name': task_name,
         'driver': 'raw_exec',
         'config': {
             'command': argv[0],
@@ -83,4 +84,16 @@ def cat(job_id, path):
     return response(requests.get(
         f'{api}/client/fs/cat/{alloc_id}',
         params={'path': path},
+    ))
+
+
+def logs(job_id, type):
+    alloc_id = alloc(job_id)
+    return response(requests.get(
+        f'{api}/client/fs/logs/{alloc_id}',
+        params={
+            'task': task_name,
+            'type': type,
+            'plain': 'true',
+        },
     ))
