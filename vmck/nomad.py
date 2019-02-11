@@ -10,9 +10,15 @@ factory_bin = str(Path(settings.FACTORY_HOME) / 'factory')
 
 def response(res):
     if 200 <= res.status_code < 300:
-        return res.json()
-    else:
-        raise RuntimeError(f"Request failed: {res.text}")
+        if res.headers.get('Content-Type') == 'application/json':
+            return res.json()
+
+        if res.encoding:
+            return res.text
+
+        return res.content
+
+    raise RuntimeError(f"Request failed: {res.text}")
 
 
 def jobs():
@@ -70,3 +76,11 @@ def alloc(job_id):
     if not alloc_ids:
         raise RuntimeError(f"No allocs found for job {job_id}")
     return(alloc_ids[-1])
+
+
+def cat(job_id, path):
+    alloc_id = alloc(job_id)
+    return response(requests.get(
+        f'{api}/client/fs/cat/{alloc_id}',
+        params={'path': path},
+    ))
