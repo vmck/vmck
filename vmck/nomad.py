@@ -5,7 +5,6 @@ from django.conf import settings
 from urllib.parse import urljoin
 
 api = urljoin(settings.NOMAD_URL, 'v1')
-factory_bin = str(Path(settings.FACTORY_HOME) / 'factory')
 task_name = 'vm'
 
 
@@ -28,22 +27,32 @@ def jobs():
 
 def nomad_job(job_id, artifacts):
     job_name = f'VMCK job {job_id}'
-    argv = [factory_bin, 'run', 'echo', 'hello', 'world!']
+
+    task_artifacts = []
+    def add_artifact(source, destination):
+        task_artifacts.append({
+            'getterSource': source,
+            'relativeDest': destination,
+            'options': {
+                'archive': 'false',
+            },
+        })
+
+    add_artifact(settings.QEMU_IMAGE_URL, 'local/')
+    image_filename = settings.QEMU_IMAGE_URL.split('/')[-1]
+
+    for a in artifacts:
+        add_artifact(*a)
 
     run_task = {
         'name': task_name,
-        'driver': 'raw_exec',
+        'driver': 'qemu',
         'config': {
-            'command': argv[0],
-            'args': argv[1:],
+            'image_path': f'local/{image_filename}',
+            'accelerator': 'kvm',
+            'args': [],
         },
-        'artifacts': [
-            {
-                'getterSource': a['source'],
-                'relativeDest': a['destination'],
-            }
-            for a in artifacts
-        ],
+        'artifacts': task_artifacts,
     }
 
     task_group = {

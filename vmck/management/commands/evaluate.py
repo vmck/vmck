@@ -11,6 +11,6 @@ class Command(BaseCommand):
 
     def handle(self, spec, package, *args, **options):
         job_id = nomad.create_job(artifacts=[
-            {'source': spec, 'destination': 'local/spec.zip'},
-            {'source': package, 'destination': 'local/package.zip'},
+            (spec, 'alloc/'),
+            (package, 'alloc/'),
         ])

@@ -29,23 +29,16 @@
         nomad agent -dev -config=/tmp/nomad.hcl &
         ```
 
-2. Install [factory][] and check that it works:
-    ```shell
-    pakku -Sy qemu socat
-    python3 <(curl -sL https://github.com/liquidinvestigations/factory/raw/master/install.py) /tmp/factory
-    /tmp/factory/factory run echo hello world
-    ```
+2. TODO explain how to set up an http server for the images
 
 3. Set up the VMCK server:
     ```shell
     pipenv install
     echo 'SECRET_KEY=changeme' > .env
     echo 'DEBUG=true' >> .env
-    echo 'FACTORY_HOME=/tmp/factory' >> .env
+    echo 'QEMU_IMAGE_URL=http://example.com/artful.qcow2' >> .env
     pipenv run ./manage.py migrate
     ```
-
-[factory]: https://github.com/liquidinvestigations/factory#readme
 
 ## Usage
 
