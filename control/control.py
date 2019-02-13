@@ -100,12 +100,13 @@ def cp(src, dest_dir):
 
 
 def main():
-    cp(Path(__file__).parent / 'agent.sh', Path('alloc/data'))
+    cp(Path(__file__).parent / 'agent', Path('alloc/data'))
 
     bootstrap_command = ' && '.join([
         'set -x',
-        'sudo mount -t 9p -o trans=virtio mnt /mnt -oversion=9p2000.L',
-        'sudo bash /mnt/agent.sh'
+        'sudo mkdir /tmp/vmck',
+        'sudo mount -t 9p -o trans=virtio vmck /tmp/vmck -oversion=9p2000.L',
+        'sudo /tmp/vmck/agent 1> /tmp/vmck/stdout.txt 2> /tmp/vmck/stderr.txt'
     ])
 
     pty_ssh_args = [

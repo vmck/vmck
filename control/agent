@@ -1,0 +1,5 @@
+#!/bin/sh
+
+set -ex
+echo "hello agent!"
+echo "world" > /tmp/vmck/hello.txt

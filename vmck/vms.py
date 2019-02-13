@@ -35,8 +35,8 @@ def task_group(spec_url):
             ',netdev=user'
             ',romfile='
         ),
-        '-fsdev', 'local,id=mnt,security_model=none,path=../alloc/data',
-        '-device', 'virtio-9p-pci,fsdev=mnt,mount_tag=mnt',
+        '-fsdev', 'local,id=vmck,security_model=none,path=../alloc/data',
+        '-device', 'virtio-9p-pci,fsdev=vmck,mount_tag=vmck',
     ]
 
     vm_task = {
