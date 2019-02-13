@@ -1,11 +1,10 @@
 from time import time
-from pathlib import Path
 import requests
 from django.conf import settings
 from urllib.parse import urljoin
+from . import vms
 
 api = urljoin(settings.NOMAD_URL, 'v1')
-task_name = 'vm'
 
 
 def response(res):
@@ -25,63 +24,29 @@ def jobs():
     return response(requests.get(f'{api}/jobs'))
 
 
-def nomad_job(job_id, artifacts):
-    job_name = f'VMCK job {job_id}'
-
-    task_artifacts = []
-    def add_artifact(source, destination):
-        task_artifacts.append({
-            'getterSource': source,
-            'relativeDest': destination,
-            'options': {
-                'archive': 'false',
-            },
-        })
-
-    add_artifact(settings.QEMU_IMAGE_URL, 'local/')
-    image_filename = settings.QEMU_IMAGE_URL.split('/')[-1]
-
-    for a in artifacts:
-        add_artifact(*a)
-
-    run_task = {
-        'name': task_name,
-        'driver': 'qemu',
-        'config': {
-            'image_path': f'local/{image_filename}',
-            'accelerator': 'kvm',
-            'args': [],
-        },
-        'artifacts': task_artifacts,
-    }
-
-    task_group = {
-        'name': 'run',
-        'tasks': [run_task],
-    }
-
+def nomad_job(job_id, spec_url):
     return {
         'job': {
             'id': job_id,
-            'name': job_name,
+            'name': f'VMCK job {job_id}',
             'type': 'batch',
             'datacenters': ['dc1'],
-            'taskgroups': [task_group],
+            'taskgroups': [
+                vms.task_group(spec_url),
+            ],
         },
     }
 
 
-def create_job(artifacts=[]):
+def create_job(spec_url):
     job_id = str(int(time()))
-    print('Job ID:', job_id)
-    job_spec = nomad_job(job_id, artifacts)
-    result = response(requests.post(f'{api}/jobs', json=job_spec))
-    print(result)
+    job_spec = nomad_job(job_id, spec_url)
+    response(requests.post(f'{api}/jobs', json=job_spec))
+    return job_id
 
 
 def kill(job_id):
-    result = response(requests.delete(f'{api}/job/{job_id}'))
-    print(result)
+    response(requests.delete(f'{api}/job/{job_id}'))
 
 
 def alloc(job_id):
@@ -108,7 +73,7 @@ def logs(job_id, type):
     return response(requests.get(
         f'{api}/client/fs/logs/{alloc_id}',
         params={
-            'task': task_name,
+            'task': 'vm',
             'type': type,
             'plain': 'true',
         },
