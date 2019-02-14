@@ -1,17 +1,20 @@
-from time import time
+from .models import Job
 from . import nomad
 from . import vms
 
 
 def create():
-    job_id = str(int(time()))
+    job = Job.objects.create()
 
     nomad.launch(
         nomad.job(
-            id=job_id,
-            name=f"vmck {job_id}",
+            id=f'vmck-{job.id}',
+            name=f"vmck {job.id}",
             taskgroups=[vms.task_group()],
         ),
     )
 
-    return job_id
+    job.status = job.STATE_RUNNING
+    job.save()
+
+    return job

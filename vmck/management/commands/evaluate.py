@@ -6,5 +6,5 @@ class Command(BaseCommand):
     help = "Evaluate a subject."
 
     def handle(self, *args, **options):
-        job_id = jobs.create()
-        print(job_id)
+        job = jobs.create()
+        print(job.id)
