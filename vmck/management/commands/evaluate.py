@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from ... import nomad
+from ... import jobs
 
 
 class Command(BaseCommand):
@@ -9,5 +9,5 @@ class Command(BaseCommand):
         parser.add_argument('spec_url')
 
     def handle(self, spec_url, *args, **options):
-        job_id = nomad.create_job(spec_url)
+        job_id = jobs.create(spec_url)
         print(job_id)

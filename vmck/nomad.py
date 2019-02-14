@@ -1,8 +1,6 @@
-from time import time
 import requests
 from django.conf import settings
 from urllib.parse import urljoin
-from . import vms
 
 api = urljoin(settings.NOMAD_URL, 'v1')
 
@@ -24,25 +22,20 @@ def jobs():
     return response(requests.get(f'{api}/jobs'))
 
 
-def nomad_job(job_id, spec_url):
+def job(id, name, taskgroups):
     return {
         'job': {
-            'id': job_id,
-            'name': f'VMCK job {job_id}',
+            'id': id,
+            'name': name,
             'type': 'batch',
             'datacenters': ['dc1'],
-            'taskgroups': [
-                vms.task_group(spec_url),
-            ],
+            'taskgroups': taskgroups,
         },
     }
 
 
-def create_job(spec_url):
-    job_id = str(int(time()))
-    job_spec = nomad_job(job_id, spec_url)
-    response(requests.post(f'{api}/jobs', json=job_spec))
-    return job_id
+def launch(definition):
+    response(requests.post(f'{api}/jobs', json=definition))
 
 
 def kill(job_id):
