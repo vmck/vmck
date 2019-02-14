@@ -105,7 +105,8 @@ def main():
         'set -x',
         'sudo mkdir /tmp/vmck',
         'sudo mount -t 9p -o trans=virtio vmck /tmp/vmck -oversion=9p2000.L',
-        'sudo /tmp/vmck/agent 1> /tmp/vmck/stdout.txt 2> /tmp/vmck/stderr.txt'
+        'cd /tmp/vmck',
+        'sudo ./agent 1> stdout.txt 2> stderr.txt',
     ])
 
     pty_ssh_args = [
