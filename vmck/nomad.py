@@ -38,23 +38,24 @@ def launch(definition):
     response(requests.post(f'{api}/jobs', json=definition))
 
 
+def status(job_id):
+    return alloc(job_id)['ClientStatus']
+
+
 def kill(job_id):
     response(requests.delete(f'{api}/job/{job_id}'))
 
 
 def alloc(job_id):
     allocs = response(requests.get(f'{api}/job/{job_id}/allocations'))
-    alloc_ids = [
-        a['ID']
-        for a in sorted(allocs, key=lambda a: a['CreateTime'])
-    ]
-    if not alloc_ids:
+    if not allocs:
         raise RuntimeError(f"No allocs found for job {job_id}")
-    return(alloc_ids[-1])
+    allocs.sort(key=lambda a: a['CreateTime'])
+    return(allocs[-1])
 
 
 def cat(job_id, path):
-    alloc_id = alloc(job_id)
+    alloc_id = alloc(job_id)['ID']
     return response(requests.get(
         f'{api}/client/fs/cat/{alloc_id}',
         params={'path': path},
@@ -62,7 +63,7 @@ def cat(job_id, path):
 
 
 def logs(job_id, type):
-    alloc_id = alloc(job_id)
+    alloc_id = alloc(job_id)['ID']
     return response(requests.get(
         f'{api}/client/fs/logs/{alloc_id}',
         params={

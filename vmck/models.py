@@ -18,6 +18,9 @@ class Job(models.Model):
         default=STATE_NEW,
     )
 
+    def __str__(self):
+        return f"{self.id} ({self.state})"
+
 
 class Artifact(models.Model):
     job = models.ForeignKey(Job, on_delete=models.CASCADE)

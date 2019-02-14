@@ -3,7 +3,7 @@ from ... import jobs
 
 
 class Command(BaseCommand):
-    help = "Evaluate a subject."
+    help = "Evaluates a subject."
 
     def handle(self, *args, **options):
         job = jobs.create()
