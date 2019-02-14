@@ -31,20 +31,26 @@ def sync_artifacts(job):
         job.artifact_set.create(name=name, data=data)
 
 
+def on_done(job):
+    job.state = job.STATE_DONE
+    sync_artifacts(job)
+    job.save()
+
+
 def poll(job):
     status = nomad.status(nomad_id(job))
 
     if status == 'complete':
-        job.state = job.STATE_DONE
-        sync_artifacts(job)
+        on_done(job)
 
     elif status == 'running':
         job.state = job.STATE_RUNNING
+        done = nomad.cat(nomad_id(job), f'alloc/data/done', binary=True)
+        if done is not None:
+            on_done(job)
 
     else:
         raise RuntimeError(f"Unknown status {status}")
-
-    job.save()
 
 
 def kill(job):

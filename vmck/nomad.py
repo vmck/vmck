@@ -15,7 +15,7 @@ def response(res, binary=False):
 
         return res.content
 
-    raise RuntimeError(f"Request failed: {res.text}")
+    res.raise_for_status()
 
 
 def jobs():
@@ -56,10 +56,18 @@ def alloc(job_id):
 
 def cat(job_id, path, binary=False):
     alloc_id = alloc(job_id)['ID']
-    return response(requests.get(
-        f'{api}/client/fs/cat/{alloc_id}',
-        params={'path': path},
-    ), binary)
+
+    try:
+        return response(requests.get(
+            f'{api}/client/fs/cat/{alloc_id}',
+            params={'path': path},
+        ), binary)
+
+    except requests.exceptions.HTTPError as err:
+        if err.response.status_code == 400:
+            return None
+
+        raise
 
 
 def logs(job_id, type):
