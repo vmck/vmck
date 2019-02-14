@@ -24,11 +24,19 @@ def create():
     return job
 
 
+def sync_artifacts(job):
+    job.artifact_set.all().delete()
+    for name in ['stdout.txt', 'stderr.txt']:
+        data = nomad.cat(nomad_id(job), f'alloc/data/{name}', binary=True)
+        job.artifact_set.create(name=name, data=data)
+
+
 def poll(job):
     status = nomad.status(nomad_id(job))
 
     if status == 'complete':
         job.state = job.STATE_DONE
+        sync_artifacts(job)
 
     elif status == 'running':
         job.state = job.STATE_RUNNING

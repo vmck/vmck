@@ -5,12 +5,12 @@ from urllib.parse import urljoin
 api = urljoin(settings.NOMAD_URL, 'v1')
 
 
-def response(res):
+def response(res, binary=False):
     if 200 <= res.status_code < 300:
         if res.headers.get('Content-Type') == 'application/json':
             return res.json()
 
-        if res.encoding:
+        if not binary and res.encoding:
             return res.text
 
         return res.content
@@ -54,12 +54,12 @@ def alloc(job_id):
     return(allocs[-1])
 
 
-def cat(job_id, path):
+def cat(job_id, path, binary=False):
     alloc_id = alloc(job_id)['ID']
     return response(requests.get(
         f'{api}/client/fs/cat/{alloc_id}',
         params={'path': path},
-    ))
+    ), binary)
 
 
 def logs(job_id, type):
