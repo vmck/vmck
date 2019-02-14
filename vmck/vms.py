@@ -84,4 +84,7 @@ def task_group():
             vm_task,
             control_task,
         ],
+        'RestartPolicy': {
+            'Attempts': 0,
+        },
     }
