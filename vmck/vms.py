@@ -79,7 +79,7 @@ def task_group():
     }
 
     return {
-        'name': 'evaluation',
+        'name': 'test',
         'tasks': [
             vm_task,
             control_task,
