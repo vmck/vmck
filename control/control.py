@@ -8,7 +8,6 @@ import logging
 import shlex
 
 debug = os.environ.get('DEBUG', '').lower() in ['1', 'on', 'yes', 'true']
-spec_url = os.environ['SPEC_URL']
 
 log_level = logging.DEBUG if debug else logging.INFO
 log = logging.getLogger(__name__)

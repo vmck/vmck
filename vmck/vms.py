@@ -9,7 +9,7 @@ def random_port(start=10000, end=20000):
     return random.SystemRandom().randint(start, end - 1)
 
 
-def task_group(spec_url):
+def task_group():
     vm_port = random_port()
 
     image_artifact = {
@@ -75,7 +75,6 @@ def task_group(spec_url):
             'VM_PORT': f'{vm_port}',
             'VM_USERNAME': settings.QEMU_IMAGE_USERNAME,
             'VM_PASSWORD': settings.QEMU_IMAGE_PASSWORD,
-            'SPEC_URL': spec_url,
         },
     }
 
