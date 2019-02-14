@@ -1,5 +1,7 @@
 import requests
 from django.core.management.base import BaseCommand
+from ...models import Job
+from ... import jobs
 from ... import nomad
 
 
@@ -10,4 +12,5 @@ class Command(BaseCommand):
         parser.add_argument('job_id')
 
     def handle(self, job_id, *args, **options):
-        print(nomad.alloc(job_id))
+        job = Job.objects.get(id=job_id)
+        print(nomad.alloc(jobs.nomad_id(job))['ID'])

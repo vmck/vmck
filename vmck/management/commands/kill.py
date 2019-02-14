@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
-from ... import nomad
+from ...models import Job
+from ... import jobs
 
 
 class Command(BaseCommand):
@@ -9,4 +10,5 @@ class Command(BaseCommand):
         parser.add_argument('job_id')
 
     def handle(self, job_id, *args, **options):
-        nomad.kill(job_id)
+        job = Job.objects.get(id=job_id)
+        jobs.kill(job)
