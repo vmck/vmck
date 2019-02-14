@@ -48,6 +48,7 @@ def poll(job):
         done = nomad.cat(nomad_id(job), f'alloc/data/done', binary=True)
         if done is not None:
             on_done(job)
+            kill(job)
 
     else:
         raise RuntimeError(f"Unknown status {status}")
