@@ -42,8 +42,8 @@ def on_done(job):
 def poll(job):
     status = nomad.status(nomad_id(job))
 
-    if status == 'complete':
-        on_done(job)
+    if status == 'pending':
+        return
 
     elif status == 'running':
         job.state = job.STATE_RUNNING
@@ -52,8 +52,11 @@ def poll(job):
             on_done(job)
             kill(job)
 
+    elif status == 'complete':
+        on_done(job)
+
     else:
-        raise RuntimeError(f"Unknown status {status}")
+        raise RuntimeError(f"Unknown status {status!r}")
 
 
 def kill(job):
