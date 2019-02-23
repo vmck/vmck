@@ -9,6 +9,7 @@
         mkdir /tmp/cluster; cd /tmp/cluster
         curl -OL https://releases.hashicorp.com/nomad/0.8.7/nomad_0.8.7_linux_amd64.zip
         curl -OL https://releases.hashicorp.com/consul/1.4.2/consul_1.4.2_linux_amd64.zip
+        unzip nomad_0.8.7_linux_amd64.zip
         unzip consul_1.4.2_linux_amd64.zip
         ```
 
