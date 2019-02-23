@@ -12,7 +12,7 @@ def after_test(request):
     return callback
 
 
-def wait_for_job(job, timeout=120):
+def wait_for_job(job, timeout=900):
     t0 = time()
 
     while time() < t0 + timeout:
