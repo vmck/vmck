@@ -4,12 +4,15 @@
 
 1. Set up a local nomad cluster:
 
-    * Install nomad:
+    * Install nomad and consul:
         ```shell
-        pakku -Sy nomad consul
+        mkdir /tmp/cluster; cd /tmp/cluster
+        curl -OL https://releases.hashicorp.com/nomad/0.8.7/nomad_0.8.7_linux_amd64.zip
+        curl -OL https://releases.hashicorp.com/consul/1.4.2/consul_1.4.2_linux_amd64.zip
+        unzip consul_1.4.2_linux_amd64.zip
         ```
 
-    * Create a configuration file, `/tmp/nomad.hcl`, with the following
+    * Create a configuration file, `/tmp/cluster/nomad.hcl`, with the following
       content, adapted to your machine in case `eth0` is not the main network
       interface:
         ```hcl
@@ -25,8 +28,9 @@
 
     * Run consul and nomad:
         ```shell
-        consul agent -dev &
-        nomad agent -dev -config=/tmp/nomad.hcl &
+        cd /tmp/cluster
+        ./consul agent -dev &
+        ./nomad agent -dev -config=./nomad.hcl &
         ```
 
 2. TODO explain how to set up an http server for the images
