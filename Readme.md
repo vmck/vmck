@@ -13,8 +13,8 @@
         ```
 
     * Create a configuration file, `/tmp/cluster/nomad.hcl`, with the following
-      content, adapted to your machine in case `eth0` is not the main network
-      interface:
+      content, replacing `eth0` with the default network interface, which you
+      can determine by running `route | grep default | awk '{print $8}'`:
         ```hcl
         advertise {
           http = "{{ GetInterfaceIP `eth0` }}"
