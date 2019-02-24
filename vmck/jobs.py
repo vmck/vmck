@@ -1,10 +1,12 @@
+from django.conf import settings
 from .models import Job
 from . import nomad
 from . import vms
 
 
 def nomad_id(job):
-    return f'vmck-{job.id}'
+    prefix = settings.NOMAD_JOB_PREFIX
+    return f'{prefix}{job.id}'
 
 
 def create():
@@ -13,7 +15,7 @@ def create():
     nomad.launch(
         nomad.job(
             id=nomad_id(job),
-            name=f"vmck {job.id}",
+            name=f"{settings.NOMAD_DEPLOYMENT_NAME} job #{job.id}",
             taskgroups=[vms.task_group()],
         ),
     )
@@ -40,8 +42,8 @@ def on_done(job):
 def poll(job):
     status = nomad.status(nomad_id(job))
 
-    if status == 'complete':
-        on_done(job)
+    if status == 'pending':
+        return
 
     elif status == 'running':
         job.state = job.STATE_RUNNING
@@ -50,8 +52,11 @@ def poll(job):
             on_done(job)
             kill(job)
 
+    elif status == 'complete':
+        on_done(job)
+
     else:
-        raise RuntimeError(f"Unknown status {status}")
+        raise RuntimeError(f"Unknown status {status!r}")
 
 
 def kill(job):

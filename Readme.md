@@ -56,3 +56,9 @@
     ```shell
     pipenv run ./manage.py createjob
     ```
+
+## Testing
+With a Nomad cluster running on `localhost:4646`, run `pipenv run pytest`, and
+enjoy. To make the tests run faster you can mirror the VM image locally and
+override the URL in the local `.env` file - see `testsuite/settings.py` for the
+default image.

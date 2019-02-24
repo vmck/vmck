@@ -118,7 +118,7 @@ def main():
     ]
 
     log.info("Running bootstrap command in VM")
-    out = retry(30, .5, pty_ssh, *pty_ssh_args)
+    out = retry(600, .5, pty_ssh, *pty_ssh_args)
 
     log.info(
         "ssh:\n==== ssh output ====\n%s\n===============",
