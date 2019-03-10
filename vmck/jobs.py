@@ -2,7 +2,6 @@ import logging
 from django.conf import settings
 from .models import Job
 from . import nomad
-from . import vms
 
 log_level = logging.DEBUG
 log = logging.getLogger(__name__)
@@ -14,14 +13,14 @@ def nomad_id(job):
     return f'{prefix}{job.id}'
 
 
-def create():
+def create(backend):
     job = Job.objects.create()
 
     nomad.launch(
         nomad.job(
             id=nomad_id(job),
             name=f"{settings.NOMAD_DEPLOYMENT_NAME} job #{job.id}",
-            taskgroups=[vms.task_group()],
+            taskgroups=[backend.task_group()],
         ),
     )
 
