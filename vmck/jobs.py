@@ -1,7 +1,12 @@
+import logging
 from django.conf import settings
 from .models import Job
 from . import nomad
 from . import vms
+
+log_level = logging.DEBUG
+log = logging.getLogger(__name__)
+log.setLevel(log_level)
 
 
 def nomad_id(job):
@@ -34,6 +39,13 @@ def sync_artifacts(job):
 
 
 def on_done(job):
+    for jobname in ['control', 'vm']:
+        for filename in ['stdout', 'stderr']:
+            filepath = f'alloc/logs/{jobname}.{filename}.0'
+            data = nomad.cat(nomad_id(job), filepath)
+            if data:
+                log.debug(f'=== {filepath} ===\n{data}')
+
     job.state = job.STATE_DONE
     sync_artifacts(job)
     job.save()
