@@ -1,0 +1,26 @@
+sudo: required
+
+services:
+  - docker
+
+language: python
+
+python:
+  - '3.7'
+
+env:
+  matrix:
+    - NOMAD_VERSION="0.8.3"
+
+before_install:
+  - curl -L -o /tmp/nomad_${NOMAD_VERSION}_linux_amd64.zip https://releases.hashicorp.com/nomad/${NOMAD_VERSION}/nomad_${NOMAD_VERSION}_linux_amd64.zip
+  - yes | unzip -d /tmp /tmp/nomad_${NOMAD_VERSION}_linux_amd64.zip
+  - /tmp/nomad agent -dev -node pynomad1 > /dev/null 2>&1 &
+  - sleep 30
+
+install:
+  - pip install pipenv
+  - pipenv install
+
+script:
+  - pipenv run pytest
