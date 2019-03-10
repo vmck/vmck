@@ -64,7 +64,7 @@ def poll(job):
             on_done(job)
             kill(job)
 
-    elif status == 'complete':
+    elif status in ['complete', 'failed']:
         on_done(job)
 
     else:
