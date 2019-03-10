@@ -35,7 +35,8 @@ def sync_artifacts(job):
     job.artifact_set.all().delete()
     for name in ['stdout.txt', 'stderr.txt']:
         data = nomad.cat(nomad_id(job), f'alloc/data/{name}', binary=True)
-        job.artifact_set.create(name=name, data=data)
+        if data is not None:
+            job.artifact_set.create(name=name, data=data)
 
 
 def on_done(job):
