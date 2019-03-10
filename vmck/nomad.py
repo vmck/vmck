@@ -5,6 +5,10 @@ from urllib.parse import urljoin
 api = urljoin(settings.NOMAD_URL, 'v1')
 
 
+class NoAllocsFoundError(RuntimeError):
+    pass
+
+
 def response(res, binary=False):
     if 200 <= res.status_code < 300:
         if res.headers.get('Content-Type') == 'application/json':
@@ -39,7 +43,10 @@ def launch(definition):
 
 
 def status(job_id):
-    return alloc(job_id)['ClientStatus']
+    try:
+        return alloc(job_id)['ClientStatus']
+    except NoAllocsFoundError:
+        return None
 
 
 def kill(job_id):
@@ -49,7 +56,7 @@ def kill(job_id):
 def alloc(job_id):
     allocs = response(requests.get(f'{api}/job/{job_id}/allocations'))
     if not allocs:
-        raise RuntimeError(f"No allocs found for job {job_id}")
+        raise NoAllocsFoundError(f"No allocs found for job {job_id}")
     allocs.sort(key=lambda a: a['CreateTime'])
     return(allocs[-1])
 

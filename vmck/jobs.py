@@ -54,7 +54,7 @@ def on_done(job):
 def poll(job):
     status = nomad.status(nomad_id(job))
 
-    if status == 'pending':
+    if status in [None, 'pending']:
         return
 
     elif status == 'running':
