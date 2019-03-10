@@ -39,7 +39,7 @@ def sync_artifacts(job):
             job.artifact_set.create(name=name, data=data)
 
 
-def on_done(job):
+def dump_logs(job):
     for jobname in ['control', 'vm']:
         for filename in ['stdout', 'stderr']:
             filepath = f'alloc/logs/{jobname}.{filename}.0'
@@ -49,8 +49,11 @@ def on_done(job):
             else:
                 log.debug('%s is empty', filepath)
 
-    job.state = job.STATE_DONE
+
+def on_done(job):
+    dump_logs(job)
     sync_artifacts(job)
+    job.state = job.STATE_DONE
     job.save()
 
 
