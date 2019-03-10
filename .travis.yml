@@ -17,7 +17,7 @@ env:
 before_install:
   - curl -L -o /tmp/nomad_${NOMAD_VERSION}_linux_amd64.zip https://releases.hashicorp.com/nomad/${NOMAD_VERSION}/nomad_${NOMAD_VERSION}_linux_amd64.zip
   - yes | unzip -d /tmp /tmp/nomad_${NOMAD_VERSION}_linux_amd64.zip
-  - /tmp/nomad agent -dev -node pynomad1 > /dev/null 2>&1 &
+  - /tmp/nomad agent -dev -node pynomad1 > /tmp/nomad.log 2>&1 &
   - sleep 30
 
 install:
@@ -26,3 +26,6 @@ install:
 
 script:
   - pipenv run pytest
+
+after_failure:
+  - cat /tmp/nomad.log
