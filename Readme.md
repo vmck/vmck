@@ -4,13 +4,11 @@
 
 1. Set up a local nomad cluster:
 
-    * Install nomad and consul:
+    * Install nomad:
         ```shell
         mkdir /tmp/cluster; cd /tmp/cluster
         curl -OL https://releases.hashicorp.com/nomad/0.8.7/nomad_0.8.7_linux_amd64.zip
-        curl -OL https://releases.hashicorp.com/consul/1.4.2/consul_1.4.2_linux_amd64.zip
         unzip nomad_0.8.7_linux_amd64.zip
-        unzip consul_1.4.2_linux_amd64.zip
         ```
 
     * Create a configuration file, `/tmp/cluster/nomad.hcl`, with the following
@@ -27,10 +25,9 @@
         }
         ```
 
-    * Run consul and nomad:
+    * Run nomad:
         ```shell
         cd /tmp/cluster
-        ./consul agent -dev &
         ./nomad agent -dev -config=./nomad.hcl &
         ```
 
