@@ -44,7 +44,9 @@ def on_done(job):
             filepath = f'alloc/logs/{jobname}.{filename}.0'
             data = nomad.cat(nomad_id(job), filepath)
             if data:
-                log.debug(f'=== {filepath} ===\n{data}')
+                log.debug('=== %s ===\n%s', filepath, data)
+            else:
+                log.debug('%s is empty', filepath)
 
     job.state = job.STATE_DONE
     sync_artifacts(job)
@@ -53,6 +55,7 @@ def on_done(job):
 
 def poll(job):
     status = nomad.status(nomad_id(job))
+    log.debug('%r status: %r', job, status)
 
     if status in [None, 'pending']:
         return
