@@ -17,7 +17,8 @@ def random_code(length, vocabulary=vocabulary_64):
 
 SECRET_KEY = random_code(43)
 
-DEBUG = is_true(os.environ.get('DEBUG'))
+DEBUG = is_true(os.environ.get('TESTING_DEBUG'))
+VM_DEBUG = DEBUG
 
 DATABASES = {
     'default': {

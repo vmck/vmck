@@ -50,3 +50,5 @@ STATIC_URL = '/static/'
 
 NOMAD_JOB_PREFIX = 'vmck-'
 NOMAD_DEPLOYMENT_NAME = "vmck"
+
+VM_DEBUG = False

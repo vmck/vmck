@@ -22,7 +22,7 @@ def control_task(vm_port):
         },
         'env': {
             'PYTHONUNBUFFERED': 'yes',
-            'DEBUG': 'yes' if settings.DEBUG else '',
+            'DEBUG': 'yes' if settings.VM_DEBUG else '',
             'VM_HOST': '${attr.unique.network.ip-address}',
             'VM_PORT': f'{vm_port}',
             'VM_USERNAME': settings.QEMU_IMAGE_USERNAME,
