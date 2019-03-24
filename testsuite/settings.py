@@ -1,22 +1,9 @@
 import os
-import string
-import secrets
 from datetime import datetime
+from vmck.utils import is_true, random_code
 from vmck.base_settings import *
 
-def is_true(value):
-    text = (value or '').lower().strip()
-    return text in ['1', 'yes', 'true', 'on', 'enabled']
-
-
-vocabulary_64 = string.ascii_letters + string.digits + '.+'
-
-def random_code(length, vocabulary=vocabulary_64):
-    return ''.join(secrets.choice(vocabulary) for _ in range(length))
-
-
 SECRET_KEY = random_code(43)
-
 DEBUG = is_true(os.environ.get('TESTING_DEBUG'))
 VM_DEBUG = DEBUG
 

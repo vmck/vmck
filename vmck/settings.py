@@ -1,10 +1,7 @@
 import os
 from pathlib import Path
+from .utils import is_true
 from .base_settings import *
-
-def is_true(value):
-    text = (value or '').lower().strip()
-    return text in ['1', 'yes', 'true', 'on', 'enabled']
 
 base_dir = Path(__file__).parent.parent
 
