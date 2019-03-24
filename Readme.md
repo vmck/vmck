@@ -34,14 +34,11 @@
         ./nomad agent -dev -config=./nomad.hcl &
         ```
 
-2. TODO explain how to set up an http server for the images
-
-3. Set up the VMCK server:
+2. Set up the VMCK server:
     ```shell
     pipenv install
     echo 'SECRET_KEY=changeme' > .env
     echo 'DEBUG=true' >> .env
-    echo 'QEMU_IMAGE_URL=http://example.com/artful.qcow2' >> .env
     pipenv run ./manage.py migrate
     ```
 
