@@ -12,6 +12,7 @@ def random_port(start=10000, end=20000):
 def control_task(vm_port):
     return {
         'name': 'control',
+        'leader': True,
         'driver': 'docker',
         'config': {
             'image': 'python:3.7',

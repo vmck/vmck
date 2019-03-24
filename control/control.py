@@ -1,11 +1,9 @@
-import sys
 import os
 from time import time, sleep
 from pathlib import Path
 import shutil
 import logging
-from subprocess import run, STDOUT, CalledProcessError
-from tempfile import TemporaryFile
+from subprocess import run, STDOUT
 
 debug = os.environ.get('DEBUG', '').lower() in ['1', 'on', 'yes', 'true']
 control_path = Path(__file__).parent.resolve()
@@ -72,10 +70,6 @@ def main():
     ]
 
     retry(600, .5, ssh, ssh_auth + [agent_path])
-    try:
-        ssh(*ssh_auth, poweroff_path)
-    except CalledProcessError:
-        pass  # `ssh poweroff` returns error code, so we expect this exception
 
 
 if __name__ == '__main__':
