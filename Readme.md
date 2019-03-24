@@ -19,6 +19,9 @@
           http = "{{ GetInterfaceIP `eth0` }}"
           serf = "{{ GetInterfaceIP `eth0` }}"
         }
+        server {
+          job_gc_threshold = "5m"
+        }
         client {
           enabled = true
           network_interface = "eth0"
