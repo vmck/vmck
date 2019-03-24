@@ -1,6 +1,11 @@
+import logging
 import requests
 from django.conf import settings
 from urllib.parse import urljoin
+
+log_level = logging.DEBUG
+log = logging.getLogger(__name__)
+log.setLevel(log_level)
 
 api = urljoin(settings.NOMAD_URL, 'v1')
 
@@ -19,6 +24,7 @@ def response(res, binary=False):
 
         return res.content
 
+    log.debug('HTTP response %r: %r', res, res.text)
     res.raise_for_status()
 
 
