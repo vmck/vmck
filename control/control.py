@@ -19,6 +19,7 @@ log.setLevel(log_level)
 
 
 def ssh(host, port, username, stdin_path):
+    verbosity_arg = '-v' if debug else '-q'
     args = [
         '/usr/bin/ssh', f'{username}@{host}',
         '-p', f'{port}',
@@ -26,6 +27,7 @@ def ssh(host, port, username, stdin_path):
         '-o', 'UserKnownHostsFile=/dev/null',
         '-o', 'StrictHostKeyChecking=no',
         '-o', 'ConnectTimeout=1',
+        '-T', verbosity_arg,
     ]
 
     with stdin_path.open('rb') as stdin:
