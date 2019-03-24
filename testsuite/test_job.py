@@ -32,5 +32,5 @@ def test_run_job(after_test):
     job = jobs.create(backend)
     after_test(jobs.kill, job)
     wait_for_job(job)
-    stdout = job.artifact_set.get(name='stdout.txt').data.decode('latin1')
+    stdout = job.artifact_set.get(name='stdout').data.decode('latin1')
     assert 'hello agent' in stdout

@@ -26,7 +26,6 @@ def control_task(vm_port):
             'VM_HOST': '${attr.unique.network.ip-address}',
             'VM_PORT': f'{vm_port}',
             'VM_USERNAME': settings.QEMU_IMAGE_USERNAME,
-            'VM_PASSWORD': settings.QEMU_IMAGE_PASSWORD,
         },
     }
 

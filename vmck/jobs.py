@@ -32,25 +32,13 @@ def create(backend):
 
 def sync_artifacts(job):
     job.artifact_set.all().delete()
-    for name in ['stdout.txt', 'stderr.txt']:
-        data = nomad.cat(nomad_id(job), f'alloc/data/{name}', binary=True)
-        if data is not None:
-            job.artifact_set.create(name=name, data=data)
-
-
-def dump_logs(job):
-    for jobname in ['control', 'vm']:
-        for filename in ['stdout', 'stderr']:
-            filepath = f'alloc/logs/{jobname}.{filename}.0'
-            data = nomad.cat(nomad_id(job), filepath)
-            if data:
-                log.debug('=== %s ===\n%s', filepath, data)
-            else:
-                log.debug('%s is empty', filepath)
+    for name in ['stdout', 'stderr']:
+        nomad_path = f'alloc/logs/control.{name}.0'
+        data = nomad.cat(nomad_id(job), nomad_path, binary=True)
+        job.artifact_set.create(name=name, data=data or b'')
 
 
 def on_done(job):
-    dump_logs(job)
     sync_artifacts(job)
     job.state = job.STATE_DONE
     job.save()

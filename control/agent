@@ -1,9 +1,0 @@
-#!/bin/sh
-
-set -ex
-
-echo "hello agent!"
-echo "world" > hello.txt
-sleep 3
-echo "agent signing off"
-touch done
