@@ -57,6 +57,20 @@
     pipenv run ./manage.py createjob
     ```
 
+## VM images
+Each job spins up a QEMU virtual machine to evaluate the submission. It needs a
+disk image, which can be downloaded from https://github.com/mgax/vmck-images,
+or built using `contrib/build.py`, which downloads an [Ubuntu cloud image][],
+prepares a [cloud-init][] configuration, applies it, and exports the resulting
+image. Run it with an argument to specify the output path:
+
+```shell
+./contrib/build.py /tmp/bionic.qcow
+```
+
+[Ubuntu cloud image]: https://cloud-images.ubuntu.com
+[cloud-init]: https://cloudinit.readthedocs.io
+
 ## Testing
 With a Nomad cluster running on `localhost:4646`, run `pipenv run pytest`, and
 enjoy. To make the tests run faster you can mirror the VM image locally and
