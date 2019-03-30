@@ -11,6 +11,7 @@ base_dir = Path(__file__).parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 DEBUG = is_true(os.environ.get('DEBUG'))
+VM_DEBUG = DEBUG
 
 _allowed_hosts = os.environ.get('ALLOWED_HOSTS', '')
 if _allowed_hosts:
@@ -27,4 +28,3 @@ NOMAD_URL = os.environ.get('NOMAD_URL', 'http://localhost:4646')
 
 QEMU_IMAGE_URL = os.environ.get('QEMU_IMAGE_URL')
 QEMU_IMAGE_USERNAME = os.environ.get('QEMU_IMAGE_USERNAME')
-QEMU_IMAGE_PASSWORD = os.environ.get('QEMU_IMAGE_PASSWORD')

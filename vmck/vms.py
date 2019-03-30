@@ -9,6 +9,27 @@ def random_port(start=10000, end=20000):
     return random.SystemRandom().randint(start, end - 1)
 
 
+def control_task(vm_port):
+    return {
+        'name': 'control',
+        'driver': 'docker',
+        'config': {
+            'image': 'python:3.7',
+            'args': ['python', '/control/control.py'],
+            'volumes': [
+                f'{control_path}:/control',
+            ],
+        },
+        'env': {
+            'PYTHONUNBUFFERED': 'yes',
+            'DEBUG': 'yes' if settings.VM_DEBUG else '',
+            'VM_HOST': '${attr.unique.network.ip-address}',
+            'VM_PORT': f'{vm_port}',
+            'VM_USERNAME': settings.QEMU_IMAGE_USERNAME,
+        },
+    }
+
+
 def task_group():
     vm_port = random_port()
 
@@ -58,33 +79,18 @@ def task_group():
         ],
     }
 
-    control_task = {
-        'name': 'control',
-        'driver': 'docker',
-        'config': {
-            'image': 'python:3.7',
-            'args': ['python', '/control/control.py'],
-            'volumes': [
-                f'{control_path}:/control',
-            ],
-        },
-        'env': {
-            'PYTHONUNBUFFERED': 'yes',
-            'DEBUG': 'yes' if settings.DEBUG else '',
-            'VM_HOST': '${attr.unique.network.ip-address}',
-            'VM_PORT': f'{vm_port}',
-            'VM_USERNAME': settings.QEMU_IMAGE_USERNAME,
-            'VM_PASSWORD': settings.QEMU_IMAGE_PASSWORD,
-        },
-    }
-
     return {
         'name': 'test',
         'tasks': [
             vm_task,
-            control_task,
+            control_task(vm_port),
         ],
         'RestartPolicy': {
             'Attempts': 0,
         },
     }
+
+
+class QemuBackend:
+    def task_group(self):
+        return task_group()

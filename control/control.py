@@ -1,76 +1,40 @@
+import sys
 import os
 from time import time, sleep
-from contextlib import contextmanager
-import pty
 from pathlib import Path
 import shutil
 import logging
-import shlex
+from subprocess import run, STDOUT, CalledProcessError
+from tempfile import TemporaryFile
 
 debug = os.environ.get('DEBUG', '').lower() in ['1', 'on', 'yes', 'true']
+control_path = Path(__file__).parent.resolve()
+agent_path = control_path / 'agent.sh'
+poweroff_path = control_path / 'poweroff.sh'
+ssh_key_path = control_path / 'ssh/id_ed25519'
 
 log_level = logging.DEBUG if debug else logging.INFO
 log = logging.getLogger(__name__)
 log.setLevel(log_level)
 
 
-@contextmanager
-def pty_process(command):
-    (pid, fd) = pty.fork()
-    if not pid:
-        os.execv(command[0], command)
-
-    try:
-        yield fd
-
-    finally:
-        (_, exit_code) = os.waitpid(pid, 0)
-        if exit_code != 0:
-            raise RuntimeError()
-
-
-def pty_ssh(host, port, username, password, command):
-    ssh_args = [
+def ssh(host, port, username, stdin_path):
+    verbosity_arg = '-v' if debug else '-q'
+    args = [
         '/usr/bin/ssh', f'{username}@{host}',
         '-p', f'{port}',
+        '-i', ssh_key_path,
         '-o', 'UserKnownHostsFile=/dev/null',
         '-o', 'StrictHostKeyChecking=no',
-        '-o', 'NumberOfPasswordPrompts=1',
         '-o', 'ConnectTimeout=1',
-        command,
+        '-T', verbosity_arg,
     ]
 
-    shell_args = ' '.join(shlex.quote(a) for a in ssh_args)
-    log.debug("running in pty: %s", shell_args)
-    with pty_process(ssh_args) as fd:
-        while True:
-            try:
-                log.debug('reading output ...')
-                output = os.read(fd, 1024)
-                log.debug('got %r', output)
-
-            except Exception:
-                return
-
-            if b'password:' in output.lower().strip():
-                log.debug('sending password')
-                os.write(fd, password.encode('utf8') + b'\n')
-                break
-
-        log.debug('waiting for output ...')
-        out = b''
-
-        while True:
-            try:
-                chunk = os.read(fd, 1024)
-                log.debug('got chunk %r', chunk)
-                out += chunk
-
-            except Exception:
-                return out
+    with stdin_path.open('rb') as stdin:
+        run(args, stdin=stdin, stderr=STDOUT, check=True)
 
 
-def retry(timeout, sleep_seconds, func, *args, **kwargs):
+def retry(timeout, sleep_seconds, func, args=(), kwargs={}):
     log.debug(
         "Retrying %s (args=%r, kwargs=%r) every %rs, up to %rs",
         func.__name__, args, kwargs, sleep_seconds, timeout,
@@ -99,31 +63,19 @@ def cp(src, dest_dir):
 
 
 def main():
-    cp(Path(__file__).parent / 'agent', Path('alloc/data'))
+    cp(Path(__file__).parent / 'agent.sh', Path('alloc/data'))
 
-    bootstrap_command = ' && '.join([
-        'set -x',
-        'sudo mkdir /tmp/vmck',
-        'sudo mount -t 9p -o trans=virtio vmck /tmp/vmck -oversion=9p2000.L',
-        'cd /tmp/vmck',
-        'sudo ./agent 1> stdout.txt 2> stderr.txt',
-    ])
-
-    pty_ssh_args = [
+    ssh_auth = [
         os.environ['VM_HOST'],
         os.environ['VM_PORT'],
         os.environ['VM_USERNAME'],
-        os.environ['VM_PASSWORD'],
-        bootstrap_command,
     ]
 
-    log.info("Running bootstrap command in VM")
-    out = retry(600, .5, pty_ssh, *pty_ssh_args)
-
-    log.info(
-        "ssh:\n==== ssh output ====\n%s\n===============",
-        out.decode('utf8', errors='replace'),
-    )
+    retry(600, .5, ssh, ssh_auth + [agent_path])
+    try:
+        ssh(*ssh_auth, poweroff_path)
+    except CalledProcessError:
+        pass  # `ssh poweroff` returns error code, so we expect this exception
 
 
 if __name__ == '__main__':
