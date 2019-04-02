@@ -30,11 +30,14 @@ Creates a new job.
 Request:
 ```json
 {
-  "image": "https://repository.grid.pub.ro/cs/so/linux-2019/so-ubuntu-18-04.ova",
+  "evaluator": {
+    "driver": "qemu",
+    "image": "https://repository.grid.pub.ro/cs/so/linux-2019/so-ubuntu-18-04.ova",
+    "command": ["bash", "hello.sh"]
+  },
   "sources": [
     {"name": "hello.sh", "id": "$source_id"}
-  ],
-  "command": ["bash", "hello.sh"]
+  ]
 }
 ```
 
