@@ -37,7 +37,10 @@ Request:
   },
   "sources": [
     {"name": "hello.sh", "id": "$source_id"}
-  ]
+  ],
+  "meta": {
+    "any": "random data"
+  }
 }
 ```
 
@@ -45,7 +48,10 @@ Response:
 ```json
 {
   "id": "$job_id",
-  "status": "queued"
+  "status": "queued",
+  "meta": {
+    "any": "random data"
+  }
 }
 ```
 
@@ -57,6 +63,9 @@ Reponse:
 {
   "id": "$job_id",
   "status": "queued|running|success|failure",
+  "meta": {
+    "any": "random data"
+  },
   "events": [
     {"message": "Job started", "time": "$iso_timestamp"}
   ],
