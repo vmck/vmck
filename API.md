@@ -4,7 +4,7 @@ All API calls require authentication, TBD.
 
 ## Methods
 
-### `GET /v1/`
+### `GET /v0/`
 Returns general information about the service.
 
 Reponse:
@@ -14,7 +14,7 @@ Reponse:
 }
 ```
 
-### `PUT /v1/jobs/source`
+### `PUT /v0/jobs/source`
 Upload source file for a future job. Returns a new ID.
 
 Request body should be the source file.
@@ -24,7 +24,7 @@ Reponse:
 {"id": "$source_id", "size": 1337}
 ```
 
-### `POST /v1/jobs`
+### `POST /v0/jobs`
 Creates a new job.
 
 Request:
@@ -55,7 +55,7 @@ Response:
 }
 ```
 
-### `GET /v1/job/:id`
+### `GET /v0/job/:id`
 Returns the job identified by `:id`.
 
 Reponse:
@@ -76,5 +76,5 @@ Reponse:
 }
 ```
 
-### `GET /v1/job/:id/artifacts/:name`
+### `GET /v0/job/:id/artifacts/:name`
 Downloads artifact identified by `:name` from job `:id`.
