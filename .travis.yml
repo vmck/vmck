@@ -12,7 +12,7 @@ python:
 
 env:
   global:
-    - NOMAD_VERSION="0.8.7"
+    - NOMAD_VERSION="0.9.0"
     - TESTING_MOCK_VM="true"
 
 before_install:
