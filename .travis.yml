@@ -26,7 +26,7 @@ install:
 script:
   - /tmp/nomad agent -dev -node pynomad1 > /tmp/nomad.log 2>&1 &
   - sleep 60
-  - travis_wait 30 pipenv run pytest
+  - travis_wait 1 pipenv run pytest
 
 after_failure:
   - cat /tmp/nomad.log
