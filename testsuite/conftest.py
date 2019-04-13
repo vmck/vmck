@@ -5,10 +5,9 @@ from vmck.utils import is_true
 
 @pytest.fixture
 def vm_backend():
-    if is_true(os.environ.get('TESTING_MOCK_VM')):
-        from mock_backend import MockBackend
-        return MockBackend()
+    if os.environ.get('TESTING_BACKEND') == 'qemu':
+        from vmck.vms import QemuBackend
+        return QemuBackend()
 
-    else:
-        from vmck import vms
-        return vms.QemuBackend()
+    from mock_backend import MockBackend
+    return MockBackend()
