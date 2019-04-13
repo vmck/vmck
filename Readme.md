@@ -70,7 +70,11 @@ image. Run it with an argument to specify the output path:
 
 ## Testing
 With a Nomad cluster running on `localhost:4646`, run `pipenv run pytest`, and
-enjoy. To make the tests run faster you can mirror the VM image locally and
+enjoy. By default, the test suite will use a *mock vm*, implemented with a
+docker backend, instead of qemu. To run the tests with the qemu backend, set
+`TESTING_BACKEND=qemu` in the `.env` file.
+
+To make the qemu tests run faster you can mirror the VM image locally and
 override the URL in the local `.env` file - see `testsuite/settings.py` for the
 default image.
 
