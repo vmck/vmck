@@ -4,6 +4,7 @@ from pathlib import Path
 import shutil
 import logging
 from subprocess import run, STDOUT
+from os import chmod
 
 debug = os.environ.get('DEBUG', '').lower() in ['1', 'on', 'yes', 'true']
 control_path = Path(__file__).parent.resolve()
@@ -17,6 +18,8 @@ log.setLevel(log_level)
 
 
 def ssh(host, port, username, stdin_path):
+    # We need the following line to work in docker on mac
+    chmod(ssh_key_path, 0o600)
     verbosity_arg = '-v' if debug else '-q'
     args = [
         '/usr/bin/ssh', f'{username}@{host}',
