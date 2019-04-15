@@ -23,5 +23,7 @@ DATABASES = {
 
 NOMAD_URL = os.environ.get('NOMAD_URL', 'http://localhost:4646')
 
+VMCK_BACKEND = os.environ.get('BACKEND', 'qemu')
+
 QEMU_IMAGE_URL = os.environ.get('QEMU_IMAGE_URL')
 QEMU_IMAGE_USERNAME = os.environ.get('QEMU_IMAGE_USERNAME')

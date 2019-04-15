@@ -1,15 +1,11 @@
-from pathlib import Path
-from django.conf import settings
-from vmck import vms
-
-mock_vm_sh = (Path(__file__).parent / 'mock_vm.sh').resolve()
+from .qemu import random_port, control_task
 
 
-class MockBackend:
+class DockerBackend:
     def task_group(self):
-        vm_port = vms.random_port()
+        vm_port = random_port()
 
-        mock_vm_task = {
+        docker_vm_task = {
             'name': 'vm',
             'driver': 'docker',
             'config': {
@@ -32,8 +28,8 @@ class MockBackend:
         return {
             'Name': 'test',
             'Tasks': [
-                mock_vm_task,
-                vms.control_task(vm_port),
+                docker_vm_task,
+                control_task(vm_port),
             ],
             'RestartPolicy': {
                 'Attempts': 0,

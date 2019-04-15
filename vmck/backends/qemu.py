@@ -2,7 +2,7 @@ import random
 from pathlib import Path
 from django.conf import settings
 
-control_path = (Path(__file__).parent.parent / 'control').resolve()
+control_path = (Path(__file__).parent / 'control').resolve()
 
 
 def random_port(start=10000, end=20000):

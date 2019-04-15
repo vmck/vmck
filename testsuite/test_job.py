@@ -1,6 +1,7 @@
 from time import time, sleep
 import pytest
 from vmck import jobs
+from vmck.backends import get_backend
 
 pytestmark = [pytest.mark.django_db]
 
@@ -25,8 +26,8 @@ def wait_for_job(job, timeout=900):
         sleep(1)
 
 
-def test_run_job(after_test, vm_backend):
-    job = jobs.create(vm_backend)
+def test_run_job(after_test):
+    job = jobs.create(get_backend())
     after_test(jobs.kill, job)
     wait_for_job(job)
     stdout = job.artifact_set.get(name='stdout').data.decode('latin1')

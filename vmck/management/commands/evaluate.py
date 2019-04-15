@@ -1,12 +1,12 @@
 from django.core.management.base import BaseCommand
 from ... import jobs
-from ... import vms
+from ...backends import get_backend
 
 
 class Command(BaseCommand):
     help = "Evaluates a subject."
 
     def handle(self, *args, **options):
-        backend = vms.QemuBackend()
+        backend = get_backend()
         job = jobs.create(backend)
         print(job.id)
