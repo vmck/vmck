@@ -19,11 +19,6 @@ def wait_for_job(job, timeout=900):
         sleep(1)
 
 
-def test_api_home(client):
-    resp = client.get('/v0/').json()
-    assert resp['version'] == '0.0.1'
-
-
 def test_run_job(after_test):
     job = jobs.create(get_backend())
     after_test(jobs.kill, job)
