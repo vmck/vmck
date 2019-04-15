@@ -6,13 +6,6 @@ from vmck.backends import get_backend
 pytestmark = [pytest.mark.django_db]
 
 
-@pytest.fixture
-def after_test(request):
-    def callback(func, *args, **kwargs):
-        request.addfinalizer(lambda: func(*args, **kwargs))
-    return callback
-
-
 def wait_for_job(job, timeout=900):
     t0 = time()
 
