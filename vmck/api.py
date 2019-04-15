@@ -37,8 +37,7 @@ def job_(request, pk):
 
     if request.method == 'DELETE':
         jobs.kill(job)
-        jobs.poll(job)
-        return JsonResponse(job_info(job))
+        return JsonResponse({'ok': True})
 
 
 @require_http_methods(['GET'])
