@@ -26,6 +26,10 @@ class JobApi:
     def destroy(self):
         return self.client.delete(self.url)
 
+    def artifact(self, name):
+        url = f'{self.url}/artifacts/{name}'
+        return self.client.get(url).content
+
 
 def test_api_home(client):
     resp = client.get('/v0/').json()
@@ -36,3 +40,4 @@ def test_api_job_lifecycle(client, after_test):
     job = JobApi(client)
     after_test(job.destroy)
     job.wait()
+    assert 'hello agent' in job.artifact('stdout').decode('latin1')

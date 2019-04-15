@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.urls import path
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import get_object_or_404
@@ -41,8 +41,16 @@ def job_(request, pk):
         return JsonResponse(job_info(job))
 
 
+@require_http_methods(['GET'])
+def artifact_(request, pk, name):
+    job = get_object_or_404(models.Job, pk=pk)
+    data = job.artifact_set.get(name=name).data
+    return HttpResponse(data)
+
+
 urls = [
     path('', home),
     path('jobs', jobs_),
     path('jobs/<int:pk>', job_),
+    path('jobs/<int:pk>/artifacts/<path:name>', artifact_),
 ]
