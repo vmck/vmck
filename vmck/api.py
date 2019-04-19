@@ -1,3 +1,4 @@
+import json
 from django.http import HttpResponse, JsonResponse
 from django.urls import path
 from django.views.decorators.http import require_http_methods
@@ -21,9 +22,23 @@ def home(request):
     })
 
 
+@require_http_methods(['PUT'])
+def source_(request):
+    upload = models.Upload.objects.create(data=request.body)
+    return JsonResponse({'id': upload.pk})
+
+
 @require_http_methods(['POST'])
 def jobs_(request):
-    job = jobs.create(get_backend())
+    spec = json.loads(request.body)
+
+    sources = []
+    for source in spec.get('sources', {}):
+        assert isinstance(source['name'], str)
+        upload = models.Upload.objects.get(pk=source['id'])
+        sources.append((source['name'], upload))
+
+    job = jobs.create(get_backend(), sources)
     return JsonResponse(job_info(job))
 
 
@@ -50,6 +65,7 @@ def artifact_(request, pk, name):
 urls = [
     path('', home),
     path('jobs', jobs_),
+    path('jobs/source', source_),
     path('jobs/<int:pk>', job_),
     path('jobs/<int:pk>/artifacts/<path:name>', artifact_),
 ]

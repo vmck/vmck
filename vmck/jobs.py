@@ -13,8 +13,11 @@ def nomad_id(job):
     return f'{prefix}{job.id}'
 
 
-def create(backend):
+def create(backend, sources=[]):
     job = Job.objects.create()
+    for name, upload in sources:
+        job.source_set.create(name=name, data=upload.data)
+        upload.delete()
 
     nomad.launch(
         nomad.job(
@@ -38,8 +41,22 @@ def sync_artifacts(job):
         job.artifact_set.create(name=name, data=data or b'')
 
 
+def _dump_sources(job):
+    # TODO this function is here to test the API that uploads job source files.
+    # It should be removed once we can inject the sources into the VM.
+    import json
+    job.artifact_set.create(
+        name='_sources',
+        data=json.dumps({
+            s.name: s.data.decode('latin1')
+            for s in job.source_set.all()
+        }).encode('utf8'),
+    )
+
+
 def on_done(job):
     sync_artifacts(job)
+    _dump_sources(job)
     job.state = job.STATE_DONE
     job.save()
 

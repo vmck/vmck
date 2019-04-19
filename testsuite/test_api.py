@@ -9,14 +9,33 @@ class JobApi:
     @classmethod
     def create(cls, client, sources):
         job = cls(client)
+        for name, data in sources:
+            job.upload(name, data)
         job.start()
         return job
 
     def __init__(self, client):
         self.client = client
+        self.sources = []
+
+    def upload(self, name, data):
+        resp = self.client.put('/v0/jobs/source', data)
+        upload_id = resp.json()['id']
+        self.sources.append({
+            'name': name,
+            'id': upload_id,
+        })
 
     def start(self):
-        self.id = client.post('/v0/jobs').json()['id']
+        job_spec = {
+            'sources': self.sources,
+        }
+        resp = self.client.post(
+            '/v0/jobs',
+            job_spec,
+            content_type='application/json',
+        )
+        self.id = resp.json()['id']
         self.url = f'/v0/jobs/{self.id}'
 
     def wait(self, timeout=900):
@@ -45,7 +64,8 @@ def test_api_home(client):
 
 
 def test_api_job_lifecycle(client, after_test):
-    job = JobApi.create(client)
+    job = JobApi.create(client, [('source', 'cafebabe')])
     after_test(job.destroy)
     job.wait()
     assert 'hello agent' in job.artifact('stdout').decode('latin1')
+    assert 'cafebabe' in job.artifact('_sources').decode('latin1')
