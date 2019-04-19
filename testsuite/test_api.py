@@ -6,8 +6,16 @@ pytestmark = [pytest.mark.django_db]
 
 class JobApi:
 
+    @classmethod
+    def create(cls, client, sources):
+        job = cls(client)
+        job.start()
+        return job
+
     def __init__(self, client):
         self.client = client
+
+    def start(self):
         self.id = client.post('/v0/jobs').json()['id']
         self.url = f'/v0/jobs/{self.id}'
 
@@ -37,7 +45,7 @@ def test_api_home(client):
 
 
 def test_api_job_lifecycle(client, after_test):
-    job = JobApi(client)
+    job = JobApi.create(client)
     after_test(job.destroy)
     job.wait()
     assert 'hello agent' in job.artifact('stdout').decode('latin1')
