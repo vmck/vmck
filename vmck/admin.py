@@ -1,7 +1,16 @@
 from django.contrib import admin
-from .models import Job, Artifact, Upload, Source
+from .models import Job, Upload, Source, Artifact
+from django.urls import path
 
-admin.site.register(Job)
-admin.site.register(Upload)
-admin.site.register(Source)
-admin.site.register(Artifact)
+class Admin(admin.ModelAdmin):
+	pass
+
+admin.site.register(Job, Admin)
+admin.site.register(Upload, Admin)
+admin.site.register(Source, Admin)
+admin.site.register(Artifact, Admin)
+
+urlpatterns = [ 
+	path('admin/', admin.site.urls)
+]
+
