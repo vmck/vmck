@@ -45,7 +45,11 @@ def job(id, name, taskgroups):
 
 
 def launch(definition):
-    response(requests.post(f'{api}/jobs', json=definition))
+    try:
+        response(requests.post(f'{api}/jobs', json=definition))
+    except Exception as err:
+        log.error('Failed to create nomad job: %s', err.response.text)
+        raise
 
 
 def status(job_id):
