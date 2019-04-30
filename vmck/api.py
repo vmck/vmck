@@ -2,6 +2,7 @@ import json
 from django.http import HttpResponse, JsonResponse
 from django.urls import path
 from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 from .backends import get_backend
 from . import jobs
@@ -15,21 +16,18 @@ def job_info(job):
     }
 
 
-@require_http_methods(['GET'])
 def home(request):
     return JsonResponse({
         'version': '0.0.1',
     })
 
 
-@require_http_methods(['PUT'])
-def source_(request):
+def upload_source(request):
     upload = models.Upload.objects.create(data=request.body)
     return JsonResponse({'id': upload.pk})
 
 
-@require_http_methods(['POST'])
-def jobs_(request):
+def create_job(request):
     spec = json.loads(request.body or '{}')
 
     sources = []
@@ -42,30 +40,38 @@ def jobs_(request):
     return JsonResponse(job_info(job))
 
 
-@require_http_methods(['GET', 'DELETE'])
-def job_(request, pk):
+def get_job(request, pk):
     job = get_object_or_404(models.Job, pk=pk)
 
-    if request.method == 'GET':
-        jobs.poll(job)
-        return JsonResponse(job_info(job))
-
-    if request.method == 'DELETE':
-        jobs.kill(job)
-        return JsonResponse({'ok': True})
+    jobs.poll(job)
+    return JsonResponse(job_info(job))
 
 
-@require_http_methods(['GET'])
-def artifact_(request, pk, name):
+def kill_job(request, pk):
+    job = get_object_or_404(models.Job, pk=pk)
+    jobs.kill(job)
+    return JsonResponse({'ok': True})
+
+
+def download_artifact(request, pk, name):
     job = get_object_or_404(models.Job, pk=pk)
     data = job.artifact_set.get(name=name).data
     return HttpResponse(data)
 
 
+def route(**views):
+    @csrf_exempt
+    @require_http_methods(list(views))
+    def view(request, **kwargs):
+        return views[request.method](request, **kwargs)
+
+    return view
+
+
 urls = [
-    path('', home),
-    path('jobs', jobs_),
-    path('jobs/source', source_),
-    path('jobs/<int:pk>', job_),
-    path('jobs/<int:pk>/artifacts/<path:name>', artifact_),
+    path('', route(GET=home)),
+    path('jobs', route(POST=create_job)),
+    path('jobs/source', route(PUT=upload_source)),
+    path('jobs/<int:pk>', route(GET=get_job, DELETE=kill_job)),
+    path('jobs/<int:pk>/artifacts/<path:name>', route(GET=download_artifact)),
 ]
