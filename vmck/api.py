@@ -1,4 +1,5 @@
 import json
+from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.urls import path
 from django.views.decorators.http import require_http_methods
@@ -43,8 +44,18 @@ def create_job(request):
 def get_job(request, pk):
     job = get_object_or_404(models.Job, pk=pk)
 
-    jobs.poll(job)
-    return JsonResponse(job_info(job))
+    health = jobs.poll(job)
+    rv = job_info(job)
+    if health:
+        check = health[0]
+        if check['Status'] == 'passing':
+            rv['ssh'] = {
+                'host': check['Output'].split(':')[0].split()[-1],
+                'port': int(check['Output'].split(':')[1]),
+                'username': settings.QEMU_IMAGE_USERNAME,
+            }
+
+    return JsonResponse(rv)
 
 
 def kill_job(request, pk):

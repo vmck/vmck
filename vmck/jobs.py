@@ -75,6 +75,9 @@ def poll(job):
             on_done(job)
             kill(job)
 
+        else:
+            return nomad.health(job.id)
+
     elif status in ['complete', 'failed']:
         on_done(job)
 

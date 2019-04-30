@@ -21,6 +21,7 @@ DATABASES = {
     }
 }
 
+CONSUL_URL = os.environ.get('CONSUL_URL', 'http://localhost:8500')
 NOMAD_URL = os.environ.get('NOMAD_URL', 'http://localhost:4646')
 
 VMCK_BACKEND = os.environ.get('BACKEND', 'qemu')

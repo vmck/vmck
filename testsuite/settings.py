@@ -13,6 +13,7 @@ DATABASES = {
     }
 }
 
+CONSUL_URL = os.environ.get('TESTING_CONSUL_URL', 'http://localhost:8500')
 NOMAD_URL = os.environ.get('TESTING_NOMAD_URL', 'http://localhost:4646')
 NOMAD_JOB_PREFIX = f'testsuite-{random_code(8)}-'
 NOMAD_DEPLOYMENT_NAME = f"test {datetime.now().strftime('%H:%M:%S')}"
