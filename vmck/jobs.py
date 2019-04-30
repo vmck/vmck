@@ -23,7 +23,7 @@ def create(backend, sources=[]):
         nomad.job(
             id=nomad_id(job),
             name=f"{settings.NOMAD_DEPLOYMENT_NAME} job #{job.id}",
-            taskgroups=[backend.task_group()],
+            taskgroups=[backend.task_group(job)],
         ),
     )
 

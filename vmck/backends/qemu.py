@@ -3,6 +3,7 @@ from pathlib import Path
 from django.conf import settings
 
 control_path = (Path(__file__).parent / 'control').resolve()
+second = 1000000000
 
 
 def random_port(start=10000, end=20000):
@@ -40,7 +41,27 @@ def resources(vm_port):
     return {'Networks': [network]}
 
 
-def task_group():
+def services(job):
+    name = f'vmck-{job.id}-ssh'
+
+    return [
+        {
+            'Name': name,
+            'PortLabel': 'ssh',
+            'Checks': [
+                {
+                    'Name': f'{name} alive on ssh',
+                    'InitialStatus': 'critical',
+                    'Type': 'tcp',
+                    'Interval': 1 * second,
+                    'Timeout':  1 * second,
+                },
+            ],
+        },
+    ]
+
+
+def task_group(job):
     vm_port = random_port()
 
     image_artifact = {
@@ -73,15 +94,16 @@ def task_group():
     vm_task = {
         'name': 'vm',
         'driver': 'qemu',
+        'artifacts': [
+            image_artifact,
+        ],
         'config': {
             'image_path': f'local/{image_filename}',
             'accelerator': 'kvm',
             'args': qemu_args,
         },
         'resources': resources(vm_port),
-        'artifacts': [
-            image_artifact,
-        ],
+        'services': services(job),
     }
 
     return {
@@ -97,5 +119,6 @@ def task_group():
 
 
 class QemuBackend:
-    def task_group(self):
-        return task_group()
+
+    def task_group(self, job):
+        return task_group(job)
