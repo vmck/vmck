@@ -30,7 +30,7 @@ def source_(request):
 
 @require_http_methods(['POST'])
 def jobs_(request):
-    spec = json.loads(request.body)
+    spec = json.loads(request.body or '{}')
 
     sources = []
     for source in spec.get('sources', {}):
