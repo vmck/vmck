@@ -1,4 +1,4 @@
-from .qemu import random_port, control_task
+from .qemu import random_port, control_task, resources
 
 
 class DockerBackend:
@@ -14,15 +14,7 @@ class DockerBackend:
                     {'ssh': 22},
                 ],
             },
-            'resources': {
-                'networks': [
-                    {
-                        'ReservedPorts': [
-                            {'label': 'ssh', 'value': vm_port},
-                        ],
-                    },
-                ],
-            },
+            'resources': resources(vm_port),
         }
 
         return {

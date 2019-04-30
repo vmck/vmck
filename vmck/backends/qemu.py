@@ -31,6 +31,15 @@ def control_task(vm_port):
     }
 
 
+def resources(vm_port):
+    network = {
+        'ReservedPorts': [
+            {'Label': 'ssh', 'Value': vm_port},
+        ],
+    }
+    return {'Networks': [network]}
+
+
 def task_group():
     vm_port = random_port()
 
@@ -69,12 +78,7 @@ def task_group():
             'accelerator': 'kvm',
             'args': qemu_args,
         },
-        'resources': {
-            'network': {
-                'reservedPorts': [{'label': 'ssh', 'value': vm_port}],
-                # TODO 'dynamicPorts': [{'label': 'ssh', 'value': 0}],
-            },
-        },
+        'resources': resources(vm_port),
         'artifacts': [
             image_artifact,
         ],
