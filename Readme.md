@@ -83,3 +83,21 @@ default image.
   rule 'tcp:${attr.unique.network.ip-address}:10674-:22' (Bad host address)`:
   the host address has changed (e.g. because it moved to a different WiFi
   hotspot). Restart Nomad and it should pick up the new address.
+
+## Docker
+```shell
+docker run --detach --restart always \
+  --name cluster \
+  --volume /opt/cluster/var:/opt/cluster/var \
+  --volume /opt/vmck/var:/opt/vmck/var \
+  --volume /var/run/docker.sock:/var/run/docker.sock:ro \
+  --privileged \
+  --net host \
+  --env NOMAD_CLIENT_INTERFACE=wg0 \
+  --env HOSTNAME=127.0.0.1 \
+  --env SECRET_KEY=foo \
+  mgax/vmck
+```
+
+Then go to consul (`http://localhost:8500/ui/dc1/services`) and wait for the
+health check lights to turn green.
