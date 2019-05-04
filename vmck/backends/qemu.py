@@ -10,28 +10,6 @@ def random_port(start=10000, end=20000):
     return random.SystemRandom().randint(start, end - 1)
 
 
-def control_task(vm_port):
-    return {
-        'name': 'control',
-        'leader': True,
-        'driver': 'docker',
-        'config': {
-            'image': 'python:3.7',
-            'args': ['python', '/control/control.py'],
-            'volumes': [
-                f'{control_path}:/control',
-            ],
-        },
-        'env': {
-            'PYTHONUNBUFFERED': 'yes',
-            'DEBUG': 'yes' if settings.VM_DEBUG else '',
-            'VM_HOST': '${attr.unique.network.ip-address}',
-            'VM_PORT': f'{vm_port}',
-            'VM_USERNAME': settings.QEMU_IMAGE_USERNAME,
-        },
-    }
-
-
 def resources(vm_port):
     network = {
         'ReservedPorts': [
@@ -50,7 +28,7 @@ def services(job):
             'PortLabel': 'ssh',
             'Checks': [
                 {
-                    'Name': f'{name} alive on ssh',
+                    'Name': f'{name} tcp',
                     'InitialStatus': 'critical',
                     'Type': 'tcp',
                     'Interval': 1 * second,
@@ -110,7 +88,6 @@ def task_group(job):
         'name': 'test',
         'tasks': [
             vm_task,
-            control_task(vm_port),
         ],
         'RestartPolicy': {
             'Attempts': 0,

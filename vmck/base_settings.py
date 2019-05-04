@@ -1,3 +1,7 @@
+from pathlib import Path
+
+base_dir = Path(__file__).parent.parent
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -51,4 +55,5 @@ STATIC_URL = '/static/'
 NOMAD_JOB_PREFIX = 'vmck-'
 NOMAD_DEPLOYMENT_NAME = "vmck"
 
-VM_DEBUG = False
+SSH_USERNAME = 'ubuntu'
+SSH_IDENTITY_FILE = str(base_dir / 'vmck' / 'backends' / 'id_ed25519')

@@ -1,4 +1,4 @@
-from .qemu import random_port, control_task, resources, services
+from .qemu import random_port, resources, services
 
 class DockerBackend:
 
@@ -22,7 +22,6 @@ class DockerBackend:
             'Name': 'test',
             'Tasks': [
                 docker_vm_task,
-                control_task(vm_port),
             ],
             'RestartPolicy': {
                 'Attempts': 0,

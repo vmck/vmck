@@ -23,38 +23,16 @@ def home(request):
     })
 
 
-def upload_source(request):
-    upload = models.Upload.objects.create(data=request.body)
-    return JsonResponse({'id': upload.pk})
-
-
 def create_job(request):
-    spec = json.loads(request.body or '{}')
-
-    sources = []
-    for source in spec.get('sources', {}):
-        assert isinstance(source['name'], str)
-        upload = models.Upload.objects.get(pk=source['id'])
-        sources.append((source['name'], upload))
-
-    job = jobs.create(get_backend(), sources)
+    job = jobs.create(get_backend())
     return JsonResponse(job_info(job))
 
 
 def get_job(request, pk):
     job = get_object_or_404(models.Job, pk=pk)
 
-    health = jobs.poll(job)
-    rv = job_info(job)
-    if health:
-        check = health[0]
-        if check['Status'] == 'passing':
-            rv['ssh'] = {
-                'host': check['Output'].split(':')[0].split()[-1],
-                'port': int(check['Output'].split(':')[1]),
-                'username': settings.QEMU_IMAGE_USERNAME,
-            }
-
+    ssh_remote = jobs.poll(job)
+    rv = dict(job_info(job), ssh=ssh_remote)
     return JsonResponse(rv)
 
 
@@ -62,12 +40,6 @@ def kill_job(request, pk):
     job = get_object_or_404(models.Job, pk=pk)
     jobs.kill(job)
     return JsonResponse({'ok': True})
-
-
-def download_artifact(request, pk, name):
-    job = get_object_or_404(models.Job, pk=pk)
-    data = job.artifact_set.get(name=name).data
-    return HttpResponse(data)
 
 
 def route(**views):
@@ -82,7 +54,5 @@ def route(**views):
 urls = [
     path('', route(GET=home)),
     path('jobs', route(POST=create_job)),
-    path('jobs/source', route(PUT=upload_source)),
     path('jobs/<int:pk>', route(GET=get_job, DELETE=kill_job)),
-    path('jobs/<int:pk>/artifacts/<path:name>', route(GET=download_artifact)),
 ]
