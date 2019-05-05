@@ -1,58 +1,67 @@
-# VMCK
+# Vmck
+Vmck is a virtual machine service that runs QEMU and Docker images in a Nomad
+cluster.
+
+It can be used as a provider for Vagrant:
+
+```shell
+vagrant plugin install vagrant-vmck
+curl -OL https://github.com/mgax/vagrant-vmck/raw/master/example_box/Vagrantfile
+vagrant up
+vagrant ssh
+```
+
+And it has its own CLI:
+
+```shell
+pipenv run ./manage.py createjob
+pipenv run ./manage.py ssh 1
+pipenv run ./manage.py kill 1
+```
 
 ## Installation
 
-1. Set up a local nomad cluster:
+### Using docker
+```shell
+docker run --detach --restart always \
+  --name cluster \
+  --volume /opt/cluster/var:/opt/cluster/var \
+  --volume /opt/vmck/var:/opt/vmck/var \
+  --volume /var/run/docker.sock:/var/run/docker.sock:ro \
+  --privileged \
+  --net host \
+  --env NOMAD_CLIENT_INTERFACE=wg0 \
+  --env HOSTNAME=127.0.0.1 \
+  --env SECRET_KEY=foo \
+  mgax/vmck
+```
 
-    * Install nomad:
-        ```shell
-        mkdir /tmp/cluster; cd /tmp/cluster
-        curl -OL https://releases.hashicorp.com/nomad/0.8.7/nomad_0.8.7_linux_amd64.zip
-        unzip nomad_0.8.7_linux_amd64.zip
-        ```
+Then go to consul (`http://localhost:8500/ui/dc1/services`) and wait for the
+health check lights to turn green.
 
-    * Create a configuration file, `/tmp/cluster/nomad.hcl`, with the following
-      content, replacing `eth0` with the default network interface, which you
-      can determine by running `route | grep default | awk '{print $8}'`:
-        ```hcl
-        advertise {
-          http = "{{ GetInterfaceIP `eth0` }}"
-          serf = "{{ GetInterfaceIP `eth0` }}"
-        }
-        server {
-          job_gc_threshold = "5m"
-        }
-        client {
-          enabled = true
-          network_interface = "eth0"
-        }
-        ```
+### Running locally
 
-    * Run nomad:
-        ```shell
-        cd /tmp/cluster
-        ./nomad agent -dev -config=./nomad.hcl &
-        ```
+You still need a working Consul + Vault + Nomad cluster, maybe
+[liquidinvestigations/cluster][] can help you.
 
-2. Set up the VMCK server:
-    ```shell
-    pipenv install
-    echo 'SECRET_KEY=changeme' > .env
-    echo 'DEBUG=true' >> .env
-    pipenv run ./manage.py migrate
-    ```
+Create a file named `.env` with your local configuration:
+```shell
+SECRET_KEY=changeme
+# DEBUG=true
+```
 
-## Usage
+Then install dependencies and run migrations:
 
-* Run the web server:
-    ```shell
-    pipenv run ./manage.py runserver
-    ```
+```shell
+pipenv install
+pipenv run ./manage.py migrate
+```
 
-* Create a job:
-    ```shell
-    pipenv run ./manage.py createjob
-    ```
+Then you can run the server:
+
+```shell
+pipenv run ./manage.py runserver
+```
 
 ## VM images
 Each job spins up a QEMU virtual machine to evaluate the submission. It needs a
@@ -83,21 +92,3 @@ default image.
   rule 'tcp:${attr.unique.network.ip-address}:10674-:22' (Bad host address)`:
   the host address has changed (e.g. because it moved to a different WiFi
   hotspot). Restart Nomad and it should pick up the new address.
-
-## Docker
-```shell
-docker run --detach --restart always \
-  --name cluster \
-  --volume /opt/cluster/var:/opt/cluster/var \
-  --volume /opt/vmck/var:/opt/vmck/var \
-  --volume /var/run/docker.sock:/var/run/docker.sock:ro \
-  --privileged \
-  --net host \
-  --env NOMAD_CLIENT_INTERFACE=wg0 \
-  --env HOSTNAME=127.0.0.1 \
-  --env SECRET_KEY=foo \
-  mgax/vmck
-```
-
-Then go to consul (`http://localhost:8500/ui/dc1/services`) and wait for the
-health check lights to turn green.
