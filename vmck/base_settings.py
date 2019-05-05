@@ -56,4 +56,3 @@ NOMAD_JOB_PREFIX = 'vmck-'
 NOMAD_DEPLOYMENT_NAME = "vmck"
 
 SSH_USERNAME = 'ubuntu'
-SSH_IDENTITY_FILE = str(base_dir / 'vmck' / 'backends' / 'id_ed25519')

@@ -25,6 +25,3 @@ QEMU_IMAGE_URL = os.environ.get('QEMU_IMAGE_URL')
 
 _ssh_username = SSH_USERNAME
 SSH_USERNAME = os.environ.get('SSH_USERNAME', _ssh_username)
-
-_ssh_identity_file = SSH_IDENTITY_FILE
-SSH_IDENTITY_FILE = os.environ.get('SSH_IDENTITY_FILE', _ssh_identity_file)

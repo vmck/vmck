@@ -40,9 +40,11 @@ class JobApi:
 
 
 def ssh(remote, args):
-    cmd = list(ssh_args(remote, args))
-    print('+', *cmd)
-    return subprocess.check_output(cmd).decode('latin1')
+    with ssh_identity() as identity_file:
+        remote = dict(remote, identity_file=identity_file)
+        cmd = list(ssh_args(remote, args))
+        print('+', *cmd)
+        return subprocess.check_output(cmd).decode('latin1')
 
 
 def test_api_home(client):
