@@ -1,8 +1,8 @@
-from .qemu import random_port, control_task, resources
-
+from .qemu import random_port, resources, services
 
 class DockerBackend:
-    def task_group(self):
+
+    def task_group(self, job):
         vm_port = random_port()
 
         docker_vm_task = {
@@ -15,13 +15,13 @@ class DockerBackend:
                 ],
             },
             'resources': resources(vm_port),
+            'services': services(job),
         }
 
         return {
             'Name': 'test',
             'Tasks': [
                 docker_vm_task,
-                control_task(vm_port),
             ],
             'RestartPolicy': {
                 'Attempts': 0,

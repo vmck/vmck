@@ -15,15 +15,11 @@ def nomad_id(job):
 
 def create(backend, sources=[]):
     job = Job.objects.create()
-    for name, upload in sources:
-        job.source_set.create(name=name, data=upload.data)
-        upload.delete()
-
     nomad.launch(
         nomad.job(
             id=nomad_id(job),
             name=f"{settings.NOMAD_DEPLOYMENT_NAME} job #{job.id}",
-            taskgroups=[backend.task_group()],
+            taskgroups=[backend.task_group(job)],
         ),
     )
 
@@ -33,30 +29,7 @@ def create(backend, sources=[]):
     return job
 
 
-def sync_artifacts(job):
-    job.artifact_set.all().delete()
-    for name in ['stdout', 'stderr']:
-        nomad_path = f'alloc/logs/control.{name}.0'
-        data = nomad.cat(nomad_id(job), nomad_path, binary=True)
-        job.artifact_set.create(name=name, data=data or b'')
-
-
-def _dump_sources(job):
-    # TODO this function is here to test the API that uploads job source files.
-    # It should be removed once we can inject the sources into the VM.
-    import json
-    job.artifact_set.create(
-        name='_sources',
-        data=json.dumps({
-            s.name: s.data.decode('latin1')
-            for s in job.source_set.all()
-        }).encode('utf8'),
-    )
-
-
 def on_done(job):
-    sync_artifacts(job)
-    _dump_sources(job)
     job.state = job.STATE_DONE
     job.save()
 
@@ -74,6 +47,18 @@ def poll(job):
         if done is not None:
             on_done(job)
             kill(job)
+
+        else:
+            health = nomad.health(job.id)
+            if health:
+                check = health[0]
+                if check['Status'] == 'passing':
+                    ssh_remote = {
+                        'host': check['Output'].split(':')[0].split()[-1],
+                        'port': int(check['Output'].split(':')[1]),
+                        'username': settings.SSH_USERNAME,
+                    }
+                    return ssh_remote
 
     elif status in ['complete', 'failed']:
         on_done(job)
