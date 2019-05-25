@@ -28,7 +28,8 @@ QEMU_IMAGE_URL = os.environ.get('QEMU_IMAGE_URL')
 _ssh_username = SSH_USERNAME
 SSH_USERNAME = os.environ.get('SSH_USERNAME', _ssh_username)
 
+SENTRY_DSN = os.environ.get('SENTRY_DSN')
 sentry_sdk.init(
-    dsn="https://cfc9c776b9834e078b54b96f6826a0f6@sentry.io/1467831",
+    dsn=SENTRY_DSN,
     integrations=[DjangoIntegration()]
 )
