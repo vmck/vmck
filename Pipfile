@@ -9,4 +9,5 @@ verify_ssl = true
 django = "*"
 requests = "*"
 pytest-django = "*"
+sentry-sdk = "*"
 vmck = {editable = true,path = "."}
