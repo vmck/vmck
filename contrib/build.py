@@ -26,12 +26,19 @@ CLOUD_INIT_YML = f"""\
 #cloud-config
 ssh_authorized_keys: ['{SSH_PUBKEY}']
 packages: ['build-essential', 'curl', 'less', 'vim']
+system_info:
+   default_user:
+     name: vagrant
+     lock_passwd: true
+     sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+     shell: /bin/bash
 runcmd:
-  - "echo '127.0.1.1 ubuntu' >> /etc/hosts"
+  - "echo 'vmck' > /etc/hostname"
+  - "echo '127.0.1.1 vmck' >> /etc/hosts"
   - "touch /etc/cloud/cloud-init.disabled"
   - "systemctl disable apt-daily.service"
   - "systemctl disable apt-daily.timer"
-  - "touch /home/ubuntu/.hushlogin"
+  - "touch /home/vagrant/.hushlogin"
   - "apt-get clean"
   - "cat /dev/zero > /ZERO || rm /ZERO"
   - "poweroff"
