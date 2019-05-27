@@ -16,7 +16,11 @@ def resources(vm_port):
             {'Label': 'ssh', 'Value': vm_port},
         ],
     }
-    return {'Networks': [network]}
+    return {
+        'Networks': [network],
+        'MemoryMB': 12000,
+        'CPU': 10000,
+    }
 
 
 def services(job):
