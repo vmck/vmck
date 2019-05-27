@@ -19,7 +19,7 @@ def resources(vm_port):
     return {
         'Networks': [network],
         'MemoryMB': 12000,
-        'CPU': 10000,
+        'CPU': 3000,
     }
 
 
