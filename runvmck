@@ -1,10 +1,5 @@
 #!/bin/bash -ex
 
-cat > Procfile <<EOF
-cluster: /opt/cluster/runcluster
-vmck: ./manage.py runserver
-EOF
-
+cd /opt/vmck
 pipenv run ./manage.py migrate
-
-exec pipenv run honcho start
+exec pipenv run ./manage.py runserver 0.0.0.0:8000

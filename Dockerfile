@@ -1,4 +1,4 @@
-FROM liquidinvestigations/cluster
+FROM python:3.7-stretch
 
 ENV PATH="/root/.local/bin:${PATH}"
 
@@ -8,8 +8,7 @@ COPY setup.py Pipfile Pipfile.lock ./
 
 RUN set -e \
  && pip install --user pipenv \
- && pipenv install \
- && pipenv install honcho
+ && pipenv install
 
 VOLUME /opt/vmck/data
 EXPOSE 8000
