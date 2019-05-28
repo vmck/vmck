@@ -70,7 +70,7 @@ def build(tmp, output):
     log.info("Preparing disk image")
     disk = tmp / 'disk.img'
     sh(f'qemu-img create -q -f qcow2 -b {shq(upstream)} {shq(disk)}')
-    sh(f'qemu-img resize {shq(disk)} 10G')
+    sh(f'qemu-img resize {shq(disk)} 20G')
 
     log.info("Preparing cloud-init image")
     cloud_init_yml = tmp / 'cloud-init.yml'
