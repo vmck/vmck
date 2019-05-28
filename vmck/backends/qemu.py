@@ -18,7 +18,7 @@ def resources(vm_port):
     }
     return {
         'Networks': [network],
-        'MemoryMB': 12000,
+        'MemoryMB': 16000,
         'CPU': 3000,
     }
 
@@ -57,6 +57,7 @@ def task_group(job):
     image_filename = settings.QEMU_IMAGE_URL.split('/')[-1]
 
     qemu_args = [
+        '-smp', '3',
         '-netdev', (
             'user'
             ',id=user'
