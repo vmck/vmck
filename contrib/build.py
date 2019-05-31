@@ -8,6 +8,7 @@ from argparse import ArgumentParser
 from tempfile import TemporaryDirectory
 import subprocess
 import shlex
+from base64 import b64encode
 
 log_level = logging.DEBUG
 log = logging.getLogger(__name__)
@@ -39,6 +40,7 @@ runcmd:
   - "systemctl disable apt-daily.service"
   - "systemctl disable apt-daily.timer"
   - "touch /home/vagrant/.hushlogin"
+  - "/tmp/script_*.sh"
   - "apt-get clean"
   - "cat /dev/zero > /ZERO || rm /ZERO"
   - "poweroff"
@@ -61,7 +63,7 @@ def download(url, dest):
     Path(tmp).rename(dest)
 
 
-def build(tmp, output):
+def build(tmp, output, scripts):
     upstream = CACHE / 'bionic-server-cloudimg-amd64.img'
     if not upstream.exists():
         log.info("Downloading cloud image from %r", BIONIC_URL)
@@ -77,6 +79,16 @@ def build(tmp, output):
     cloud_init_img = tmp / 'cloud-init.img'
     with cloud_init_yml.open('w', encoding='utf8') as f:
         f.write(CLOUD_INIT_YML)
+        if scripts:
+            f.write('write_files:\n')
+            for n, script in enumerate(scripts):
+                with script.open('rb') as s:
+                    script_b64 = b64encode(s.read()).decode('latin1')
+                f.write(f'  - encoding: b64\n')
+                f.write(f'    content: {script_b64}\n')
+                f.write(f'    path: /tmp/script_{n}.sh\n')
+                f.write(f'    permissions: "0755"\n')
+
 
     sh(f'cloud-localds {shq(cloud_init_img)} {shq(cloud_init_yml)}')
 
@@ -95,10 +107,11 @@ def build(tmp, output):
 def main():
     parser = ArgumentParser()
     parser.add_argument('output', type=Path)
+    parser.add_argument('script', nargs='*', type=Path)
     options = parser.parse_args()
 
     with TemporaryDirectory() as tmp:
-        build(Path(tmp), options.output)
+        build(Path(tmp), options.output, options.script)
 
 
 if __name__ == '__main__':
