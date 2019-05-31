@@ -16,4 +16,5 @@ EXPOSE 8000
 CMD ./runvmck
 
 ADD vmck ./vmck
-ADD manage.py runvmck ./
+ADD contrib ./contrib
+ADD manage.py runvmck Readme.md ./
