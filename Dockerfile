@@ -5,7 +5,7 @@ WORKDIR /opt/vmck
 
 RUN set -e \
  && apt-get update -qq \
- && apt-get install -qqy qemu-utils \
+ && apt-get install -qqy qemu-utils cloud-image-utils \
  && apt-get clean && rm -rf /var/lib/apt/lists/* \
  && pip install --user pipenv
 
