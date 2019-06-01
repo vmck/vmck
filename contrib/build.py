@@ -63,7 +63,7 @@ def download(url, dest):
     Path(tmp).rename(dest)
 
 
-def build(tmp, output, scripts):
+def build(tmp, output, scripts, files_to_copy):
     upstream = CACHE / 'bionic-server-cloudimg-amd64.img'
     if not upstream.exists():
         log.info("Downloading cloud image from %r", BIONIC_URL)
@@ -79,7 +79,7 @@ def build(tmp, output, scripts):
     cloud_init_img = tmp / 'cloud-init.img'
     with cloud_init_yml.open('w', encoding='utf8') as f:
         f.write(CLOUD_INIT_YML)
-        if scripts:
+        if scripts or files_to_copy:
             f.write('write_files:\n')
             for n, script in enumerate(scripts):
                 with script.open('rb') as s:
@@ -88,7 +88,13 @@ def build(tmp, output, scripts):
                 f.write(f'    content: {script_b64}\n')
                 f.write(f'    path: /tmp/script_{n}.sh\n')
                 f.write(f'    permissions: "0755"\n')
-
+            for host_path, guest_path in files_to_copy:
+                with host_path.open('rb') as s:
+                    file_b64 = b64encode(s.read()).decode('latin1')
+                f.write(f'  - encoding: b64\n')
+                f.write(f'    content: {file_b64}\n')
+                f.write(f'    path: {str(guest_path)}\n')
+                f.write(f'    permissions: "0644"\n')
 
     sh(f'cloud-localds {shq(cloud_init_img)} {shq(cloud_init_yml)}')
 
@@ -107,11 +113,14 @@ def build(tmp, output, scripts):
 def main():
     parser = ArgumentParser()
     parser.add_argument('output', type=Path)
-    parser.add_argument('script', nargs='*', type=Path)
+    parser.add_argument('--script', type=Path, action='append', default=[])
+    parser.add_argument('--copy-file', action='append', metavar='HOST:GUEST', default=[])
     options = parser.parse_args()
 
+    files_to_copy = [tuple(map(Path, s.split(':'))) for s in options.copy_file]
+
     with TemporaryDirectory() as tmp:
-        build(Path(tmp), options.output, options.script)
+        build(Path(tmp), options.output, options.script, files_to_copy)
 
 
 if __name__ == '__main__':
