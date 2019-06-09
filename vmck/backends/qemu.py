@@ -49,12 +49,11 @@ def task_group(job):
     image_artifact = {
         'getterSource': settings.QEMU_IMAGE_URL,
         'relativeDest': 'local/',
-        'options': {
-            'archive': 'false',
-        },
     }
 
     image_filename = settings.QEMU_IMAGE_URL.split('/')[-1]
+    if image_filename.endswith('.tar.gz'):
+        image_filename = image_filename[:-len('.tar.gz')]
 
     qemu_args = [
         '-smp', '3',
