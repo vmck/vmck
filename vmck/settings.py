@@ -24,6 +24,8 @@ NOMAD_URL = os.environ.get('NOMAD_URL', 'http://localhost:4646')
 
 VMCK_BACKEND = os.environ.get('BACKEND', 'docker')
 QEMU_IMAGE_URL = os.environ.get('QEMU_IMAGE_URL')
+QEMU_MEMORY = int(os.environ.get('QEMU_MEMORY', QEMU_MEMORY)
+QEMU_CPU = int(os.environ.get('QEMU_CPU', QEMU_CPU)
 
 _ssh_username = SSH_USERNAME
 SSH_USERNAME = os.environ.get('SSH_USERNAME', _ssh_username)
