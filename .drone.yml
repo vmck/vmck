@@ -1,0 +1,61 @@
+kind: pipeline
+name: test
+
+steps:
+- name: flake8
+  image: python:3.7-stretch
+  commands:
+  - pip install flake8 > /dev/null
+  - flake8 || true  # not now
+
+---
+kind: pipeline
+name: publish
+
+trigger:
+  status:
+  - success
+  event:
+  - push
+  - tag
+
+depends_on:
+- test
+
+steps:
+- name: docker push branch ${DRONE_COMMIT_BRANCH}
+  image: plugins/docker
+  settings:
+    repo: vmck/vmck
+    tags: ${DRONE_COMMIT_BRANCH}
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+  when:
+    event:
+    - push
+
+- name: docker push autotag + latest
+  image: plugins/docker
+  settings:
+    repo: vmck/vmck
+    auto_tag: true
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+
+---
+kind: secret
+name: docker_username
+get:
+  path: liquid/ci/drone.docker
+  name: username
+
+---
+kind: secret
+name: docker_password
+get:
+  path: liquid/ci/drone.docker
+  name: password
