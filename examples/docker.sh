@@ -10,5 +10,6 @@ docker run --detach --restart always \
   --env DEBUG=true \
   --env BACKEND=qemu \
   --env QEMU_IMAGE_URL=http://10.66.60.1:9999/bionic-vagrant.qcow2 \
+  --env QEMU_CPU_MHZ=1000 \
   --publish 10.66.60.1:8000:8000 \
-  $(docker build . -q)
+  vmck/vmck:latest

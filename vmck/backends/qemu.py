@@ -10,7 +10,7 @@ def random_port(start=10000, end=20000):
     return random.SystemRandom().randint(start, end - 1)
 
 
-def resources(vm_port):
+def resources(vm_port, options):
     network = {
         'ReservedPorts': [
             {'Label': 'ssh', 'Value': vm_port},
@@ -18,8 +18,8 @@ def resources(vm_port):
     }
     return {
         'Networks': [network],
-        'MemoryMB': settings.QEMU_MEMORY,
-        'CPU': settings.QEMU_CPU,
+        'MemoryMB': options['memory'],
+        'CPU': options['cpu_mhz'],
     }
 
 
@@ -43,7 +43,7 @@ def services(job):
     ]
 
 
-def task_group(job):
+def task_group(job, options):
     vm_port = random_port()
 
     image_artifact = {
@@ -56,7 +56,7 @@ def task_group(job):
         image_filename = image_filename[:-len('.tar.gz')]
 
     qemu_args = [
-        '-smp', '3',
+        '-smp', str(options['cpus']),
         '-netdev', (
             'user'
             ',id=user'
@@ -84,7 +84,7 @@ def task_group(job):
             'accelerator': 'kvm',
             'args': qemu_args,
         },
-        'resources': resources(vm_port),
+        'resources': resources(vm_port, options),
         'services': services(job),
     }
 
@@ -101,5 +101,5 @@ def task_group(job):
 
 class QemuBackend:
 
-    def task_group(self, job):
-        return task_group(job)
+    def task_group(self, job, options):
+        return task_group(job, options)
