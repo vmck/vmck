@@ -2,7 +2,7 @@ from .qemu import random_port, resources, services
 
 class DockerBackend:
 
-    def task_group(self, job):
+    def task_group(self, job, options):
         vm_port = random_port()
 
         docker_vm_task = {
@@ -14,7 +14,7 @@ class DockerBackend:
                     {'ssh': 22},
                 ],
             },
-            'resources': resources(vm_port),
+            'resources': resources(vm_port, options),
             'services': services(job),
         }
 

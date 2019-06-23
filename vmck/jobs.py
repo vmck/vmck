@@ -13,13 +13,13 @@ def nomad_id(job):
     return f'{prefix}{job.id}'
 
 
-def create(backend, sources=[]):
+def create(backend, options):
     job = Job.objects.create()
     nomad.launch(
         nomad.job(
             id=nomad_id(job),
             name=f"{settings.NOMAD_DEPLOYMENT_NAME} job #{job.id}",
-            taskgroups=[backend.task_group(job)],
+            taskgroups=[backend.task_group(job, options)],
         ),
     )
 
