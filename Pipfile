@@ -9,4 +9,6 @@ verify_ssl = true
 django = "*"
 requests = "*"
 pytest-django = "*"
+waitress = "*"
+honcho = "*"
 vmck = {editable = true,path = "."}

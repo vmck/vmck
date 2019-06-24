@@ -2,7 +2,7 @@
 
 cat > Procfile <<EOF
 cluster: /opt/cluster/runcluster
-vmck: ./manage.py runserver
+vmck: python server.py
 EOF
 
 pipenv run ./manage.py migrate
