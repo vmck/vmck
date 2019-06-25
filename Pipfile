@@ -10,4 +10,5 @@ django = "*"
 requests = "*"
 pytest-django = "*"
 sentry-sdk = "*"
+waitress = "*"
 vmck = {editable = true,path = "."}
