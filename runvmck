@@ -2,4 +2,4 @@
 
 cd /opt/vmck
 pipenv run ./manage.py migrate
-exec pipenv run ./manage.py runserver 0.0.0.0:8000
+exec pipenv run python ./server.py 
