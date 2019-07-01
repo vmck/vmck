@@ -9,7 +9,7 @@ RUN set -e \
  && apt-get clean && rm -rf /var/lib/apt/lists/* \
  && pip install --user pipenv
 
-COPY setup.py Pipfile Pipfile.lock ./
+COPY server.py setup.py Pipfile Pipfile.lock ./
 RUN pipenv install
 
 ADD vmck ./vmck
