@@ -14,16 +14,20 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Source',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True,
+                                        serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=4096)),
                 ('data', models.BinaryField()),
-                ('job', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='vmck.Job')),
+                ('job', models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to='vmck.Job')),
             ],
         ),
         migrations.CreateModel(
             name='Upload',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(auto_created=True, primary_key=True,
+                                        serialize=False, verbose_name='ID')),
                 ('data', models.BinaryField()),
             ],
         ),

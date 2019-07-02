@@ -2,7 +2,7 @@ from time import time, sleep
 import subprocess
 import pytest
 from django.conf import settings
-from vmck.ssh import ssh_args
+from vmck.ssh import ssh_args, ssh_identity
 
 pytestmark = [pytest.mark.django_db]
 

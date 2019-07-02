@@ -6,7 +6,7 @@ steps:
   image: python:3.7-stretch
   commands:
   - pip install flake8 > /dev/null
-  - flake8 || true  # not now
+  - flake8   # not now
 
 ---
 kind: pipeline
