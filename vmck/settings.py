@@ -1,6 +1,7 @@
 import os
 import sentry_sdk
 from .utils import is_true
+from .base_settings import *  # noqa F401, F403
 from .base_settings import QEMU_CPU_MHZ, SSH_USERNAME, base_dir
 from sentry_sdk.integrations.django import DjangoIntegration
 
