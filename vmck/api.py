@@ -1,6 +1,6 @@
 import json
 from django.conf import settings
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.urls import path
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
@@ -24,7 +24,7 @@ def home(request):
 
 
 def create_job(request):
-    options = json.loads(request.body) if request.body else {} # TODO validate
+    options = json.loads(request.body) if request.body else {}  # TODO validate
     options.setdefault('cpus', 1)
     options.setdefault('memory', 512)
     options['cpu_mhz'] = options['cpus'] * settings.QEMU_CPU_MHZ

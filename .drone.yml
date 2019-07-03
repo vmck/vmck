@@ -3,10 +3,9 @@ name: test
 
 steps:
 - name: flake8
-  image: python:3.7-stretch
+  image: alpine/flake8:3.7.7
   commands:
-  - pip install flake8 > /dev/null
-  - flake8 || true  # not now
+  - flake8
 
 ---
 kind: pipeline

@@ -2,7 +2,6 @@ import sys
 import argparse
 import subprocess
 from django.core.management.base import BaseCommand
-from django.conf import settings
 from ... import models
 from ... import jobs
 from ...ssh import ssh_args, ssh_identity

@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 from vmck.utils import is_true, random_code
-from vmck.base_settings import *
+from vmck.base_settings import *  # noqa
 
 SECRET_KEY = random_code(43)
 DEBUG = is_true(os.environ.get('TESTING_DEBUG'))
