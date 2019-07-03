@@ -1,2 +1,3 @@
 [flake8]
-exclude = vmck/migrations
+per-file-ignores =
+	vmck/migrations/*: E501
