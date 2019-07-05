@@ -4,6 +4,85 @@ job "vmck" {
   datacenters = ["dc1"]
   type = "service"
 
+  group "imghost" {
+    task "nginx" {
+      driver = "docker"
+      config {
+        image = "nginx:mainline"
+        volumes = [
+          "/usr/share/vmck-images:/usr/share/nginx/html", # TODO: add setting for host volume
+          "local/nginx.conf:/etc/nginx/nginx.conf",
+        ]
+        port_map {
+          http = 80
+        }
+        labels {
+          liquid_task = "vmck-imghost-nginx"
+        }
+      }
+      resources {
+        memory = 80
+        cpu = 200
+        network {
+          port "http" {
+            static = 10000
+          }
+        }
+      }
+      template {
+        data = <<-EOF
+          user  nginx;
+          worker_processes auto;
+
+          error_log  /var/log/nginx/error.log warn;
+          pid        /var/run/nginx.pid;
+
+          events {
+            worker_connections  1024;
+          }
+
+          http {
+            include       /etc/nginx/mime.types;
+            default_type  application/octet-stream;
+
+            sendfile        on;
+            sendfile_max_chunk 4m;
+            aio threads;
+            keepalive_timeout  65;
+            server {
+              listen       80;
+              server_name  _;
+              error_log /dev/stderr info;
+              location / {
+                root   /usr/share/nginx/html;
+                autoindex on;
+                proxy_max_temp_file_size 0;
+                proxy_buffering off;
+              }
+              location = /healthcheck {
+                stub_status;
+              }
+            }
+          }
+        EOF
+        destination = "local/nginx.conf"
+      }
+      service {
+        name = "vmck-imghost"
+        port = "http"
+        check {
+          name = "vmck-imghost nginx alive on http"
+          initial_status = "critical"
+          type = "http"
+          path = "/healthcheck"
+	        # TODO: add setting for interval and timeout
+          interval = "5s"
+          timeout = "5s"
+        }
+      }
+    }
+  }
+
   group "vmck" {
     task "vmck" {
       driver = "docker"
