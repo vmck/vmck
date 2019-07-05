@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
+
 from urllib.request import Request, urlopen, HTTPError
-from urllib.parse import urlencode
 import json
-import pprint
+
 
 def request(method, url, data=None, headers=None):
     """Makes a request against the JSON url
@@ -33,7 +33,8 @@ def request(method, url, data=None, headers=None):
     with urlopen(req) as res:
         if res.status >= 200 and res.status < 300:
             content = res.read()
-            if res.headers.get('Content-Type') == 'application/json' and len(content):
+            if (res.headers.get('Content-Type') == 'application/json' and
+                    len(content)):
                 return json.loads(content)
             else:
                 return None
@@ -48,7 +49,7 @@ def main():
     data = {}
 
     # nomad hcl->json convertor
-    url_parser = 'http://10.66.60.1:4646/v1/jobs/parse'  
+    url_parser = 'http://10.66.60.1:4646/v1/jobs/parse'
     # nomad api for job submission
     url_submit = 'http://10.66.60.1:4646/v1/jobs'
 
@@ -63,6 +64,7 @@ def main():
     job_submit = json.dumps(job_vmck).encode('utf8')
 
     request(method='POST', url=url_submit, data=job_submit, headers=None)
+
 
 if __name__ == "__main__":
     main()

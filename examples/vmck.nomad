@@ -59,7 +59,7 @@ job "vmck" {
           initial_status = "critical"
           type = "http"
           path = "/v0/"
-	        # TODO: add setting for interval and timeout 
+	        # TODO: add setting for interval and timeout
 	        interval = "5s"
           timeout = "5s"
         }
