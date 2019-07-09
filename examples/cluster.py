@@ -1,32 +1,31 @@
 #!/usr/bin/env python3
 
-
 from urllib.request import Request, urlopen, HTTPError
 import json
 
 
 def request(method, url, data=None, headers=None):
-    """Makes a request against the JSON url
+    """Make a request against the JSON url
     :param method: the request method
     :param url: the path in the JSON API
     :param data: the request body
     :type data: bytes|str
     """
-    req_url = url
-    req_headers = dict(headers or {})
-    req_body = None
+
+    headers = dict(headers or {})
+    body = None
 
     if data is not None:
         if isinstance(data, bytes):
-            req_body = data
+            body = data
         else:
-            req_headers['Content-Type'] = 'application/json'
-            req_body = json.dumps(data).encode('utf8')
+            headers['Content-Type'] = 'application/json'
+            body = json.dumps(data).encode('utf8')
 
     req = Request(
-        req_url,
-        req_body,
-        req_headers,
+        url,
+        body,
+        headers,
         method=method,
     )
 
@@ -43,8 +42,6 @@ def request(method, url, data=None, headers=None):
 
 
 def main():
-    """Main function, nothing special
-    """
     job_vmck = {}
     data = {}
 
@@ -54,17 +51,16 @@ def main():
     url_submit = 'http://10.66.60.1:4646/v1/jobs'
 
     data['Canonicalize'] = True
-    data['JobHCL'] = open("vmck.nomad", "r").read()
+    data['JobHCL'] = open('vmck.nomad', 'r').read()
 
     # conversion from hcl->json
-    vmck_json = request(method='POST', url=url_parser, data=data, headers=None)
+    vmck_json = request(method='POST', url=url_parser, data=data)
 
     # every nomad file that will be submitted must have a 'Job' stanza
     job_vmck['Job'] = vmck_json
-    job_submit = json.dumps(job_vmck).encode('utf8')
 
-    request(method='POST', url=url_submit, data=job_submit, headers=None)
+    request(method='POST', url=url_submit, data=job_vmck)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

@@ -1,5 +1,3 @@
-# TODO: remove hardcoded values
-#       add configurationa like in https://github.com/liquidinvestigations/node/blob/master/templates/drone.nomad
 job "vmck" {
   datacenters = ["dc1"]
   type = "service"
@@ -10,14 +8,11 @@ job "vmck" {
       config {
         image = "nginx:mainline"
         volumes = [
-          "/usr/share/vmck-images:/usr/share/nginx/html", # TODO: add setting for host volume
+          "/usr/share/vmck-images:/usr/share/nginx/html",
           "local/nginx.conf:/etc/nginx/nginx.conf",
         ]
         port_map {
           http = 80
-        }
-        labels {
-          liquid_task = "vmck-imghost-nginx"
         }
       }
       resources {
@@ -25,7 +20,7 @@ job "vmck" {
         cpu = 200
         network {
           port "http" {
-            static = 10000
+            static = 7000
           }
         }
       }
@@ -75,7 +70,6 @@ job "vmck" {
           initial_status = "critical"
           type = "http"
           path = "/healthcheck"
-	        # TODO: add setting for interval and timeout
           interval = "5s"
           timeout = "5s"
         }
@@ -89,7 +83,7 @@ job "vmck" {
       config {
         image = "vmck/vmck"
         volumes = [
-          "/opt/vmck/data:/opt/vmck/data", # TODO: add setting for host volume
+          "/opt/vmck/data:/opt/vmck/data",
         ]
         port_map {
           http = 8000
@@ -99,7 +93,6 @@ job "vmck" {
         }
       }
       template {
-	      # TODO: add setting for CONSUL_URL and NOMAD_URL
         data = <<-EOF
         SECRET_KEY = "TODO:ChangeME!!!"
         HOSTNAME = "*"
@@ -138,7 +131,6 @@ job "vmck" {
           initial_status = "critical"
           type = "http"
           path = "/v0/"
-	        # TODO: add setting for interval and timeout
 	        interval = "5s"
           timeout = "5s"
         }
