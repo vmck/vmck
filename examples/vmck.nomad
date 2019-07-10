@@ -131,7 +131,7 @@ job "vmck" {
           initial_status = "critical"
           type = "http"
           path = "/v0/"
-	        interval = "5s"
+          interval = "5s"
           timeout = "5s"
         }
       }
