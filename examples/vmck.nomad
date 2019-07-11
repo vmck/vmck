@@ -33,19 +33,19 @@ job "vmck" {
           pid        /var/run/nginx.pid;
 
           events {
-            worker_connections  1024;
+            worker_connections 1024;
           }
 
           http {
             include       /etc/nginx/mime.types;
             default_type  application/octet-stream;
 
-            sendfile        on;
+            sendfile on;
             sendfile_max_chunk 4m;
             aio threads;
-            keepalive_timeout  65;
+            keepalive_timeout 65;
             server {
-              listen       80;
+              listen 80;
               server_name  _;
               error_log /dev/stderr info;
               location / {
@@ -94,28 +94,28 @@ job "vmck" {
       }
       template {
         data = <<-EOF
-        SECRET_KEY = "TODO:ChangeME!!!"
-        HOSTNAME = "*"
-        SSH_USERNAME = "vagrant"
-        CONSUL_URL = "10.66.60.1:8500"
-        NOMAD_URL = "10.66.60.1:4646"
-        BACKEND = "qemu"
-        QEMU_CPU_MHZ = 3000
-        EOF
-        destination = "local/vmck.env"
-        env = true
+          SECRET_KEY = "TODO:ChangeME!!!"
+          HOSTNAME = "*"
+          SSH_USERNAME = "vagrant"
+          CONSUL_URL = "10.66.60.1:8500"
+          NOMAD_URL = "10.66.60.1:4646"
+          BACKEND = "qemu"
+          QEMU_CPU_MHZ = 3000
+          EOF
+          destination = "local/vmck.env"
+          env = true
       }
       template {
         # TODO: the QEMU_IMAGE_URL has a very sinister form. Please refer to the
         #       following link: https://github.com/vmck/image-builder#building-different-flavors-of-images
         #       That link will explain why the image is named as it is now and how to make your own
         data = <<-EOF
-        {{- range service "vmck-imghost" -}}
-          QEMU_IMAGE_URL = "http://{{.Address}}:{{.Port}}/cluster-master.qcow2.tar.gz"
-        {{- end }}
-        EOF
-        destination = "local/vmck-imghost.env"
-        env = true
+          {{- range service "vmck-imghost" -}}
+            QEMU_IMAGE_URL = "http://{{.Address}}:{{.Port}}/cluster-master.qcow2.tar.gz"
+          {{- end }}
+          EOF
+          destination = "local/vmck-imghost.env"
+          env = true
       }
       resources {
         memory = 450

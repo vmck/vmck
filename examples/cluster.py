@@ -3,7 +3,6 @@
 from urllib.request import Request, urlopen
 import json
 
-
 NOMAD_URL = 'http://10.66.60.1:4646'
 
 
@@ -39,19 +38,18 @@ def request(method, url, data=None, headers=None):
 
 
 def main():
-    hcl_to_json_url = f'{NOMAD_URL}/v1/jobs/parse'
-    submit_job_url = f'{NOMAD_URL}/v1/jobs'
-
     with open('vmck.nomad') as f:
         job_hcl = f.read()
 
-    data = {
-        'Canonicalize': True,
-        'JobHCL': job_hcl,
-    }
+    data =
 
-    vmck_json = request(method='POST', url=hcl_to_json_url, data=data)
-    request(method='POST', url=submit_job_url, data={'Job': vmck_json})
+    vmck_json = request(method='POST', url=f'{NOMAD_URL}/v1/jobs/parse',
+                data={
+                    'Canonicalize': True,
+                    'JobHCL': job_hcl,
+                })
+    request(method='POST', url=f'{NOMAD_URL}/v1/jobs',
+            data={'Job': vmck_json})
 
 
 if __name__ == '__main__':
