@@ -41,13 +41,11 @@ def main():
     with open('vmck.nomad') as f:
         job_hcl = f.read()
 
-    data =
-
     vmck_json = request(method='POST', url=f'{NOMAD_URL}/v1/jobs/parse',
-                data={
-                    'Canonicalize': True,
-                    'JobHCL': job_hcl,
-                })
+                        data={
+                            'Canonicalize': True,
+                            'JobHCL': job_hcl,
+                        })
     request(method='POST', url=f'{NOMAD_URL}/v1/jobs',
             data={'Job': vmck_json})
 
