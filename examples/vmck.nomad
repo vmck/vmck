@@ -106,6 +106,9 @@ job "vmck" {
         env = true
       }
       template {
+        # TODO: the QEMU_IMAGE_URL has a very sinister form. Please refer to the
+        #       following link: https://github.com/vmck/image-builder#building-different-flavors-of-images
+        #       That link will explain why the image is named as it is now and how to make your own
         data = <<-EOF
         {{- range service "vmck-imghost" -}}
           QEMU_IMAGE_URL = "http://{{.Address}}:{{.Port}}/cluster-master.qcow2.tar.gz"

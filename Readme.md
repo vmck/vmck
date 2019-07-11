@@ -63,6 +63,24 @@ Then you can run the server:
 pipenv run ./manage.py runserver
 ```
 
+## Running on your cluster
+
+You still need a working Consul + Vault + Nomad cluster, maybe
+[liquidinvestigations/cluster][] can help you. This cluster will usualy be
+available at `http://10.66.60.1:4646`. If you choose to use another cluster
+you should change `NOMAD_URL` in `examples/cluster.py` to your
+Nomad cluster's IP.
+
+To start vmck in your Nomad cluster:
+
+```shell
+cd examples
+./cluster.py
+```
+
+This will send a job request to Nomad's API. Go to your Nomad cluster's web UI
+and you should find vmck in the job section. Watch the lights turn green.
+
 ## VM images
 Each job spins up a QEMU virtual machine to evaluate the submission. It needs a
 disk image, which can be downloaded from https://github.com/mgax/vmck-images,
