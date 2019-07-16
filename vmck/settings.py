@@ -16,7 +16,7 @@ if _hostname:
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(base_dir, 'data/db.sqlite3'),
+        'NAME': os.path.join(base_dir, 'data', 'db.sqlite3'),
     }
 }
 
