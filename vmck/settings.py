@@ -36,4 +36,4 @@ sentry_sdk.init(
     integrations=[DjangoIntegration()]
 )
 
-UNAUTHENTICATED_PATHS = ["/v0/token"]
+UNAUTHENTICATED_PATHS = ["/v0/token", "/v0/"]
