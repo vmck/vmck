@@ -3,7 +3,8 @@ import json
 from time import time, sleep
 import base64
 import pytest
-from django.conf import settings # noqa
+from django.conf import settings
+
 from vmck.ssh import ssh_args, ssh_identity
 
 pytestmark = [pytest.mark.django_db]
