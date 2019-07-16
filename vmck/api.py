@@ -2,7 +2,6 @@ import base64
 import json
 
 import jwt
-import time
 from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
