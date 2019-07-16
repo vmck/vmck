@@ -1,6 +1,6 @@
 # VMCK API
 
-All API calls require authentication, TBD.
+All API calls require authentication via JWT Bearer tokens.
 
 ## Methods
 
@@ -78,3 +78,7 @@ Reponse:
 
 ### `GET /v0/job/:id/artifacts/:name`
 Downloads artifact identified by `:name` from job `:id`.
+
+### `GET /v0/token`
+Generates a jwt token using the credentials sent using [Basic Authentication](https://en.wikipedia.org/wiki/Basic_access_authentication)
+

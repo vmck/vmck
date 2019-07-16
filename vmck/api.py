@@ -90,7 +90,7 @@ def route(**views):
 
 urls = [
     path('', route(GET=home)),
-    path('token', route(POST=create_token)),
+    path('token', route(GET=create_token)),
     path('jobs', route(POST=create_job)),
     path('jobs/<int:pk>', route(GET=get_job, DELETE=kill_job)),
 ]
