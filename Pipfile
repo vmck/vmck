@@ -9,6 +9,7 @@ verify_ssl = true
 django = "*"
 requests = "*"
 pytest-django = "*"
+pyjwt = "*"
 sentry-sdk = "*"
 waitress = "*"
 vmck = {editable = true,path = "."}
