@@ -16,7 +16,7 @@ if _hostname:
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': str(base_dir / 'data' / 'db.sqlite3'),
+        'NAME': os.path.join(base_dir, 'data/db.sqlite3'),
     }
 }
 
@@ -35,3 +35,5 @@ sentry_sdk.init(
     dsn=SENTRY_DSN,
     integrations=[DjangoIntegration()]
 )
+
+UNAUTHENTICATED_PATHS = ["/v0/token"]
