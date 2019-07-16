@@ -7,6 +7,15 @@ steps:
   commands:
   - flake8
 
+- name: test-vmck-on-nomad
+  depends_on:
+  - flake8
+  image: vmck/vagrant-vmck
+  commands:
+  - export VMCK_URL=http://$VMCK_IP:$VMCK_PORT
+  - echo $VMCK_URL
+  - ci/deploy-vmck
+
 ---
 kind: pipeline
 name: publish
