@@ -48,7 +48,7 @@ def create_token(request):
         algorithm='HS256'
     ).decode('utf-8')
 
-    return JsonResponse({"auth_token": jwt_token})
+    return JsonResponse({'auth_token': jwt_token})
 
 
 def create_job(request):
