@@ -2,6 +2,7 @@ import base64
 import json
 
 import jwt
+import time
 from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -36,12 +37,12 @@ def create_token(request):
     # TODO if password is not correct return failure
 
     private_key = settings.SECRET_KEY
-    print("Signing with " + private_key)
 
     jwt_token = jwt.encode(
         {
             'sub': username,
-            'iss': 'vmck'
+            'iss': 'vmck',
+            'iat': int(time.time())
         },
         key=private_key,
         algorithm='HS256'

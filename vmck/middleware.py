@@ -10,25 +10,24 @@ def jwt_authentication_middleware(get_response):
             return get_response(request)
 
         try:
-            bearer_header = request.headers['Authorization']
-            if not bearer_header.startswith('Bearer'):
+            auth_header = request.headers['Authorization']
+            if not auth_header.startswith('Bearer'):
                 return HttpResponse('Unauthorized', status=401)
 
-            jwt_token = bearer_header[7:]
+            jwt_token = auth_header[7:]
 
             private_key = settings.SECRET_KEY
             decoded_jwt = jwt.decode(jwt_token, private_key, algorithms=['HS256'])
-            print(decoded_jwt)
             user = decoded_jwt['sub']
 
             if user:
+                # TODO get user object and set it on request
                 request.user = request._cached_user = user
             else:
                 return HttpResponse('Unauthorized', status=401)
 
             return get_response(request)
-        except (KeyError, jwt.DecodeError) as e:
-            print(e)
+        except (KeyError, jwt.DecodeError):
             return HttpResponse('Unauthorized', status=401)
 
     return middleware
