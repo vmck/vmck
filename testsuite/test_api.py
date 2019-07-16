@@ -1,7 +1,10 @@
-from time import time, sleep
 import subprocess
+import json
+from time import time, sleep
+import base64
 import pytest
-from django.conf import settings # noqa
+from django.conf import settings
+
 from vmck.ssh import ssh_args, ssh_identity
 
 pytestmark = [pytest.mark.django_db]
@@ -19,7 +22,12 @@ class JobApi:
         self.client = client
 
     def start(self):
-        resp = self.client.post('/v0/jobs', content_type='application/json')
+        credentials = base64.b64encode(b'test:test').decode('utf8')
+        resp = self.client.get('/v0/token', **{'HTTP_AUTHORIZATION': 'Basic ' + credentials}).json()
+
+        token = resp['auth_token']
+        resp = self.client.post('/v0/jobs', **{'HTTP_AUTHORIZATION': 'Bearer ' + token})
+
         self.id = resp.json()['id']
         self.url = f'/v0/jobs/{self.id}'
 
