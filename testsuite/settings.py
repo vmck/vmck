@@ -20,5 +20,9 @@ NOMAD_DEPLOYMENT_NAME = f"test {datetime.now().strftime('%H:%M:%S')}"
 VMCK_BACKEND = os.environ.get('TESTING_BACKEND', 'docker')
 
 _github_image = 'https://github.com/mgax/vmck-images/raw/master/bionic.qcow2'
+<<<<<<< HEAD
 QEMU_IMAGE_PATH_PREFIX = os.environ.get('TESTING_QEMU_IMAGE_PATH_PREFIX',
                                         _github_image)
+=======
+QEMU_IMAGE_URL = os.environ.get('TESTING_QEMU_IMAGE_URL', _github_image)
+>>>>>>> Updates!
