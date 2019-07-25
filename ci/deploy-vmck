@@ -7,10 +7,6 @@ export VAGRANT_DEFAULT_PROVIDER=vmck
 export VAGRANT_CHECKPOINT_DISABLE=true
 export VAGRANT_BOX_UPDATE_CHECK_DISABLE=true
 
-FILENAME=$(basename -- "$PROVISION")
-STEM=${FILENAME%.*}
-export VMNAME="$DRONE_REPO_NAME-$DRONE_BUILD_NUMBER-$STEM"
-
 TIMEOUT_MIN=23
 RETRIES=3
 
@@ -57,22 +53,24 @@ ret=$?
 
 print_section "Start vmck on cluster"
 vagrant ssh <<'EOF'
-bash /opt/node/ci/test-alive-on-cluster.sh
+bash /opt/vmck/ci/test-alive-on-cluster.sh
 EOF
 ret=$?
 
 if [ $ret -ne 0 ]; then
   echo "[+] START VMCK ON CLUSTER - FAILED"
+  exit $ret
 fi
 
 print_section "Do pytest"
 vagrant ssh <<'EOF'
-bash /opt/node/ci/test-pytest.sh
+bash /opt/vmck/ci/test-pytest.sh
 EOF
 ret=$?
 
 if [ $ret -ne 0 ]; then
   echo "[+] DO PYTEST- FAILED"
+  exit $ret
 fi
 
 print_section "Destroying Vagrant"

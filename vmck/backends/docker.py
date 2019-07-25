@@ -10,7 +10,7 @@ class DockerBackend:
             'name': 'vm',
             'driver': 'docker',
             'config': {
-                'image': 'mgax/vmck-mock-vm',
+                'image': 'vmck/mock',
                 'port_map': [
                     {'ssh': 22},
                 ],

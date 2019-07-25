@@ -1,10 +1,12 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
+
+set -e
 
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 
 set +e
 echo "Starting cluster.py"
-python3 /opt/node/examples/cluster.py
+python3 /opt/vmck/examples/cluster.py
 echo "cluster.py run successfully"
 
 i=0

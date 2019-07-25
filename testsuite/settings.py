@@ -21,5 +21,3 @@ VMCK_BACKEND = os.environ.get('TESTING_BACKEND', 'docker')
 
 _github_image = 'https://github.com/mgax/vmck-images/raw/master/bionic.qcow2'
 QEMU_IMAGE_URL = os.environ.get('TESTING_QEMU_IMAGE_URL', _github_image)
-
-SSH_USERNAME = os.environ.get('SSH_USERNAME', 'ubuntu')

@@ -4,8 +4,9 @@
 require 'etc'
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "generic/ubuntu1804"
-if Vagrant.has_plugin?('vagrant-env')
+  config.vm.box = "base"
+
+  if Vagrant.has_plugin?('vagrant-env')
     config.env.enable
   end
 
@@ -13,20 +14,12 @@ if Vagrant.has_plugin?('vagrant-env')
   custom_sh = ENV['PROVISION_SH']
 
   config.vm.define machine_name
-  # disable implicit mount for /vagrant
-  config.vm.synced_folder '.', '/vagrant', disabled: true
+  config.nfs.functional = false
 
-  # blank provisioner that can be overridden by providers
-  config.vm.provision 'provider', type: 'shell', inline: '/bin/true', privileged: false
+  config.vm.synced_folder "../.", "/opt/vmck", type: "rsync",
+      rsync__exclude: [".git/", ".pytest_cache/", "data/", "docs/"]
 
-  config.vm.provider :vmck do |vmck, override|
-    vmck.vmck_url = ENV['VMCK_URL']
-    vmck.memory = 1024 * 2
-    vmck.cpus = 1
-
-    override.vm.box = "base"
-    override.nfs.functional = false
-    override.vm.provision(
+  config.vm.provision(
       'provider',
       preserve_order: true,
       type: 'shell',
@@ -34,8 +27,10 @@ if Vagrant.has_plugin?('vagrant-env')
       inline: nil,
       privileged: false,
     )
-    override.vm.synced_folder "../.", "/opt/node", type: "rsync",
-      rsync__exclude: [".vagrant/", ".git/", "__pycache__/",
-                       "venv/", "volumes/", "collections/"]
+
+  config.vm.provider :vmck do |vmck, override|
+    vmck.vmck_url = ENV['VMCK_URL']
+    vmck.memory = 1024 * 2
+    vmck.cpus = 1
   end
 end

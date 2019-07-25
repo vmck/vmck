@@ -7,7 +7,7 @@ steps:
   commands:
   - flake8
 
-- name: test-cluster-and-pytest
+- name: test
   depends_on:
   - flake8
   image: vmck/vagrant-vmck
