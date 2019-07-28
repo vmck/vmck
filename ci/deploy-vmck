@@ -51,27 +51,13 @@ vagrant provision
 ret=$?
 
 
-print_section "Start vmck on cluster"
+print_section "Doing tests"
 vagrant ssh <<'EOF'
+set -e
+bash /opt/vmck/ci/test-pytest.sh
 bash /opt/vmck/ci/test-alive-on-cluster.sh
 EOF
 ret=$?
-
-if [ $ret -ne 0 ]; then
-  echo "[+] START VMCK ON CLUSTER - FAILED"
-  exit $ret
-fi
-
-print_section "Do pytest"
-vagrant ssh <<'EOF'
-bash /opt/vmck/ci/test-pytest.sh
-EOF
-ret=$?
-
-if [ $ret -ne 0 ]; then
-  echo "[+] DO PYTEST- FAILED"
-  exit $ret
-fi
 
 print_section "Destroying Vagrant"
 vagrant destroy -f || echo "vagrant destroy failed, but we don't care"

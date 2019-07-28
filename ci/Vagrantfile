@@ -17,7 +17,8 @@ Vagrant.configure("2") do |config|
   config.nfs.functional = false
 
   config.vm.synced_folder "../.", "/opt/vmck", type: "rsync",
-      rsync__exclude: [".git/", ".pytest_cache/", "data/", "docs/"]
+      rsync__exclude: ["../.git"],
+      rsync_args: ["--ignore-from", "../.gitignore"]
 
   config.vm.provision(
       'provider',
