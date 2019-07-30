@@ -22,6 +22,8 @@ DATABASES = {
 
 CONSUL_URL = os.environ.get('CONSUL_URL', 'http://localhost:8500')
 NOMAD_URL = os.environ.get('NOMAD_URL', 'http://localhost:4646')
+NOMAD_JOB_PREFIX = os.environ.get('NOMAD_JOB_PREFIX', NOMAD_JOB_PREFIX)
+NOMAD_DEPLOYMENT_NAME = os.environ.get('NOMAD_DEPLOYMENT_NAME', NOMAD_DEPLOYMENT_NAME)
 
 VMCK_BACKEND = os.environ.get('BACKEND', 'docker')
 QEMU_IMAGE_URL = os.environ.get('QEMU_IMAGE_URL')
