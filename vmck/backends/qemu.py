@@ -73,6 +73,17 @@ def task_group(job, options):
         '-device', 'virtio-9p-pci,fsdev=vmck,mount_tag=vmck',
     ]
 
+    if options['usbstick']:
+        usbsticks = Path(settings.QEMU_USBSTICKS).resolve()
+        image = (usbsticks / options['usbstick']).resolve()
+        assert usbsticks in image.parents
+
+        qemu_args += [
+            '-device', 'piix3-usb-uhci',
+            '-device', 'usb-storage,drive=usb0',
+            '-drive', f'if=none,id=usb0,format=qcow2,file={image}',
+        ]
+
     vm_task = {
         'name': 'vm',
         'driver': 'qemu',

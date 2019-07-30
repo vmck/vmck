@@ -28,6 +28,7 @@ def create_job(request):
     options.setdefault('cpus', 1)
     options.setdefault('memory', 512)
     options['cpu_mhz'] = options['cpus'] * settings.QEMU_CPU_MHZ
+    options.setdefault('usbstick', None)
     job = jobs.create(get_backend(), options)
     return JsonResponse(job_info(job))
 
