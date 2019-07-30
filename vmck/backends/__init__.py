@@ -2,7 +2,7 @@ from django.conf import settings
 
 
 def get_backend():
-    backend = settings.VMCK_BACKEND
+    backend = settings.BACKEND
 
     if backend == 'qemu':
         from .qemu import QemuBackend

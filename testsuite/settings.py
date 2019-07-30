@@ -17,7 +17,7 @@ NOMAD_URL = os.environ.get('TESTING_NOMAD_URL', 'http://localhost:4646')
 NOMAD_JOB_PREFIX = f'testsuite-{random_code(8)}-'
 NOMAD_DEPLOYMENT_NAME = f"test {datetime.now().strftime('%H:%M:%S')}"
 
-VMCK_BACKEND = os.environ.get('TESTING_BACKEND', 'docker')
+BACKEND = os.environ.get('TESTING_BACKEND', 'docker')
 
 _github_image = 'https://github.com/mgax/vmck-images/raw/master/bionic.qcow2'
 QEMU_IMAGE_URL = os.environ.get('TESTING_QEMU_IMAGE_URL', _github_image)
