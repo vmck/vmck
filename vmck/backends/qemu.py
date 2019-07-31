@@ -79,9 +79,8 @@ def task_group(job, options):
         assert usbsticks in image.parents
 
         qemu_args += [
-            '-device', 'piix3-usb-uhci',
-            '-device', 'usb-storage,drive=usb0',
-            '-drive', f'if=none,id=usb0,format=qcow2,file={image}',
+            '-drive',
+            f'if=virtio,discard=unmap,detect-zeroes=unmap,file={image}',
         ]
 
     vm_task = {
