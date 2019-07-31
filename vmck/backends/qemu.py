@@ -76,7 +76,8 @@ def task_group(job, options):
     if options['storage']:
         storage_root = Path(settings.QEMU_STORAGE).resolve()
         storage = (storage_root / options['storage']).resolve()
-        assert storage_root in storage.parents
+        assert storage_root in storage.parents, \
+            f"{storage_root} is outside of {storage}"
 
         qemu_args += [
             '-drive',
