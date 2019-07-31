@@ -21,4 +21,4 @@ while [ $i -le 180 ]; do
   fi
 done
 
-exit -1
+exit 1
