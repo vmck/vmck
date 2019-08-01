@@ -24,7 +24,7 @@ CONSUL_URL = os.environ.get('CONSUL_URL', 'http://localhost:8500')
 NOMAD_URL = os.environ.get('NOMAD_URL', 'http://localhost:4646')
 
 VMCK_BACKEND = os.environ.get('BACKEND', 'docker')
-QEMU_IMAGE_URL = os.environ.get('QEMU_IMAGE_URL')
+QEMU_IMAGE_PATH_PREFIX = os.environ.get('QEMU_IMAGE_PATH_PREFIX')
 QEMU_CPU_MHZ = int(os.environ.get('QEMU_CPU_MHZ', QEMU_CPU_MHZ))
 
 _ssh_username = SSH_USERNAME
