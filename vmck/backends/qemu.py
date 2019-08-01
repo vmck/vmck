@@ -48,13 +48,14 @@ def task_group(job, options):
     vm_port = random_port()
 
     prefix = settings.QEMU_IMAGE_PATH_PREFIX.rstrip('/') + '/'
+    image = urljoin(prefix, options['image_path'])
+
+    assert image.startswith(prefix)
 
     image_artifact = {
-        'getterSource': urljoin(prefix, options['image_path']),
+        'getterSource': image,
         'relativeDest': 'local/',
     }
-
-    assert image_artifact['getterSource'].startswith(settings.QEMU_IMAGE_PATH_PREFIX) # noqa
 
     image_filename = options['image_path'].split('/')[-1]
     if image_filename.endswith('.tar.gz'):
