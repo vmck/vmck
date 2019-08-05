@@ -2,7 +2,11 @@ import os
 import sentry_sdk
 from .utils import is_true
 from .base_settings import *  # noqa
-from .base_settings import QEMU_CPU_MHZ, SSH_USERNAME, base_dir
+from .base_settings import QEMU_CPU_MHZ
+from .base_settings import SSH_USERNAME
+from .base_settings import NOMAD_JOB_PREFIX
+from .base_settings import NOMAD_DEPLOYMENT_NAME
+from .base_settings import base_dir
 from sentry_sdk.integrations.django import DjangoIntegration
 
 SECRET_KEY = os.environ.get('SECRET_KEY')
@@ -23,7 +27,8 @@ DATABASES = {
 CONSUL_URL = os.environ.get('CONSUL_URL', 'http://localhost:8500')
 NOMAD_URL = os.environ.get('NOMAD_URL', 'http://localhost:4646')
 NOMAD_JOB_PREFIX = os.environ.get('NOMAD_JOB_PREFIX', NOMAD_JOB_PREFIX)
-NOMAD_DEPLOYMENT_NAME = os.environ.get('NOMAD_DEPLOYMENT_NAME', NOMAD_DEPLOYMENT_NAME)
+NOMAD_DEPLOYMENT_NAME = os.environ.get('NOMAD_DEPLOYMENT_NAME',
+                                       NOMAD_DEPLOYMENT_NAME)
 
 BACKEND = os.environ.get('BACKEND', 'docker')
 QEMU_IMAGE_URL = os.environ.get('QEMU_IMAGE_URL')
