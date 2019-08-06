@@ -13,6 +13,7 @@ steps:
   image: vmck/vagrant-vmck
   commands:
   - export VMCK_URL=http://$VMCK_IP:$VMCK_PORT
+  - export SHUTDOWN=15
   - echo $VMCK_URL
   - ci/deploy-vmck
 
