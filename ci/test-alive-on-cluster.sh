@@ -1,8 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/bash -ex
 
 cd "$( dirname "${BASH_SOURCE[0]}" )"
-
-set -e
 
 python3 /opt/vmck/examples/cluster.py
 

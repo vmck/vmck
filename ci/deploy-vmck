@@ -1,18 +1,10 @@
-#!/usr/bin/env bash
+#!/bin/bash -ex
 
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 
-function clean {
-    vagrant destroy -f || echo "vagrant destroy failed, but we don't care"
-}
-trap clean  EXIT
-
-set -ex
+trap "vagrant destroy -f"  EXIT
 
 vagrant up
 
-vagrant ssh <<'EOF'
-set -e
-bash /opt/vmck/ci/test-pytest.sh
-bash /opt/vmck/ci/test-alive-on-cluster.sh
-EOF
+vagrant ssh -- /opt/vmck/ci/test-pytest.sh
+vagrant ssh -- /opt/vmck/ci/test-alive-on-cluster.sh

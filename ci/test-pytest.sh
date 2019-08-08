@@ -1,7 +1,7 @@
-#!/usr/bin/env bash
+#!/bin/bash -ex
 
 cd "$( dirname "${BASH_SOURCE[0]}" )"/..
 
-sudo -H pip3 install pipenv
-pipenv install
-exec pipenv run pytest
+sudo pip3 install pipenv
+sudo pipenv install --system --deploy
+exec pytest

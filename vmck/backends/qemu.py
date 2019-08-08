@@ -68,7 +68,7 @@ def task_group(job, options):
             ',id=user'
             ',net=192.168.1.0/24'
             ',hostname=vmck'
-            ',hostfwd=tcp:${attr.unique.network.ip-address}:' f'{vm_port}-:22'
+            ',hostfwd=tcp:${attr.unique.network.ip-address}:${NOMAD_PORT_ssh}:22'  # noqa: E501
         ),
         '-device', (
             'virtio-net-pci'
@@ -82,6 +82,9 @@ def task_group(job, options):
     vm_task = {
         'name': 'vm',
         'driver': 'qemu',
+        'port_map': {
+            'ssh': '22',
+        },
         'artifacts': [
             image_artifact,
         ],

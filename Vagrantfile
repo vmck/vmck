@@ -20,6 +20,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision 'shell', path: "ci/wait-cluster.sh"
 
   config.vm.provider :vmck do |vmck|
+    vmck.image_path = 'cluster-master.qcow2.tar.gz'
     vmck.vmck_url = ENV['VMCK_URL']
     vmck.memory = 1024 * 2
     vmck.cpus = 1
