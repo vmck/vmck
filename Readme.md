@@ -35,75 +35,80 @@ docker run --detach --restart always \
   --env SECRET_KEY=foo \
   mgax/vmck
 ```
+Here you can add different `--env` options with arguments matching
+`{root}/vmck/settings.py` and `{root}/vmck/base_settings.py` to suit your
+preferences.
 
 Then go to consul (`http://localhost:8500/ui/dc1/services`) and wait for the
 health check lights to turn green.
 
 ### Running locally
 
-You still need a working Consul + Vault + Nomad cluster, maybe
-[liquidinvestigations/cluster][] can help you.
-
-Create a file named `.env` with your local configuration:
-```shell
-SECRET_KEY=changeme
-# DEBUG=true
+- Needs a Nomad instance alongside Consul([liquidinvestigations/cluster](https://github.com/liquidinvestigations/cluster) is easy to set-up and has both Nomad and Consul)
+- If you are using the above mentioned cluster you can skip this step if not add the following to your `.env` file:
 ```
-
-Then install dependencies and run migrations:
-
+SECRET_KEY=change_me
+CONSUL_URL=your_consul_url
+NOMAD_URL=your_nomad_url
+```
+- By default the `docker` backend is selected. You can choose `qemu` by adding `BACKEND=qemu` to your `.env` file
+- Then install dependencies and run migrations:
 ```shell
 pipenv install
 pipenv run ./manage.py migrate
 ```
-
-Then you can run the server:
-
+- Then you can run the server:
 ```shell
 pipenv run ./manage.py runserver
 ```
 
-## Running on your cluster
+## Running VMCK on your cluster
 
-You still need a working Consul + Vault + Nomad cluster, maybe
-[liquidinvestigations/cluster][] can help you. This cluster will usualy be
-available at `http://10.66.60.1:4646`. If you choose to use another cluster
-you should change `NOMAD_URL` in `examples/cluster.py` to your
-Nomad cluster's IP.
-
-To start vmck in your Nomad cluster:
+You need Nomad cluster with Consul. To start vmck in your Nomad cluster:
 
 ```shell
+export NOMAD_URL='your_nomad_url' # skip this line if you are using liquidinvestigations/cluster
 cd examples
 ./cluster.py
 ```
 
-This will send a job request to Nomad's API. Go to your Nomad cluster's web UI
-and you should find vmck in the job section. Watch the lights turn green.
+Now VMCK is a job in your Nomad cluster.
 
-## VM images
-Each job spins up a QEMU virtual machine to evaluate the submission. It needs a
-disk image, which can be downloaded from https://github.com/mgax/vmck-images,
-or built using `contrib/build.py`, which downloads an [Ubuntu cloud image][],
-prepares a [cloud-init][] configuration, applies it, and exports the resulting
-image. Run it with an argument to specify the output path:
+## Qemu VM images
 
-```shell
-./contrib/build.py /tmp/bionic.qcow
-```
-
-[Ubuntu cloud image]: https://cloud-images.ubuntu.com
-[cloud-init]: https://cloudinit.readthedocs.io
+Now all images are built using [vmck/image-builder](https://github.com/vmck/image-builder).
+Please refer to it on how to build, provision and test your image.
 
 ## Testing
-With a Nomad cluster running on `localhost:4646`, run `pipenv run pytest`, and
-enjoy. By default, the test suite will use a *mock vm*, implemented with a
-docker backend, instead of qemu. To run the tests with the qemu backend, set
-`TESTING_BACKEND=qemu` in the `.env` file.
 
-To make the qemu tests run faster you can mirror the VM image locally and
-override the URL in the local `.env` file - see `testsuite/settings.py` for the
-default image.
+### Requirements
+
+- Nomad instance alongside Consul([liquidinvestigations/cluster](https://github.com/liquidinvestigations/cluster) is easy to set-up and has both Nomad and Consul)
+- If you are using the above mentioned cluster you can skip this step if not add the following to your `.env` file:
+```
+TESTING_CONSUL_URL=your_consul_url
+TESTING_NOMAD_URL=your_nomad_url
+```
+- By default the `docker` backend is selected. You can choose `qemu` by adding `TESTING_BACKEND=qemu` to your `.env` file
+
+### Docker backend
+
+The docker backend uses [vmck/mock](https://github.com/vmck/mock) as it's default image.
+The only way to change that is to modify `{root}/vmck/backends/docker.py docker_vm_task.config.image`.
+We do not recommend it as the docker backend is for **testing purposes only**.
+Check [vmck/vagrant-vmck](https://github.com/vmck/vagrant-vmck) and [Vagrant](https://www.vagrantup.com/docs/)
+on how to provision, test and use the job that vmck will start.
+
+### Qemu backend
+
+This requires a bit more configuration. Qemu images are retrieved through a `nginx` server.
+You need to have one. [Here](https://github.com/liquidinvestigations/node/blob/master/templates/drone.nomad#L8) is an example of a `.hcl` job specification
+that you can use to start the server on your Nomad cluster. You need to set `TESTING_QEMU_IMAGE_PATH_PREFIX` in `.env` file
+to the url of your `nginx` server. To use the image of your choosing set `image_path` option
+in your `POST` request to the name of your desired image.
+
+### Doing tests
+With a Nomad cluster up and running, run `pipenv run pytest`, and enjoy.
 
 ## Troubleshooting
 * QEMU fails to start with error `qemu-system-x86_64: Invalid host forwarding

@@ -1,0 +1,10 @@
+#!/bin/bash -ex
+
+cd "$( dirname "${BASH_SOURCE[0]}" )"
+
+trap "vagrant destroy -f"  EXIT
+
+vagrant up
+
+vagrant ssh -- /opt/vmck/ci/test-pytest.sh
+vagrant ssh -- /opt/vmck/ci/test-alive-on-cluster.sh

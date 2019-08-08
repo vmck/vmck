@@ -3,8 +3,9 @@
 from urllib.request import Request, urlopen
 from pathlib import Path
 import json
+import os
 
-NOMAD_URL = 'http://10.66.60.1:4646'
+NOMAD_URL = os.environ.get('NOMAD_URL', 'http://10.66.60.1:4646')
 
 
 def request(method, url, data=None, headers=None):
