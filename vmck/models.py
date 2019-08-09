@@ -18,5 +18,7 @@ class Job(models.Model):
         default=STATE_NEW,
     )
 
+    name = models.CharField(max_length=32, default='default')
+
     def __str__(self):
         return f"{self.id} ({self.state})"

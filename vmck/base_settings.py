@@ -1,4 +1,6 @@
 from pathlib import Path
+from socket import gethostname
+import os
 
 base_dir = Path(__file__).parent.parent
 
@@ -53,7 +55,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 NOMAD_JOB_PREFIX = 'vmck-'
-NOMAD_DEPLOYMENT_NAME = "vmck"
+NOMAD_DEPLOYMENT_NAME = f"vmck@{os.environ.get('HOSTNAME', gethostname())}"
 
 SSH_USERNAME = 'vagrant'
 
