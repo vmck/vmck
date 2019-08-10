@@ -29,9 +29,16 @@ def create(backend, options):
     return job
 
 
-def on_done(job):
-    job.state = job.STATE_DONE
-    job.save()
+def ssh_remote(job):
+    health = nomad.health(job.id)
+    if health:
+        check = health[0]
+        if check['Status'] == 'passing':
+            return {
+                'host': check['Output'].split(':')[0].split()[-1],
+                'port': int(check['Output'].split(':')[1]),
+                'username': settings.SSH_USERNAME,
+            }
 
 
 def poll(job):
@@ -43,25 +50,12 @@ def poll(job):
 
     elif status == 'running':
         job.state = job.STATE_RUNNING
-        done = nomad.cat(nomad_id(job), f'alloc/data/done', binary=True)
-        if done is not None:
-            on_done(job)
-            kill(job)
-
-        else:
-            health = nomad.health(job.id)
-            if health:
-                check = health[0]
-                if check['Status'] == 'passing':
-                    ssh_remote = {
-                        'host': check['Output'].split(':')[0].split()[-1],
-                        'port': int(check['Output'].split(':')[1]),
-                        'username': settings.SSH_USERNAME,
-                    }
-                    return ssh_remote
+        job.save()
+        return ssh_remote(job)
 
     elif status in ['complete', 'failed']:
-        on_done(job)
+        job.state = job.STATE_DONE
+        job.save()
 
     else:
         raise RuntimeError(f"Unknown status {status!r}")
