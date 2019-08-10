@@ -7,6 +7,15 @@ steps:
   commands:
   - flake8
 
+- name: test
+  depends_on:
+  - flake8
+  image: vmck/vagrant-vmck:0.2.0
+  commands:
+  - export VMCK_URL=http://$VMCK_IP:$VMCK_PORT
+  - export SHUTDOWN=15
+  - ci/deploy-vmck
+
 ---
 kind: pipeline
 name: publish
