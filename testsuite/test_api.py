@@ -1,7 +1,7 @@
 from time import time, sleep
 import subprocess
 import pytest
-from django.conf import settings
+from django.conf import settings # noqa
 from vmck.ssh import ssh_args, ssh_identity
 
 pytestmark = [pytest.mark.django_db]
@@ -19,7 +19,7 @@ class JobApi:
         self.client = client
 
     def start(self):
-        resp = self.client.post('/v0/jobs')
+        resp = self.client.post('/v0/jobs', content_type='application/json')
         self.id = resp.json()['id']
         self.url = f'/v0/jobs/{self.id}'
 
@@ -59,6 +59,6 @@ def test_api_job_lifecycle(client, after_test):
     job_state = job.wait()
     print(job_state)
 
-    remote = dict(job_state['ssh'], identity_file=settings.SSH_IDENTITY_FILE)
+    remote = dict(job_state['ssh'])
     out = ssh(remote, ['echo', 'hello', 'world'])
     assert out.strip() == 'hello world'

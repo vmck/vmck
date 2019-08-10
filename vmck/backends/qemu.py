@@ -1,5 +1,6 @@
 import random
 from pathlib import Path
+from urllib.parse import urljoin
 from django.conf import settings
 
 control_path = (Path(__file__).parent / 'control').resolve()
@@ -46,12 +47,17 @@ def services(job):
 def task_group(job, options):
     vm_port = random_port()
 
+    prefix = settings.QEMU_IMAGE_PATH_PREFIX.rstrip('/') + '/'
+    image = urljoin(prefix, options['image_path'])
+
+    assert image.startswith(prefix)
+
     image_artifact = {
-        'getterSource': settings.QEMU_IMAGE_URL,
+        'getterSource': image,
         'relativeDest': 'local/',
     }
 
-    image_filename = settings.QEMU_IMAGE_URL.split('/')[-1]
+    image_filename = options['image_path'].split('/')[-1]
     if image_filename.endswith('.tar.gz'):
         image_filename = image_filename[:-len('.tar.gz')]
 
@@ -62,7 +68,7 @@ def task_group(job, options):
             ',id=user'
             ',net=192.168.1.0/24'
             ',hostname=vmck'
-            ',hostfwd=tcp:${attr.unique.network.ip-address}:' f'{vm_port}-:22'
+            ',hostfwd=tcp:${attr.unique.network.ip-address}:${NOMAD_PORT_ssh}:22'  # noqa: E501
         ),
         '-device', (
             'virtio-net-pci'
@@ -76,6 +82,9 @@ def task_group(job, options):
     vm_task = {
         'name': 'vm',
         'driver': 'qemu',
+        'port_map': {
+            'ssh': '22',
+        },
         'artifacts': [
             image_artifact,
         ],
