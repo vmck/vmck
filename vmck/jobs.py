@@ -34,6 +34,18 @@ def on_done(job):
     job.save()
 
 
+def ssh_remote(job):
+    health = nomad.health(job.id)
+    if health:
+        check = health[0]
+        if check['Status'] == 'passing':
+            return {
+                'host': check['Output'].split(':')[0].split()[-1],
+                'port': int(check['Output'].split(':')[1]),
+                'username': settings.SSH_USERNAME,
+            }
+
+
 def poll(job):
     status = nomad.status(nomad_id(job))
     log.debug('%r status: %r', job, status)
@@ -43,16 +55,7 @@ def poll(job):
 
     elif status == 'running':
         job.state = job.STATE_RUNNING
-        health = nomad.health(job.id)
-        if health:
-            check = health[0]
-            if check['Status'] == 'passing':
-                ssh_remote = {
-                    'host': check['Output'].split(':')[0].split()[-1],
-                    'port': int(check['Output'].split(':')[1]),
-                    'username': settings.SSH_USERNAME,
-                }
-                return ssh_remote
+        return ssh_remote(job)
 
     elif status in ['complete', 'failed']:
         on_done(job)
