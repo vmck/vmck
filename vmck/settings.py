@@ -31,7 +31,7 @@ NOMAD_DEPLOYMENT_NAME = os.environ.get('NOMAD_DEPLOYMENT_NAME',
                                        NOMAD_DEPLOYMENT_NAME)
 
 BACKEND = os.environ.get('BACKEND', 'docker')
-QEMU_IMAGE_URL = os.environ.get('QEMU_IMAGE_URL')
+QEMU_IMAGE_PATH_PREFIX = os.environ.get('QEMU_IMAGE_PATH_PREFIX')
 QEMU_CPU_MHZ = int(os.environ.get('QEMU_CPU_MHZ', QEMU_CPU_MHZ))
 
 _ssh_username = SSH_USERNAME
