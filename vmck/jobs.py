@@ -29,11 +29,6 @@ def create(backend, options):
     return job
 
 
-def on_done(job):
-    job.state = job.STATE_DONE
-    job.save()
-
-
 def ssh_remote(job):
     health = nomad.health(job.id)
     if health:
@@ -55,10 +50,12 @@ def poll(job):
 
     elif status == 'running':
         job.state = job.STATE_RUNNING
+        job.save()
         return ssh_remote(job)
 
     elif status in ['complete', 'failed']:
-        on_done(job)
+        job.state = job.STATE_DONE
+        job.save()
 
     else:
         raise RuntimeError(f"Unknown status {status!r}")
