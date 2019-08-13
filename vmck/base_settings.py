@@ -24,6 +24,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'vmck.urls'
 
+MEDIA_ROOT = base_dir / 'data' / 'uploads'
+FILE_UPLOAD_DIRECTORY_PERMISSIONS = 0o731
+FILE_UPLOAD_PERMISSIONS = 0o666
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

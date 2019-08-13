@@ -10,6 +10,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = is_true(os.environ.get('DEBUG'))
 
 _hostname = os.environ.get('HOSTNAME')
+
 if _hostname:
     ALLOWED_HOSTS = [_hostname]
 
