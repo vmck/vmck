@@ -1,7 +1,10 @@
 import string
 import secrets
+import os
+from socket import gethostname
 
 vocabulary_64 = string.ascii_letters + string.digits + '.+'
+hostname = os.environ.get('HOST', gethostname())
 
 
 def random_code(length, vocabulary=vocabulary_64):
