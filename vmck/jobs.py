@@ -15,15 +15,17 @@ def nomad_id(job):
 
 def create(backend, options):
     job = Job.objects.create()
+    job.state = job.STATE_RUNNING
+    job.name = options['name']
+
     nomad.launch(
         nomad.job(
             id=nomad_id(job),
-            name=f"{settings.NOMAD_DEPLOYMENT_NAME} job #{job.id}",
+            name=f"{settings.NOMAD_DEPLOYMENT_NAME}#{job.id} {job.name}",
             taskgroups=[backend.task_group(job, options)],
         ),
     )
 
-    job.state = job.STATE_RUNNING
     job.save()
 
     return job

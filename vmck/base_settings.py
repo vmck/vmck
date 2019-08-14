@@ -1,4 +1,5 @@
 from pathlib import Path
+from .utils import hostname
 
 base_dir = Path(__file__).parent.parent
 
@@ -53,7 +54,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 NOMAD_JOB_PREFIX = 'vmck-'
-NOMAD_DEPLOYMENT_NAME = "vmck"
+NOMAD_DEPLOYMENT_NAME = f"vmck@{hostname}"
 
 SSH_USERNAME = 'vagrant'
 
