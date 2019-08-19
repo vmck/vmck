@@ -36,6 +36,10 @@ def services(job):
                     'Name': f'{name} tcp',
                     'InitialStatus': 'critical',
                     'Type': 'tcp',
+                    'Command': '/opt/vmck/vmck/backends/check-ssh.sh',
+                    'Args': [
+                        '${NOMAD_IP_ssh}', "${NOMAD_PORT_ssh}"
+                    ],
                     'Interval': 1 * second,
                     'Timeout':  1 * second,
                 },
