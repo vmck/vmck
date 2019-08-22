@@ -83,11 +83,16 @@ job "vmck" {
 
   group "vmck" {
     task "vmck" {
+      constraint {
+        attribute = "${meta.volumes}"
+        operator  = "is_set"
+      }
       driver = "docker"
       config {
         image = "vmck/vmck:0.4.0"
+        dns_servers = ["${attr.unique.network.ip-address}"]
         volumes = [
-          "/opt/vmck/data:/opt/vmck/data",
+          "${meta.volumes}/vmck/data:/opt/vmck/data",
         ]
         port_map {
           http = 8000
