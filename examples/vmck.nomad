@@ -12,7 +12,7 @@ job "vmck" {
       config {
         image = "nginx:mainline"
         volumes = [
-          "{meta.volumes}/vmck-images:/usr/share/nginx/html",
+          "${meta.volumes}/vmck-images:/usr/share/nginx/html",
           "local/nginx.conf:/etc/nginx/nginx.conf",
         ]
         port_map {
@@ -24,7 +24,7 @@ job "vmck" {
         cpu = 200
         network {
           port "http" {
-            static = 10000
+            static = 10001
           }
         }
       }
@@ -92,7 +92,7 @@ job "vmck" {
         image = "vmck/vmck:0.4.0"
         dns_servers = ["${attr.unique.network.ip-address}"]
         volumes = [
-          "${meta.volumes}/vmck/data:/opt/vmck/data",
+          "${meta.volumes}/vmck:/opt/vmck/data",
         ]
         port_map {
           http = 8000
@@ -106,8 +106,8 @@ job "vmck" {
           SECRET_KEY = "TODO:ChangeME!!!"
           HOSTNAME = "*"
           SSH_USERNAME = "vagrant"
-          CONSUL_URL = "consul.service.consul:8500"
-          NOMAD_URL = "nomad.service.consul:4646"
+          CONSUL_URL = "http://consul.service.consul:8500"
+          NOMAD_URL = "http://nomad.service.consul:4646"
           BACKEND = "qemu"
           QEMU_CPU_MHZ = 3000
           EOF
@@ -128,7 +128,7 @@ job "vmck" {
         cpu = 350
         network {
           port "http" {
-            static = 9995
+            static = 10000
           }
         }
       }
