@@ -89,7 +89,7 @@ job "vmck" {
       }
       driver = "docker"
       config {
-        image = "vmck/vmck:0.4.1"
+        image = "vmck/vmck:0.4.2"
         hostname = "${attr.unique.hostname}"
         dns_servers = ["${attr.unique.network.ip-address}"]
         volumes = [
@@ -97,9 +97,6 @@ job "vmck" {
         ]
         port_map {
           http = 8000
-        }
-        labels {
-          liquid_task = "vmck"
         }
       }
       template {
