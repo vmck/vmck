@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo 'a' | telnet -e a $1 $2
+nc -zw3 $1 $2

@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 cd "$( dirname "${BASH_SOURCE[0]}" )"
-curl "10.66.60.1:4646"
+
 python3 /opt/vmck/examples/cluster.py
 
 i=0
