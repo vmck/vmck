@@ -27,7 +27,7 @@ def request(method, url, data=None, headers=None):
             body = json.dumps(data).encode('utf8')
 
     req = Request(url, body, headers, method=method)
-
+    print(url)
     with urlopen(req) as res:
         if 200 <= res.status < 300:
             if res.headers.get('Content-Type') == 'application/json':
@@ -41,7 +41,7 @@ def request(method, url, data=None, headers=None):
 
 def main():
     here = Path(__file__).resolve().parents[0]
-    with open(here/'vmck.nomad') as f:
+    with open(here / 'vmck.nomad') as f:
         job_hcl = f.read()
 
     vmck_json = request(method='POST', url=f'{NOMAD_URL}/v1/jobs/parse',
