@@ -33,9 +33,9 @@ def services(job):
             'PortLabel': 'ssh',
             'Checks': [
                 {
-                    'Name': f'{name} tcp',
+                    'Name': f'{name} ssh check',
                     'InitialStatus': 'critical',
-                    'Type': 'tcp',
+                    'Type': 'script',
                     'Command': '/opt/vmck/vmck/backends/check-ssh.sh',
                     'Args': [
                         '${NOMAD_IP_ssh}', "${NOMAD_PORT_ssh}"
