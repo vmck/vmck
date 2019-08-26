@@ -19,8 +19,8 @@ def resources(vm_port, options):
     }
     return {
         'Networks': [network],
-        'MemoryMB': options['memory'],
-        'CPU': options['cpu_mhz'],
+        'MemoryMB': int(options['memory']),
+        'CPU': int(options['cpu_mhz']),
     }
 
 

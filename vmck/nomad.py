@@ -33,14 +33,13 @@ def jobs():
     return response(requests.get(f'{api}/jobs'))
 
 
-def job(id, name, taskgroups, priority=50):
+def job(id, name, taskgroups):
     return {
         'job': {
             'id': id,
             'name': name,
-            'type': 'batch',
-            'priority': priority,
             'datacenters': ['dc1'],
+            'type': 'batch',
             'taskgroups': taskgroups,
         },
     }

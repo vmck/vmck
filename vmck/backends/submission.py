@@ -1,3 +1,6 @@
+from . import qemu
+
+
 class Submission:
 
     def task_group(self, job, options):
@@ -8,19 +11,21 @@ class Submission:
                 'image': 'vmck/vagrant-vmck:submission',
             },
             'env': {
-                'DOWNLOAD_URL': options['archive'],
+                'DOWNLOAD_URL': options['manager']['archive'],
                 'VMCK_URL': 'http://10.42.1.1:10000',
             },
             'resources': {
-                'MemoryMB': options['memory'],
-                'CPU': options['cpu_mhz'],
+                'MemoryMB': options['manager']['memory'],
+                'CPU': options['manager']['cpu_mhz'],
             },
         }
-
+        vm_task_group = qemu.task_group(job, options['vm'])
+        vm_task = vm_task_group['tasks'][0]
         return {
             'Name': 'handler',
             'Tasks': [
                 submission_task,
+                vm_task,
             ],
             'RestartPolicy': {
                 'Attempts': 0,
