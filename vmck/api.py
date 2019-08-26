@@ -8,7 +8,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 from .backends import get_backend, get_submission
 from .nomad import launch, job
-from .utils import random_code
+from .jobs import nomad_id
+from .models import Job
 from . import jobs
 from . import models
 
@@ -29,19 +30,23 @@ def home(request):
 def create_submission(request):
     options = json.loads(request.body) if request.body else {}  # TODO validate
 
-    options['memory'] = 50
-    options['cpu_mhz'] = 30
+    jobs = Job.objects.create()
+    jobs.state = jobs.STATE_RUNNING
+
+    submission_id = nomad_id(jobs)
+    options['vm']['cpu_mhz'] = int(options['vm']['cpus']) * settings.QEMU_CPU_MHZ  # noqa: E501
 
     launch(
         job(
-            id=f'submission-{random_code(4)}',
+            id=submission_id,
             name='submission-test',
-            taskgroups=[get_submission().task_group(None, options)],
-            priority=5
-            ),
-    )
+            taskgroups=[get_submission().task_group(jobs, options)]
+            )
+        )
 
-    return JsonResponse({'succes': True})
+    jobs.save()
+
+    return JsonResponse({'id': submission_id})
 
 
 def create_job(request):
