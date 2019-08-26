@@ -1,11 +1,14 @@
 import json
+
 from django.conf import settings
 from django.http import JsonResponse
 from django.urls import path
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
-from .backends import get_backend
+from .backends import get_backend, get_submission
+from .nomad import launch, job
+from .utils import random_code
 from . import jobs
 from . import models
 
@@ -21,6 +24,24 @@ def home(request):
     return JsonResponse({
         'version': '0.0.1',
     })
+
+
+def create_submission(request):
+    options = json.loads(request.body) if request.body else {}  # TODO validate
+
+    options['memory'] = 50
+    options['cpu_mhz'] = 30
+
+    launch(
+        job(
+            id=f'submission-{random_code(4)}',
+            name='submission-test',
+            taskgroups=[get_submission().task_group(None, options)],
+            priority=5
+            ),
+    )
+
+    return JsonResponse({'succes': True})
 
 
 def create_job(request):
@@ -64,4 +85,5 @@ urls = [
     path('', route(GET=home)),
     path('jobs', route(POST=create_job)),
     path('jobs/<int:pk>', route(GET=get_job, DELETE=kill_job)),
+    path('submission', route(POST=create_submission)),
 ]
