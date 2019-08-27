@@ -15,12 +15,11 @@ class Submission:
                 'VMCK_URL': 'http://10.42.1.1:10000',
             },
             'resources': {
-                'MemoryMB': options['manager']['memory'],
-                'CPU': options['manager']['cpu_mhz'],
+                'MemoryMB': int(options['manager']['memory']),
+                'CPU': int(options['manager']['cpu_mhz']),
             },
         }
-        vm_task_group = qemu.task_group(job, options['vm'])
-        vm_task = vm_task_group['tasks'][0]
+        vm_task = qemu.task_group(job, options['vm'])['tasks'][0]
         return {
             'Name': 'handler',
             'Tasks': [

@@ -38,8 +38,8 @@ def job(id, name, taskgroups):
         'job': {
             'id': id,
             'name': name,
-            'datacenters': ['dc1'],
             'type': 'batch',
+            'datacenters': ['dc1'],
             'taskgroups': taskgroups,
         },
     }
