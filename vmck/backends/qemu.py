@@ -36,7 +36,7 @@ def services(job):
                     'Name': f'{name} tcp',
                     'InitialStatus': 'critical',
                     'Type': 'tcp',
-                    'Port': '${NOMAD_PORT_ssh}',
+                    'PortLabel': 'ssh',
                     'Interval': 1 * second,
                     'Timeout':  1 * second,
                 },

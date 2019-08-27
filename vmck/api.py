@@ -5,11 +5,10 @@ from django.http import JsonResponse
 from django.urls import path
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import get_object_or_404
 from .backends import get_backend, get_submission
-from .nomad import launch, job
+from django.shortcuts import get_object_or_404
 from .jobs import nomad_id
-from .models import Job
+from . import nomad
 from . import jobs
 from . import models
 
@@ -27,36 +26,52 @@ def home(request):
     })
 
 
-def create_submission(request):
-    options = json.loads(request.body) if request.body else {}  # TODO validate
-
-    jobs = Job.objects.create()
-    jobs.state = jobs.STATE_RUNNING
-
-    submission_id = nomad_id(jobs)
-    options['vm']['cpu_mhz'] = int(options['vm']['cpus']) * settings.QEMU_CPU_MHZ  # noqa: E501
-
-    launch(
-        job(
-            id=submission_id,
-            name='submission-test',
-            taskgroups=[get_submission().task_group(jobs, options)]
-            )
-        )
-
-    jobs.save()
-
-    return JsonResponse({'id': submission_id})
-
-
-def create_job(request):
-    options = json.loads(request.body) if request.body else {}  # TODO validate
-
+def process_options(options):
     options.setdefault('cpus', 1)
     options.setdefault('memory', 512)
     options.setdefault('image_path', 'imgbuild-master.qcow2.tar.gz')
     options.setdefault('name', 'default')
-    options['cpu_mhz'] = options['cpus'] * settings.QEMU_CPU_MHZ
+    options['cpu_mhz'] = int(options['cpus']) * settings.QEMU_CPU_MHZ
+
+    return options
+
+
+def create_submission(request):
+    options = json.loads(request.body) if request.body else {}  # TODO validate
+
+    job = models.Job.objects.create()
+    job.state = job.STATE_RUNNING
+    job.token = options['vm']['token']
+
+    submission_id = nomad_id(jobs)
+    options['vm'] = process_options(options['vm'])
+
+    nomad.launch(
+        nomad.job(
+                 id=submission_id,
+                 name='submission-test',
+                 taskgroups=[get_submission().task_group(jobs, options)]
+                 )
+            )
+
+    job.save()
+
+    return JsonResponse({'id': submission_id})
+
+
+def connect(request):
+    token = json.loads(request.body) if request.body else {}  # TODO validate
+
+    job_id = get_object_or_404(models.Job,
+                               token=token,
+                               state=models.Job.STATE_RUNNING)
+
+    return JsonResponse({'id': job_id})
+
+
+def create_job(request):
+    options = json.loads(request.body) if request.body else {}  # TODO validate
+    options = process_options(options)
 
     job = jobs.create(get_backend(), options)
 
@@ -91,4 +106,5 @@ urls = [
     path('jobs', route(POST=create_job)),
     path('jobs/<int:pk>', route(GET=get_job, DELETE=kill_job)),
     path('submission', route(POST=create_submission)),
+    path('connect', route(POST=connect)),
 ]
