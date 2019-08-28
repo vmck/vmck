@@ -11,6 +11,12 @@ from .jobs import nomad_id
 from . import nomad
 from . import jobs
 from . import models
+import logging
+
+
+log_level = logging.DEBUG
+log = logging.getLogger(__name__)
+log.setLevel(log_level)
 
 
 def job_info(job):
@@ -42,15 +48,16 @@ def create_submission(request):
     job = models.Job.objects.create()
     job.state = job.STATE_RUNNING
     job.token = options['vm']['token']
+    log.debug(job.token)
 
-    submission_id = nomad_id(jobs)
+    submission_id = nomad_id(job)
     options['vm'] = process_options(options['vm'])
 
     nomad.launch(
         nomad.job(
                  id=submission_id,
                  name='submission-test',
-                 taskgroups=[get_submission().task_group(jobs, options)]
+                 taskgroups=[get_submission().task_group(job, options)]
                  )
             )
 
@@ -60,11 +67,12 @@ def create_submission(request):
 
 
 def connect(request):
-    token = json.loads(request.body) if request.body else {}  # TODO validate
-
+    options = json.loads(request.body) if request.body else {}  # TODO validate
+    token = options['token']
+    log.debug(token)
     job_id = get_object_or_404(models.Job,
                                token=token,
-                               state=models.Job.STATE_RUNNING)
+                               state=models.Job.STATE_RUNNING).id
 
     return JsonResponse({'id': job_id})
 
@@ -103,8 +111,8 @@ def route(**views):
 
 urls = [
     path('', route(GET=home)),
-    path('jobs', route(POST=create_job)),
-    path('jobs/<int:pk>', route(GET=get_job, DELETE=kill_job)),
-    path('submission', route(POST=create_submission)),
     path('connect', route(POST=connect)),
+    path('jobs', route(POST=create_job)),
+    path('submission', route(POST=create_submission)),
+    path('jobs/<int:pk>', route(GET=get_job, DELETE=kill_job)),
 ]
