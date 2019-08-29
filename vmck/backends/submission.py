@@ -12,7 +12,7 @@ class Submission:
             },
             'env': {
                 'DOWNLOAD_URL': options['manager']['archive'],
-                'VMCK_URL': 'http://10.42.1.1:10000',
+                'VMCK_URL': options['manager']['vmck_api'],
             },
             'resources': {
                 'MemoryMB': int(options['manager']['memory']),
