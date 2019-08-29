@@ -9,6 +9,7 @@ class Submission:
             'driver': 'docker',
             'config': {
                 'image': 'vmck/vagrant-vmck:submission',
+                'force_pull': True,
             },
             'env': {
                 'DOWNLOAD_URL': options['manager']['archive'],
