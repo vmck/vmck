@@ -14,7 +14,7 @@ from . import models
 import logging
 
 
-log_level = logging.DEBUG
+log_level = logging.WARNING
 log = logging.getLogger(__name__)
 log.setLevel(log_level)
 
@@ -47,8 +47,6 @@ def create_submission(request):
 
     job = models.Job.objects.create()
     job.state = job.STATE_RUNNING
-    job.token = options['vm']['token']
-    log.debug(job.token)
 
     submission_id = nomad_id(job)
     options['vm'] = process_options(options['vm'])
@@ -66,20 +64,11 @@ def create_submission(request):
     return JsonResponse({'id': submission_id})
 
 
-def connect(request):
-    options = json.loads(request.body) if request.body else {}  # TODO validate
-    token = options['token']
-    log.debug(token)
-    job_id = get_object_or_404(models.Job,
-                               token=token,
-                               state=models.Job.STATE_RUNNING).id
-
-    return JsonResponse({'id': job_id})
-
-
 def create_job(request):
     options = json.loads(request.body) if request.body else {}  # TODO validate
     options = process_options(options)
+
+    log.debug(f'Job oprtions:\n{options}')
 
     job = jobs.create(get_backend(), options)
 
@@ -111,7 +100,6 @@ def route(**views):
 
 urls = [
     path('', route(GET=home)),
-    path('connect', route(POST=connect)),
     path('jobs', route(POST=create_job)),
     path('submission', route(POST=create_submission)),
     path('jobs/<int:pk>', route(GET=get_job, DELETE=kill_job)),
