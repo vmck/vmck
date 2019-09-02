@@ -14,6 +14,7 @@ class Submission:
             'env': {
                 'DOWNLOAD_URL': options['manager']['archive'],
                 'VMCK_URL': options['manager']['vmck_api'],
+                'VMCK_JOB_ID': str(job.id),
             },
             'resources': {
                 'MemoryMB': int(options['manager']['memory']),

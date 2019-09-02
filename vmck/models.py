@@ -19,7 +19,6 @@ class Job(models.Model):
     )
 
     name = models.CharField(max_length=1024, default='default')
-    token = models.CharField(max_length=128, default='none')
 
     def __str__(self):
         return f"{self.id} ({self.state})"
