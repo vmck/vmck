@@ -10,9 +10,10 @@ steps:
 - name: test
   depends_on:
   - flake8
-  image: vmck/vagrant-vmck:0.2.0
+  image: vmck/vagrant-vmck:0.2.1
   commands:
   - export VMCK_URL=http://$VMCK_IP:$VMCK_PORT
+  - export JOB_NAME="drone $DRONE_REPO:$DRONE_BRANCH#$DRONE_BUILD_NUMBER"
   - export SHUTDOWN=15
   - ci/deploy-vmck
 
