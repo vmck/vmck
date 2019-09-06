@@ -12,7 +12,8 @@ class Submission:
                 'force_pull': True,
             },
             'env': {
-                'DOWNLOAD_URL': options['manager']['archive'],
+                'DOWNLOAD_ARCHIVE_URL': options['manager']['archive'],
+                'DOWNLOAD_SCRIPT_URL': options['manager']['script'],
                 'VMCK_URL': options['manager']['vmck_api'],
                 'VMCK_JOB_ID': str(job.id),
             },
