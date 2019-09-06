@@ -7,7 +7,7 @@ python3 /opt/vmck/examples/cluster.py
 i=0
 
 while [ $i -le 180 ]; do
-  if curl --output /dev/null --silent --head --fail "10.66.60.1:9995"; then
+  if curl --output /dev/null --silent --head --fail "10.66.60.1:10000"; then
     exit 0
   else
     sleep 5
