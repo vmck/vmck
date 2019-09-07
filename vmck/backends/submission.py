@@ -15,6 +15,7 @@ class Submission:
                 'DOWNLOAD_ARCHIVE_URL': options['manager']['archive'],
                 'DOWNLOAD_SCRIPT_URL': options['manager']['script'],
                 'VMCK_URL': options['manager']['vmck_api'],
+                'INTERFACE_ADDRESS': options['manager']['interface_address'],
                 'VMCK_JOB_ID': str(job.id),
             },
             'resources': {
