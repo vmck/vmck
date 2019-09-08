@@ -48,12 +48,11 @@ def create_submission(request):
     job = models.Job.objects.create()
     job.state = job.STATE_RUNNING
 
-    submission_id = nomad_id(job)
     options['vm'] = process_options(options['vm'])
 
     nomad.launch(
         nomad.job(
-                 id=submission_id,
+                 id=nomad_id(job),
                  name='submission-test',
                  taskgroups=[get_submission().task_group(job, options)]
                  )
@@ -61,7 +60,7 @@ def create_submission(request):
 
     job.save()
 
-    return JsonResponse({'id': submission_id})
+    return JsonResponse({'id': job.id})
 
 
 def create_job(request):
