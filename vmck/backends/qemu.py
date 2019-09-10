@@ -1,7 +1,9 @@
 import random
-from pathlib import Path
+
+from vmck.backends import submission
 from urllib.parse import urljoin
 from django.conf import settings
+from pathlib import Path
 
 control_path = (Path(__file__).parent / 'control').resolve()
 second = 1000000000
@@ -98,7 +100,7 @@ def task_group(job, options):
         'services': services(job),
     }
 
-    return {
+    nomad_job = {
         'name': 'test',
         'tasks': [
             vm_task,
@@ -107,6 +109,11 @@ def task_group(job, options):
             'Attempts': 0,
         },
     }
+
+    if 'env' in options:
+        nomad_job['tasks'].append(submission.task(job, options))
+
+    return nomad_job
 
 
 class QemuBackend:

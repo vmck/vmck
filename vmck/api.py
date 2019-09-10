@@ -6,11 +6,10 @@ from django.http import JsonResponse
 from django.urls import path
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
-from .backends import get_backend, get_submission
+from vmck.backends import get_backend
 from django.shortcuts import get_object_or_404
-from . import nomad
-from . import jobs
-from . import models
+from vmck import jobs
+from vmck import models
 
 
 log_level = logging.WARNING
@@ -39,27 +38,6 @@ def process_options(options):
     options['cpu_mhz'] = options['cpus'] * settings.QEMU_CPU_MHZ
 
     return options
-
-
-def create_submission(request):
-    options = json.loads(request.body) if request.body else {}  # TODO validate
-
-    job = models.Job.objects.create()
-    job.state = job.STATE_RUNNING
-
-    options = process_options(options)
-
-    nomad.launch(
-        nomad.job(
-                 id=jobs.nomad_id(job),
-                 name='submission-test',
-                 taskgroups=[get_submission().task_group(job, options)]
-                 )
-            )
-
-    job.save()
-
-    return JsonResponse({'id': job.id})
 
 
 def create_job(request):
@@ -99,6 +77,5 @@ def route(**views):
 urls = [
     path('', route(GET=home)),
     path('jobs', route(POST=create_job)),
-    path('submission', route(POST=create_submission)),
     path('jobs/<int:pk>', route(GET=get_job, DELETE=kill_job)),
 ]
