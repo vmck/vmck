@@ -13,8 +13,3 @@ def get_backend():
         return DockerBackend()
 
     raise KeyError(f"Unknown backend {backend}")
-
-
-def get_submission():
-    from .submission import Submission
-    return Submission()
