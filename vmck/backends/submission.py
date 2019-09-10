@@ -19,8 +19,8 @@ class Submission:
                 'VMCK_JOB_ID': str(job.id),
             },
             'resources': {
-                'MemoryMB': int(options['manager']['memory']),
-                'CPU': int(options['manager']['cpu_mhz']),
+                'MemoryMB': options['manager']['memory'],
+                'CPU': options['manager']['cpu_mhz'],
             },
         }
         vm_task = qemu.task_group(job, options['vm'])['tasks'][0]
