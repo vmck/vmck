@@ -1,4 +1,5 @@
 import json
+import logging
 
 from django.conf import settings
 from django.http import JsonResponse
@@ -10,7 +11,6 @@ from django.shortcuts import get_object_or_404
 from . import nomad
 from . import jobs
 from . import models
-import logging
 
 
 log_level = logging.WARNING
@@ -47,7 +47,7 @@ def create_submission(request):
     job = models.Job.objects.create()
     job.state = job.STATE_RUNNING
 
-    options['vm'] = process_options(options['vm'])
+    options = process_options(options)
 
     nomad.launch(
         nomad.job(
