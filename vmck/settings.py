@@ -20,6 +20,8 @@ DATABASES = {
     }
 }
 
+VMCK_URL = os.environ.get('VMCK_URL', 'http://10.42.1.1:10000')
+
 CONSUL_URL = os.environ.get('CONSUL_URL', 'http://localhost:8500')
 NOMAD_URL = os.environ.get('NOMAD_URL', 'http://localhost:4646')
 

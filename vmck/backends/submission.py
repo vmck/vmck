@@ -1,3 +1,6 @@
+from django.conf import settings
+
+
 def task(job, options):
     return {
         'name': 'submission-handler',
@@ -15,7 +18,7 @@ def task(job, options):
         'env': {
             'DOWNLOAD_ARCHIVE_URL': options['env']['archive'],
             'DOWNLOAD_SCRIPT_URL': options['env']['script'],
-            'VMCK_URL': options['env']['vmck_api'],
+            'VMCK_URL': settings.VMCK_URL,
             'INTERFACE_ADDRESS': options['env']['interface_address'],
             'VMCK_JOB_ID': str(job.id),
         },
