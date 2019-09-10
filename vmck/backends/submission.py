@@ -12,18 +12,18 @@ class Submission:
                 'force_pull': True,
             },
             'env': {
-                'DOWNLOAD_ARCHIVE_URL': options['manager']['archive'],
-                'DOWNLOAD_SCRIPT_URL': options['manager']['script'],
-                'VMCK_URL': options['manager']['vmck_api'],
-                'INTERFACE_ADDRESS': options['manager']['interface_address'],
+                'DOWNLOAD_ARCHIVE_URL': options['env']['archive'],
+                'DOWNLOAD_SCRIPT_URL': options['env']['script'],
+                'VMCK_URL': options['env']['vmck_api'],
+                'INTERFACE_ADDRESS': options['env']['interface_address'],
                 'VMCK_JOB_ID': str(job.id),
             },
             'resources': {
-                'MemoryMB': options['manager']['memory'],
-                'CPU': options['manager']['cpu_mhz'],
+                'MemoryMB': options['env']['memory'],
+                'CPU': options['env']['cpu_mhz'],
             },
         }
-        vm_task = qemu.task_group(job, options['vm'])['tasks'][0]
+        vm_task = qemu.task_group(job, options)['tasks'][0]
         return {
             'Name': 'handler',
             'Tasks': [
