@@ -7,7 +7,6 @@ from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from .backends import get_backend, get_submission
 from django.shortcuts import get_object_or_404
-from .jobs import nomad_id
 from . import nomad
 from . import jobs
 from . import models
@@ -37,7 +36,7 @@ def process_options(options):
     options.setdefault('memory', 512)
     options.setdefault('image_path', 'imgbuild-master.qcow2.tar.gz')
     options.setdefault('name', 'default')
-    options['cpu_mhz'] = int(options['cpus']) * settings.QEMU_CPU_MHZ
+    options['cpu_mhz'] = options['cpus'] * settings.QEMU_CPU_MHZ
 
     return options
 
@@ -52,7 +51,7 @@ def create_submission(request):
 
     nomad.launch(
         nomad.job(
-                 id=nomad_id(job),
+                 id=jobs.nomad_id(job),
                  name='submission-test',
                  taskgroups=[get_submission().task_group(job, options)]
                  )
