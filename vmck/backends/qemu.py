@@ -107,18 +107,13 @@ def task_group(job, options):
     if options.get('manager', False):
         tasks.append(submission.task(job, options))
 
-    nomad_job = {
+    return {
         'name': 'test',
         'tasks': tasks,
         'RestartPolicy': {
             'Attempts': 0,
         },
     }
-
-    if 'env' in options:
-        nomad_job['tasks'].append(submission.task(job, options))
-
-    return nomad_job
 
 
 class QemuBackend:
