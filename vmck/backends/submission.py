@@ -3,8 +3,8 @@ from django.conf import settings
 manager_script = '''\
 #!/bin/bash -ex
 trap "vagrant destroy -f" EXIT
-curl -X  "${ARCHIVE_URL}" -o submission.zip
-curl -X  "${SCRIPT_URL}" -o checker.sh
+curl "${ARCHIVE_URL}" -o submission.zip
+curl "${SCRIPT_URL}" -o checker.sh
 vagrant up
 vagrant ssh -- < checker.sh > result.out
 data="$(base64 result.out)"
@@ -59,7 +59,7 @@ def task(job, options):
             {
                 "DestPath": "local/submission.sh",
                 "EmbeddedTmpl": manager_script,
-                "Perms": 766,
+                "Perms": "766",
             },
             {
                 "DestPath": "local/Vagrantfile",
