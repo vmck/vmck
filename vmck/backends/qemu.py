@@ -1,11 +1,8 @@
 import random
-
-from vmck.backends import submission
 from urllib.parse import urljoin
-import random
+from pathlib import Path
 
 from django.conf import settings
-from pathlib import Path
 
 from vmck.backends import submission
 
