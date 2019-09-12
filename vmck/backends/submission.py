@@ -12,7 +12,7 @@ JSON_STRING=$(jq -n \
                  --arg tok "$SUBMISSION_ID" \
                  --arg out "$data" \
                  '{token: $tok, output: $out,}')
-curl -X POST "http://${INTERFACE_ADDRESS}/done/" -d $JSON_STRING \
+curl -X POST "http://${INTERFACE_ADDRESS}/done/" -d "$JSON_STRING" \
      --header "Content-Type: application/json"
 '''
 

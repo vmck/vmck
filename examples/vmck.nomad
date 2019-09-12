@@ -106,7 +106,7 @@ job "vmck" {
           SSH_USERNAME = "vagrant"
           CONSUL_URL = "http://consul.service.consul:8500"
           NOMAD_URL = "http://nomad.service.consul:4646"
-          VMCK_URL = "${attr.unique.network.ip-address}:10000"
+          VMCK_URL = "http://${attr.unique.network.ip-address}:10000"
           BACKEND = "qemu"
           QEMU_CPU_MHZ = 3000
           EOF
