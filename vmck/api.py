@@ -35,7 +35,7 @@ def process_options(options):
     options.setdefault('cpus', 1)
     options.setdefault('memory', 512)
     options.setdefault('image_path', 'imgbuild-master.qcow2.tar.gz')
-    options.setdefault('name', 'default')
+    options['name'] = options.get('name') or 'default'
     options['cpu_mhz'] = options['cpus'] * settings.QEMU_CPU_MHZ
 
     return options
