@@ -45,8 +45,7 @@ def task(job, options):
                 "local/submission.sh:/src/submission.sh",
                 "local/Vagrantfile:/src/Vagrantfile",
             ],
-            'command': '/bin/bash',
-            'args': ['/src/submission.sh'],
+            'command': '/src/submission.sh',
         },
         'env': {
             'ARCHIVE_URL': options['env']['archive'],
@@ -65,7 +64,6 @@ def task(job, options):
             {
                 "DestPath": "local/Vagrantfile",
                 "EmbeddedTmpl": vagrantfile,
-                "Perms": 766,
             },
         ],
         'resources': {
