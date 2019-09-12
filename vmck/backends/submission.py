@@ -1,51 +1,12 @@
 from django.conf import settings
 
-manager_script = '''\
-#!/bin/bash -ex
-trap "vagrant destroy -f" EXIT
-curl "${ARCHIVE_URL}" -o submission.zip
-curl "${SCRIPT_URL}" -o checker.sh
-vagrant up
-vagrant ssh -- < checker.sh > result.out
-data="$(base64 result.out)"
-JSON_STRING=$(jq -n \
-                 --arg tok "$SUBMISSION_ID" \
-                 --arg out "$data" \
-                 '{token: $tok, output: $out,}')
-curl -X POST "${INTERFACE_ADDRESS}/done/" -d "$JSON_STRING" \
-     --header "Content-Type: application/json"
-'''
-
-vagrantfile = '''\
-Vagrant.configure("2") do |config|
-    config.vm.box = 'base'
-
-    if Vagrant.has_plugin?('vagrant-env')
-        config.env.enable
-    end
-
-    config.nfs.functional = false
-    config.vm.provision 'shell', inline: 'mv /vagrant/submission.zip .; \
-                                            unzip submission.zip; \
-                                            chown -R vagrant:vagrant .'
-    config.vm.provider :vmck do |vmck|
-        vmck.vmck_url = ENV['VMCK_URL']
-    end
-end
-'''
-
-
 def task(job, options):
     return {
         'name': 'submission-handler',
         'driver': 'docker',
         'config': {
             'image': f'vmck/vagrant-vmck:{options["env"]["vagrant_tag"]}',
-            'volumes': [
-                "local/submission.sh:/src/submission.sh",
-                "local/Vagrantfile:/src/Vagrantfile",
-            ],
-            'command': '/src/submission.sh',
+            'command': '/src/submission/launch.sh',
         },
         'env': {
             'ARCHIVE_URL': options['env']['archive'],
@@ -55,17 +16,6 @@ def task(job, options):
             'VMCK_JOB_ID': str(job.id),
             'SUBMISSION_ID': options['env']['id'],
         },
-        'templates': [
-            {
-                "DestPath": "local/submission.sh",
-                "EmbeddedTmpl": manager_script,
-                "Perms": "766",
-            },
-            {
-                "DestPath": "local/Vagrantfile",
-                "EmbeddedTmpl": vagrantfile,
-            },
-        ],
         'resources': {
             'MemoryMB': options['env']['memory'],
             'CPU': options['env']['cpu_mhz'],
