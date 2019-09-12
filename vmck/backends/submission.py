@@ -8,7 +8,7 @@ curl -X GET ${DOWNLOAD_SCRIPT_URL} > checker.sh
 vagrant up
 vagrant ssh -- < checker.sh > result.out
 data="$(base64 result.out)"
-echo "{\\"token\\": \\"${DOWNLOAD_ARCHIVE_URL}\\",\
+echo "{\\"token\\": \\"${SUBMISSION_ID}\\",\
        \\"output\\": \\"${data}\\"}" > data.json
 curl -X POST "http://${INTERFACE_ADDRESS}/done/" -d @data.json \
      --header "Content-Type: application/json"
@@ -53,6 +53,7 @@ def task(job, options):
             'VMCK_URL': settings.VMCK_URL,
             'INTERFACE_ADDRESS': options['env']['interface_address'],
             'VMCK_JOB_ID': str(job.id),
+            'SUBMISSION_ID': options['env']['id']
         },
         'templates': [
             {
