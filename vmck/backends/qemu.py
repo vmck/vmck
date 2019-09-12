@@ -1,9 +1,18 @@
+<<<<<<< HEAD
 import random
 
 from vmck.backends import submission
+=======
+from pathlib import Path
+>>>>>>> fd7f866c0fad6f8f973bc9f39cc19d6f20f1d0f4
 from urllib.parse import urljoin
+import random
+
 from django.conf import settings
 from pathlib import Path
+
+from vmck.backends import submission
+
 
 control_path = (Path(__file__).parent / 'control').resolve()
 second = 1000000000
@@ -48,6 +57,7 @@ def services(job):
 
 
 def task_group(job, options):
+    tasks = []
     vm_port = random_port()
 
     prefix = settings.QEMU_IMAGE_PATH_PREFIX.rstrip('/') + '/'
@@ -99,12 +109,14 @@ def task_group(job, options):
         'resources': resources(vm_port, options),
         'services': services(job),
     }
+    tasks.append(vm_task)
+
+    if options.get('manager', False):
+        tasks.append(submission.task(job, options))
 
     nomad_job = {
         'name': 'test',
-        'tasks': [
-            vm_task,
-        ],
+        'tasks': tasks,
         'RestartPolicy': {
             'Attempts': 0,
         },

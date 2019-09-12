@@ -4,11 +4,15 @@ job "vmck" {
 
   group "imghost" {
     task "nginx" {
+      constraint {
+        attribute = "${meta.volumes}"
+        operator  = "is_set"
+      }
       driver = "docker"
       config {
         image = "nginx:mainline"
         volumes = [
-          "/usr/share/vmck-images:/usr/share/nginx/html",
+          "${meta.volumes}/vmck-images:/usr/share/nginx/html",
           "local/nginx.conf:/etc/nginx/nginx.conf",
         ]
         port_map {
@@ -20,7 +24,7 @@ job "vmck" {
         cpu = 200
         network {
           port "http" {
-            static = 7000
+            static = 10001
           }
         }
       }
@@ -79,17 +83,20 @@ job "vmck" {
 
   group "vmck" {
     task "vmck" {
+      constraint {
+        attribute = "${meta.volumes}"
+        operator  = "is_set"
+      }
       driver = "docker"
       config {
-        image = "vmck/vmck"
+        image = "vmck/vmck:0.4.2"
+        hostname = "${attr.unique.hostname}"
+        dns_servers = ["${attr.unique.network.ip-address}"]
         volumes = [
-          "/opt/vmck/data:/opt/vmck/data",
+          "${meta.volumes}/vmck:/opt/vmck/data",
         ]
         port_map {
           http = 8000
-        }
-        labels {
-          liquid_task = "vmck"
         }
       }
       template {
@@ -97,8 +104,9 @@ job "vmck" {
           SECRET_KEY = "TODO:ChangeME!!!"
           HOSTNAME = "*"
           SSH_USERNAME = "vagrant"
-          CONSUL_URL = "10.66.60.1:8500"
-          NOMAD_URL = "10.66.60.1:4646"
+          CONSUL_URL = "http://consul.service.consul:8500"
+          NOMAD_URL = "http://nomad.service.consul:4646"
+          VMCK_URL = "http://${NOMAD_ADDR_http}"
           BACKEND = "qemu"
           QEMU_CPU_MHZ = 3000
           EOF
@@ -119,7 +127,7 @@ job "vmck" {
         cpu = 350
         network {
           port "http" {
-            static = 9995
+            static = 10000
           }
         }
       }
