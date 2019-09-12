@@ -1,5 +1,6 @@
 from django.conf import settings
 
+
 def task(job, options):
     return {
         'name': 'submission-handler',
