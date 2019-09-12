@@ -6,8 +6,9 @@ from django.http import JsonResponse
 from django.urls import path
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
-from vmck.backends import get_backend
 from django.shortcuts import get_object_or_404
+
+from vmck.backends import get_backend
 from vmck import jobs
 from vmck import models
 
@@ -41,10 +42,8 @@ def process_options(options):
 
 
 def create_job(request):
-    options = json.loads(request.body) if request.body else {}  # TODO validate
-    options = process_options(options)
-
-    log.debug(f'Job oprtions:\n{options}')
+    options = process_options(json.loads(request.body))
+    log.debug(f'Job options:\n{options}')
 
     job = jobs.create(get_backend(), options)
 
