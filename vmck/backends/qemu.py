@@ -1,10 +1,6 @@
-<<<<<<< HEAD
 import random
 
 from vmck.backends import submission
-=======
-from pathlib import Path
->>>>>>> fd7f866c0fad6f8f973bc9f39cc19d6f20f1d0f4
 from urllib.parse import urljoin
 import random
 
