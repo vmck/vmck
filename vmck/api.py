@@ -13,7 +13,7 @@ from vmck import jobs
 from vmck import models
 
 
-log_level = logging.WARNING
+log_level = logging.DEBUG
 log = logging.getLogger(__name__)
 log.setLevel(log_level)
 

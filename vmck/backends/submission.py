@@ -13,9 +13,8 @@ def task(job, options):
             'ARCHIVE_URL': options['env']['archive'],
             'SCRIPT_URL': options['env']['script'],
             'VMCK_URL': settings.VMCK_URL,
-            'INTERFACE_ADDRESS': options['env']['interface_address'],
+            'VMCK_CALLBACK_URL': options['env']['vmck_callback_url'],
             'VMCK_JOB_ID': str(job.id),
-            'SUBMISSION_ID': options['env']['id'],
         },
         'resources': {
             'MemoryMB': options['env']['memory'],
