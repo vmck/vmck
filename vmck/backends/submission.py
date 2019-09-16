@@ -10,10 +10,10 @@ def task(job, options):
             'command': '/src/submission/launch.sh',
         },
         'env': {
-            'ARCHIVE_URL': options['env']['archive'],
-            'SCRIPT_URL': options['env']['script'],
+            'VMCK_ARCHIVE_URL': options['env']['archive'],
+            'VMCK_SCRIPT_URL': options['env']['script'],
             'VMCK_URL': settings.VMCK_URL,
-            'VMCK_CALLBACK_URL': options['env']['vmck_callback_url'],
+            'VMCK_CALLBACK_URL': options['env']['callback_url'],
             'VMCK_JOB_ID': str(job.id),
         },
         'resources': {
