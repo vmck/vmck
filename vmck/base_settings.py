@@ -53,7 +53,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-NOMAD_JOB_PREFIX = 'vmck-'
+NOMAD_JOB_PREFIX = 'vmck-api-'
 NOMAD_DEPLOYMENT_NAME = f"vmck@{hostname}"
 
 SSH_USERNAME = 'vagrant'
