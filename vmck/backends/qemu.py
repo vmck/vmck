@@ -106,6 +106,10 @@ def task_group(job, options):
         'RestartPolicy': {
             'Attempts': 0,
         },
+        'ReschedulePolicy': {
+            'Attempts': 0,
+            'Unlimited': False,
+        },
     }
 
 
