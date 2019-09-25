@@ -1,4 +1,4 @@
-from .qemu import random_port, resources, services
+from vmck.backends.qemu import random_port, resources, services
 
 
 class DockerBackend:

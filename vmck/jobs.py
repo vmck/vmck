@@ -1,7 +1,9 @@
 import logging
+
 from django.conf import settings
-from .models import Job
-from . import nomad
+
+from vmck.models import Job
+from vmck import nomad
 
 log_level = logging.DEBUG
 log = logging.getLogger(__name__)
@@ -33,6 +35,7 @@ def create(backend, options):
 
 def ssh_remote(job):
     health = nomad.health(job.id)
+
     if health:
         check = health[0]
         if check['Status'] == 'passing':

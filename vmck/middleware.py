@@ -1,4 +1,5 @@
 import jwt
+
 from django.http import JsonResponse
 
 from vmck import settings
@@ -6,7 +7,7 @@ from vmck import settings
 
 def jwt_authentication_middleware(get_response):
     def middleware(request):
-        if request.path in settings.UNAUTHENTICATED_PATHS:
+        if request.path in settings.UNAUTHENTICATED_PATHS or settings.DEBUG:
             return get_response(request)
 
         try:
@@ -16,10 +17,10 @@ def jwt_authentication_middleware(get_response):
 
             jwt_token = auth_header[7:]
 
-            private_key = settings.SECRET_KEY
             decoded_jwt = jwt.decode(jwt_token,
-                                     private_key,
+                                     settings.SECRET_KEY,
                                      algorithms=['HS256'])
+
             user = decoded_jwt['sub']
 
             if user:
