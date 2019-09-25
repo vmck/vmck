@@ -1,9 +1,9 @@
-import subprocess
-import json
-from time import time, sleep
 import base64
+import subprocess
+from time import time, sleep
+
 import pytest
-from django.conf import settings
+from django.conf import settings  # noqa
 
 from vmck.ssh import ssh_args, ssh_identity
 
@@ -28,9 +28,10 @@ class JobApi:
 
         token = auth_resp['auth_token']
         resp = self.client.post('/v0/jobs',
-                                HTTP_AUTHORIZATION=f'Basic {credentials}')
+                                HTTP_AUTHORIZATION=f'Bearer {token}',
+                                content_type='application/json')
 
-        self.id = resp.json()['id']resp
+        self.id = resp.json()['id']
         self.url = f'/v0/jobs/{self.id}'
 
     def wait(self, timeout=900):

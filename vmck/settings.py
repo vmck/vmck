@@ -1,8 +1,8 @@
 import os
 import sentry_sdk
-from .utils import is_true
-from .base_settings import *  # noqa
-from .base_settings import QEMU_CPU_MHZ, SSH_USERNAME, base_dir
+from vmck.utils import is_true
+from vmck.base_settings import *  # noqa
+from vmck.base_settings import QEMU_CPU_MHZ, SSH_USERNAME, base_dir
 from sentry_sdk.integrations.django import DjangoIntegration
 
 SECRET_KEY = os.environ.get('SECRET_KEY')
@@ -16,7 +16,7 @@ if _hostname:
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(base_dir, 'data', 'db.sqlite3'),
+        'NAME': str(base_dir / 'data' / 'db.sqlite3'),
     }
 }
 
