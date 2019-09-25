@@ -1,11 +1,13 @@
 import os
+
 import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
 from vmck.utils import is_true
 from vmck.base_settings import *  # noqa
 from vmck.base_settings import QEMU_CPU_MHZ, SSH_USERNAME, base_dir
-from sentry_sdk.integrations.django import DjangoIntegration
 
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'changeme')
 
 DEBUG = is_true(os.environ.get('DEBUG'))
 

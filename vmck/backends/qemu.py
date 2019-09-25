@@ -1,6 +1,7 @@
 import random
 from pathlib import Path
 from urllib.parse import urljoin
+
 from django.conf import settings
 
 control_path = (Path(__file__).parent / 'control').resolve()

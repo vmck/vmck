@@ -35,15 +35,13 @@ def create_token(request):
     (username, password) = base64.b64decode(credentials).decode('latin-1').split(':')  # noqa: E501
     # TODO if password is not correct return failure
 
-    private_key = settings.SECRET_KEY
-
     jwt_token = jwt.encode(
         {
             'sub': username,
             'iss': 'vmck',
             'iat': int(time.time()),
         },
-        key=private_key,
+        key=settings.SECRET_KEY,
         algorithm='HS256',
     ).decode('latin-1')
 

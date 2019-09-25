@@ -26,9 +26,9 @@ class JobApi:
         auth_resp = self.client.get('/v0/token',
                                     HTTP_AUTHORIZATION=f'Basic {credentials}').json()  # noqa: E501
 
-        token = auth_resp['auth_token']
+        self.token = auth_resp['auth_token']
         resp = self.client.post('/v0/jobs',
-                                HTTP_AUTHORIZATION=f'Bearer {token}',
+                                HTTP_AUTHORIZATION=f'Bearer {self.token}',
                                 content_type='application/json')
 
         self.id = resp.json()['id']
@@ -38,7 +38,10 @@ class JobApi:
         t0 = time()
 
         while time() < t0 + timeout:
-            data = self.client.get(self.url).json()
+            data = self.client.get(
+                self.url,
+                HTTP_AUTHORIZATION=f'Bearer {self.token}',
+            ).json()
 
             if data.get('ssh'):
                 return data
@@ -47,7 +50,10 @@ class JobApi:
             sleep(1)
 
     def destroy(self):
-        return self.client.delete(self.url)
+        return self.client.delete(
+            self.url,
+            HTTP_AUTHORIZATION=f'Bearer {self.token}',
+        )
 
 
 def ssh(remote, args):

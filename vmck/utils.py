@@ -1,6 +1,6 @@
+import os
 import string
 import secrets
-import os
 from socket import gethostname
 
 vocabulary_64 = string.ascii_letters + string.digits + '.+'

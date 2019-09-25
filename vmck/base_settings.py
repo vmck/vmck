@@ -1,5 +1,5 @@
 from pathlib import Path
-from .utils import hostname
+from vmck.utils import hostname
 
 base_dir = Path(__file__).parent.parent
 
