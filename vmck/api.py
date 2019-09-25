@@ -12,7 +12,6 @@ from django.views.decorators.http import require_http_methods
 
 from vmck import jobs
 from vmck import models
-from vmck import settings
 from vmck.backends import get_backend
 
 
@@ -31,9 +30,9 @@ def home(request):
 
 def create_token(request):
     auth_header = request.headers['Authorization']
-    token_type, _, credentials = auth_header.partition(' ')
+    (token_type, _, credentials) = auth_header.partition(' ')
 
-    username, password = base64.b64decode(credentials).decode('utf-8').split(':')
+    (username, password) = base64.b64decode(credentials).decode('latin-1').split(':')  # noqa: E501
     # TODO if password is not correct return failure
 
     private_key = settings.SECRET_KEY
@@ -42,11 +41,11 @@ def create_token(request):
         {
             'sub': username,
             'iss': 'vmck',
-            'iat': int(time.time())
+            'iat': int(time.time()),
         },
         key=private_key,
         algorithm='HS256',
-    ).decode('utf-8')
+    ).decode('latin-1')
 
     return JsonResponse({'auth_token': jwt_token})
 
