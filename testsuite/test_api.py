@@ -22,13 +22,15 @@ class JobApi:
         self.client = client
 
     def start(self):
-        credentials = base64.b64encode(b'test:test').decode('utf8')
-        resp = self.client.get('/v0/token', **{'HTTP_AUTHORIZATION': 'Basic ' + credentials}).json()
+        credentials = base64.b64encode(b'test:test').decode('latin1')
+        auth_resp = self.client.get('/v0/token',
+                                    HTTP_AUTHORIZATION=f'Basic {credentials}').json()  # noqa: E501
 
-        token = resp['auth_token']
-        resp = self.client.post('/v0/jobs', **{'HTTP_AUTHORIZATION': 'Bearer ' + token})
+        token = auth_resp['auth_token']
+        resp = self.client.post('/v0/jobs',
+                                HTTP_AUTHORIZATION=f'Basic {credentials}')
 
-        self.id = resp.json()['id']
+        self.id = resp.json()['id']resp
         self.url = f'/v0/jobs/{self.id}'
 
     def wait(self, timeout=900):
