@@ -1,8 +1,8 @@
 import base64
 import json
+import time
 
 import jwt
-import time
 from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -10,10 +10,10 @@ from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
-from . import jobs
-from . import models
-from . import settings
-from .backends import get_backend
+from vmck import jobs
+from vmck import models
+from vmck import settings
+from vmck.backends import get_backend
 
 
 def job_info(job):
@@ -45,7 +45,7 @@ def create_token(request):
             'iat': int(time.time())
         },
         key=private_key,
-        algorithm='HS256'
+        algorithm='HS256',
     ).decode('utf-8')
 
     return JsonResponse({'auth_token': jwt_token})
