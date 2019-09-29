@@ -106,6 +106,7 @@ job "vmck" {
           SSH_USERNAME = "vagrant"
           CONSUL_URL = "http://consul.service.consul:8500"
           NOMAD_URL = "http://nomad.service.consul:4646"
+          VMCK_URL = 'http://{{ env "NOMAD_ADDR_http" }}'
           BACKEND = "qemu"
           QEMU_CPU_MHZ = 3000
           EOF

@@ -45,7 +45,7 @@ def ssh_remote(job):
 
 def poll(job):
     status = nomad.status(nomad_id(job))
-    log.debug('%r status: %r', job, status)
+    log.debug(f'{job.id} status: {status}')
 
     if status in [None, 'pending']:
         return

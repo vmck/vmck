@@ -1,7 +1,11 @@
 import random
-from pathlib import Path
 from urllib.parse import urljoin
+from pathlib import Path
+
 from django.conf import settings
+
+from vmck.backends import submission
+
 
 control_path = (Path(__file__).parent / 'control').resolve()
 second = 1000000000
@@ -36,7 +40,7 @@ def services(job):
                     'Name': f'{name} tcp',
                     'InitialStatus': 'critical',
                     'Type': 'tcp',
-                    'Port': '${NOMAD_PORT_ssh}',
+                    'PortLabel': 'ssh',
                     'Interval': 1 * second,
                     'Timeout':  1 * second,
                 },
@@ -46,6 +50,7 @@ def services(job):
 
 
 def task_group(job, options):
+    tasks = []
     vm_port = random_port()
 
     prefix = settings.QEMU_IMAGE_PATH_PREFIX.rstrip('/') + '/'
@@ -97,12 +102,14 @@ def task_group(job, options):
         'resources': resources(vm_port, options),
         'services': services(job),
     }
+    tasks.append(vm_task)
+
+    if options.get('manager', False):
+        tasks.append(submission.task(job, options))
 
     return {
         'name': 'test',
-        'tasks': [
-            vm_task,
-        ],
+        'tasks': tasks,
         'RestartPolicy': {
             'Attempts': 0,
         },
