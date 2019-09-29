@@ -14,8 +14,8 @@ DATABASES = {
     }
 }
 
-CONSUL_URL = os.environ.get('TESTING_CONSUL_URL', 'http://10.42.1.1:8500')
-NOMAD_URL = os.environ.get('TESTING_NOMAD_URL', 'http://10.42.1.1:4646')
+CONSUL_URL = os.environ.get('TESTING_CONSUL_URL', 'http://10.66.60.1:8500')
+NOMAD_URL = os.environ.get('TESTING_NOMAD_URL', 'http://10.66.60.1:4646')
 NOMAD_JOB_PREFIX = f'testsuite-{random_code(8)}-'
 NOMAD_DEPLOYMENT_NAME = f"test-vmck@{hostname} {datetime.now().strftime('%H:%M:%S')}"  # noqa: E501
 
