@@ -22,8 +22,8 @@ Vagrant.configure("2") do |config|
   config.vm.provider :vmck do |vmck|
     vmck.image_path = 'cluster-master.qcow2.tar.gz'
     vmck.vmck_url = ENV['VMCK_URL']
-    vmck.memory = 1024 * 2
+    vmck.memory = 1024 * 4
     vmck.name = ENV['VMCK_NAME']
-    vmck.cpus = 1
+    vmck.cpus = 2
   end
 end
