@@ -34,7 +34,7 @@ class JobApi:
         self.id = resp.json()['id']
         self.url = f'/v0/jobs/{self.id}'
 
-    def wait(self, timeout=900):
+    def wait(self, timeout=120):
         t0 = time()
 
         while time() < t0 + timeout:
