@@ -15,6 +15,7 @@ def task(job, options):
             'VMCK_URL': settings.VMCK_URL,
             'VMCK_CALLBACK_URL': options['env']['callback'],
             'VMCK_JOB_ID': str(job.id),
+            'VMCK_AUTH': options['env']['auth'],
         },
         'resources': {
             'MemoryMB': options['env']['memory'],
