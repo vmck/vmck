@@ -1,7 +1,11 @@
 import logging
+import socket
+
 from django.conf import settings
+
 from .models import Job
 from . import nomad
+
 
 log_level = logging.DEBUG
 log = logging.getLogger(__name__)
@@ -31,16 +35,41 @@ def create(backend, options):
     return job
 
 
+def test_ssh_signature(host, port):
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(1)
+        try:
+            log.debug(f"Connecting to {host}:{port}")
+            sock.connect((host, port))
+            log.debug(f"Successfully connectied to {host}:{port}")
+            resp = sock.recv(1000)
+            log.debug(f"Received {resp}")
+            if resp.startswith(b'SSH-'):
+                return True
+        finally:
+            sock.close()
+    except Exception as e:
+        log.debug(f"Exception: {e}")
+        pass
+
+    return False
+
+
 def ssh_remote(job):
     health = nomad.health(job.id)
     if health:
         check = health[0]
+        log.debug(f"Healthcheck for {job.id}: {check['Status']}")
         if check['Status'] == 'passing':
-            return {
-                'host': check['Output'].split(':')[0].split()[-1],
-                'port': int(check['Output'].split(':')[1]),
-                'username': settings.SSH_USERNAME,
-            }
+            host = check['Output'].split(':')[0].split()[-1]
+            port = int(check['Output'].split(':')[1])
+            if test_ssh_signature(host, port):
+                return {
+                    'host': host,
+                    'port': port,
+                    'username': settings.SSH_USERNAME,
+                }
 
 
 def poll(job):

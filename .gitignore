@@ -1,5 +1,5 @@
 /.env
 /*.egg-info
 /data
-/ci/.vagrant
+/.vagrant
 /.pytest_cache
