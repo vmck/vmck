@@ -1,4 +1,4 @@
-from .qemu import random_port, resources, services
+from .qemu import random_port, constraints, resources, services
 
 
 class DockerBackend:
@@ -21,6 +21,7 @@ class DockerBackend:
 
         return {
             'Name': 'test',
+            'Constraints': constraints(),
             'Tasks': [
                 docker_vm_task,
             ],
