@@ -7,9 +7,8 @@ from .models import Job
 from . import nomad
 
 
-log_level = logging.DEBUG
 log = logging.getLogger(__name__)
-log.setLevel(log_level)
+log.setLevel(settings.log_level)
 
 
 def nomad_id(job):

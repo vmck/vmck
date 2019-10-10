@@ -1,4 +1,5 @@
 import os
+import logging
 import sentry_sdk
 from .utils import is_true
 from .base_settings import *  # noqa
@@ -8,6 +9,7 @@ from sentry_sdk.integrations.django import DjangoIntegration
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 DEBUG = is_true(os.environ.get('DEBUG'))
+log_level = logging.DEBUG if DEBUG else logging.INFO
 
 _hostname = os.environ.get('HOSTNAME')
 if _hostname:
