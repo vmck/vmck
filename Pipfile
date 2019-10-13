@@ -11,4 +11,5 @@ requests = "*"
 pytest-django = "*"
 sentry-sdk = "*"
 waitress = "*"
+psycopg2 = "==2.7.4"
 vmck = {editable = true,path = "."}
