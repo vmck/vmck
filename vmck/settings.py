@@ -2,7 +2,7 @@ import os
 import sentry_sdk
 from .utils import is_true
 from .base_settings import *  # noqa
-from .base_settings import QEMU_CPU_MHZ, SSH_USERNAME, base_dir
+from .base_settings import QEMU_CPU_MHZ, SSH_USERNAME
 from sentry_sdk.integrations.django import DjangoIntegration
 
 SECRET_KEY = os.environ.get('SECRET_KEY')
@@ -16,7 +16,7 @@ if _hostname:
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'interface',
+        'NAME': 'vmck',
         'USER': os.getenv('POSTGRES_USER'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
         'HOST': os.getenv('POSTGRES_ADDRESS'),
