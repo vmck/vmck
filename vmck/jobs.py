@@ -8,7 +8,7 @@ from . import nomad
 
 
 log = logging.getLogger(__name__)
-log.setLevel(settings.log_level)
+log.setLevel(settings.LOG_LEVEL)
 
 
 def nomad_id(job):

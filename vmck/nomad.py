@@ -4,7 +4,7 @@ from django.conf import settings
 from urllib.parse import urljoin
 
 log = logging.getLogger(__name__)
-log.setLevel(settings.log_level)
+log.setLevel(settings.LOG_LEVEL)
 
 api = urljoin(settings.NOMAD_URL, 'v1')
 consul_api = urljoin(settings.CONSUL_URL, 'v1')

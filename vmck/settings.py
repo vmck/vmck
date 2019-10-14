@@ -9,7 +9,7 @@ from sentry_sdk.integrations.django import DjangoIntegration
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 DEBUG = is_true(os.environ.get('DEBUG'))
-log_level = logging.DEBUG if DEBUG else logging.INFO
+LOG_LEVEL = logging.DEBUG if DEBUG else logging.INFO
 
 _hostname = os.environ.get('HOSTNAME')
 if _hostname:
