@@ -41,7 +41,7 @@ def test_ssh_signature(host, port):
         try:
             log.debug(f"Connecting to {host}:{port}")
             sock.connect((host, port))
-            log.debug(f"Successfully connectied to {host}:{port}")
+            log.debug(f"Successfully connected to {host}:{port}")
             resp = sock.recv(1000)
             log.debug(f"Received {resp}")
             if resp.startswith(b'SSH-'):
