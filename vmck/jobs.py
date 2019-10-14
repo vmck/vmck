@@ -10,7 +10,7 @@ from . import nomad
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG if settings.DEBUG else logging.INFO)
 
-skip_ssh_signature = not settings.CHECK_SSH_SIGNATURE
+skip_ssh_signature = (settings.CHECK_SSH_SIGNATURE_TIMEOUT < 0)
 
 
 def nomad_id(job):
@@ -39,7 +39,7 @@ def create(backend, options):
 def test_ssh_signature(host, port):
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.settimeout(5)
+        sock.settimeout(settings.CHECK_SSH_SIGNATURE_TIMEOUT)
         try:
             log.debug(f"Connecting to {host}:{port}")
             sock.connect((host, port))

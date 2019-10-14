@@ -37,4 +37,4 @@ sentry_sdk.init(
     integrations=[DjangoIntegration()]
 )
 
-CHECK_SSH_SIGNATURE = bool(os.environ.get('TEST_SSH_SIGNATURE'))
+CHECK_SSH_SIGNATURE_TIMEOUT = int(os.environ.get('TEST_SSH_SIGNATURE_TIMEOUT', '-1'))
