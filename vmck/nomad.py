@@ -3,9 +3,8 @@ import requests
 from django.conf import settings
 from urllib.parse import urljoin
 
-log_level = logging.DEBUG
 log = logging.getLogger(__name__)
-log.setLevel(log_level)
+log.setLevel(logging.DEBUG if settings.DEBUG else logging.INFO)
 
 api = urljoin(settings.NOMAD_URL, 'v1')
 consul_api = urljoin(settings.CONSUL_URL, 'v1')
