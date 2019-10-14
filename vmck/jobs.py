@@ -10,6 +10,8 @@ from . import nomad
 log = logging.getLogger(__name__)
 log.setLevel(settings.LOG_LEVEL)
 
+skip_ssh_signature = not settings.CHECK_SSH_SIGNATURE
+
 
 def nomad_id(job):
     prefix = settings.NOMAD_JOB_PREFIX
@@ -63,7 +65,7 @@ def ssh_remote(job):
         if check['Status'] == 'passing':
             host = check['Output'].split(':')[0].split()[-1]
             port = int(check['Output'].split(':')[1])
-            if test_ssh_signature(host, port):
+            if skip_ssh_signature or test_ssh_signature(host, port):
                 return {
                     'host': host,
                     'port': port,
