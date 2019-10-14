@@ -8,7 +8,7 @@ from . import nomad
 
 
 log = logging.getLogger(__name__)
-log.setLevel(settings.LOG_LEVEL)
+log.setLevel(logging.DEBUG if settings.DEBUG else logging.INFO)
 
 skip_ssh_signature = not settings.CHECK_SSH_SIGNATURE
 

@@ -14,7 +14,7 @@ from vmck import models
 
 
 log = logging.getLogger(__name__)
-log.setLevel(settings.LOG_LEVEL)
+log.setLevel(logging.DEBUG if settings.DEBUG else logging.INFO)
 
 
 def job_info(job):
