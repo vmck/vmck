@@ -39,4 +39,4 @@ sentry_sdk.init(
     integrations=[DjangoIntegration()]
 )
 
-TEST_SSH_SIGNATURE = bool(os.environ.get('TEST_SSH_SIGNATURE'))
+CHECK_SSH_SIGNATURE = bool(os.environ.get('TEST_SSH_SIGNATURE'))
