@@ -15,6 +15,16 @@ def random_port(start=10000, end=20000):
     return random.SystemRandom().randint(start, end - 1)
 
 
+def constraints():
+    return [
+        {
+            'LTarget': "${meta.vmck_worker}",
+            'RTarget': "",
+            'Operand': "is_set",
+        },
+    ]
+
+
 def resources(vm_port, options):
     network = {
         'ReservedPorts': [
@@ -114,6 +124,7 @@ def task_group(job, options):
 
     return {
         'name': 'test',
+        'Constraints': constraints(),
         'tasks': tasks,
         'RestartPolicy': {
             'Attempts': 0,
