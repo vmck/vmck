@@ -38,5 +38,5 @@ sentry_sdk.init(
 )
 
 CHECK_SSH_SIGNATURE_TIMEOUT = int(
-    os.environ.get('TEST_SSH_SIGNATURE_TIMEOUT', '-1')
+    os.environ.get('CHECK_SSH_SIGNATURE_TIMEOUT', '-1')
 )
