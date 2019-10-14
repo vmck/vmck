@@ -72,9 +72,9 @@ def ssh_remote(job):
 
 
 def poll(job):
-    job.state = job.STATE_DONE
-    log.warning(f"Polling dead job {job!r}")
-    return
+    if job.state == job.STATE_DONE:
+        log.warning(f"Polling dead job {job!r}")
+        return
 
     status = nomad.status(nomad_id(job))
     log.debug(f'{job.id} status: {status}')
