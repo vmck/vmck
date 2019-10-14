@@ -67,15 +67,20 @@ def task_group(job, options):
     if image_filename.endswith('.tar.gz'):
         image_filename = image_filename[:-len('.tar.gz')]
 
+    netdev = (
+        'user'
+        ',id=user'
+        ',net=192.168.1.0/24'
+        ',hostname=vmck'
+        ',hostfwd=tcp:${attr.unique.network.ip-address}:${NOMAD_PORT_ssh}-:22'
+    )
+
+    if options['restrict_network']:
+        netdev += ',restrict=on'
+
     qemu_args = [
         '-smp', str(options['cpus']),
-        '-netdev', (
-            'user'
-            ',id=user'
-            ',net=192.168.1.0/24'
-            ',hostname=vmck'
-            ',hostfwd=tcp:${attr.unique.network.ip-address}:${NOMAD_PORT_ssh}-:22'  # noqa: E501
-        ),
+        '-netdev', netdev,
         '-device', (
             'virtio-net-pci'
             ',netdev=user'
