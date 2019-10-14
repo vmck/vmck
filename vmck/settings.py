@@ -1,5 +1,4 @@
 import os
-import logging
 import sentry_sdk
 from .utils import is_true
 from .base_settings import *  # noqa
