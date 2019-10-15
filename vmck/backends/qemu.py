@@ -5,6 +5,7 @@ from pathlib import Path
 from django.conf import settings
 
 from vmck.backends import submission
+from vmck.backends import socat
 
 
 control_path = (Path(__file__).parent / 'control').resolve()
@@ -82,7 +83,7 @@ def task_group(job, options):
         ',id=user'
         ',net=192.168.1.0/24'
         ',hostname=vmck'
-        ',hostfwd=tcp:${attr.unique.network.ip-address}:${NOMAD_PORT_ssh}-:22'
+        ',hostfwd=tcp:127.0.0.1:${NOMAD_PORT_ssh}-:22'
     )
 
     if options['restrict_network']:
@@ -118,6 +119,7 @@ def task_group(job, options):
         'services': services(job),
     }
     tasks.append(vm_task)
+    tasks.append(socat.task())
 
     if options.get('manager', False):
         tasks.append(submission.task(job, options))
