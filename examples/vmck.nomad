@@ -81,6 +81,58 @@ job "vmck" {
     }
   }
 
+  group "database" {
+    task "postgres" {
+      constraint {
+        attribute = "${meta.volumes}"
+        operator  = "is_set"
+      }
+
+      driver = "docker"
+      config {
+        image = "postgres:12.0-alpine"
+        dns_servers = ["${attr.unique.network.ip-address}"]
+        volumes = [
+          "${meta.volumes}/database-vmck/postgres/data:/var/lib/postgresql/data",
+        ]
+        port_map {
+          pg = 5432
+        }
+      }
+      template {
+        data = <<-EOF
+          POSTGRES_DB = "vmck"
+          {{- with secret "kv/postgres" }}
+            POSTGRES_USER = {{ .Data.username }}
+            POSTGRES_PASSWORD = {{ .Data.password }}
+          {{- end }}
+          EOF
+        destination = "local/postgres.env"
+        env = true
+      }
+      resources {
+        memory = 350
+        network {
+          mbits = 1
+          port "pg" {
+            static = 5431
+          }
+        }
+      }
+      service {
+        name = "database-postgres-vmck"
+        port = "pg"
+        check {
+          name = "tcp"
+          initial_status = "critical"
+          type = "tcp"
+          interval = "5s"
+          timeout = "5s"
+        }
+      }
+    }
+  }
+
   group "vmck" {
     task "vmck" {
       constraint {
@@ -89,7 +141,7 @@ job "vmck" {
       }
       driver = "docker"
       config {
-        image = "vmck/vmck:0.4.4"
+        image = "vmck/vmck:0.4.5"
         hostname = "${attr.unique.hostname}"
         dns_servers = ["${attr.unique.network.ip-address}"]
         volumes = [
@@ -110,8 +162,8 @@ job "vmck" {
           BACKEND = "qemu"
           QEMU_CPU_MHZ = 3000
           EOF
-          destination = "local/vmck.env"
-          env = true
+        destination = "local/vmck.env"
+        env = true
       }
       template {
         data = <<-EOF
@@ -119,8 +171,29 @@ job "vmck" {
             QEMU_IMAGE_PATH_PREFIX = "http://{{.Address}}:{{.Port}}"
           {{- end }}
           EOF
-          destination = "local/vmck-imghost.env"
-          env = true
+        destination = "local/vmck-imghost.env"
+        env = true
+      }
+      template {
+        data = <<-EOF
+          {{- with secret "kv/postgres" }}
+            POSTGRES_USER = {{ .Data.username }}
+            POSTGRES_PASSWORD = {{ .Data.password }}
+          {{- end }}
+          EOF
+        destination = "local/postgres.env"
+        env = true
+      }
+      template {
+        data = <<-EOF
+          {{- range service "database-postgres-vmck" -}}
+            POSTGRES_DB = "vmck"
+            POSTGRES_ADDRESS = "{{ .Address }}"
+            POSTGRES_PORT = "{{ .Port }}"
+          {{- end }}
+          EOF
+        destination = "local/postgres-api.env"
+        env = true
       }
       resources {
         memory = 450

@@ -13,11 +13,23 @@ _hostname = os.environ.get('HOSTNAME')
 if _hostname:
     ALLOWED_HOSTS = [_hostname]
 
+_postgres_db = {
+    'ENGINE': 'django.db.backends.postgresql',
+    'NAME': os.getenv('POSTGRES_DB'),
+    'USER': os.getenv('POSTGRES_USER'),
+    'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+    'HOST': os.getenv('POSTGRES_ADDRESS'),
+    'PORT': os.getenv('POSTGRES_PORT'),
+}
+_sqlite_db = {
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': str(base_dir / 'data' / 'db.sqlite3'),
+}
+
+default_db = _postgres_db if os.getenv('POSTGRES_DB') else _sqlite_db
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': str(base_dir / 'data' / 'db.sqlite3'),
-    }
+    'default': default_db
 }
 
 VMCK_URL = os.environ.get('VMCK_URL', 'http://localhost:10000')
