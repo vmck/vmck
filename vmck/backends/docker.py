@@ -1,4 +1,5 @@
-from .qemu import random_port, constraints, resources, services
+from .qemu import random_port, constraints, resources
+from .socat import services
 
 
 class DockerBackend:
