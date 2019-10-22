@@ -107,8 +107,8 @@ job "vmck" {
           CONSUL_URL = "http://consul.service.consul:8500"
           NOMAD_URL = "http://nomad.service.consul:4646"
           VMCK_URL = 'http://{{ env "NOMAD_ADDR_http" }}'
-          BACKEND = "qemu"
-          QEMU_CPU_MHZ = 3000
+          BACKEND = "docker"
+          QEMU_CPU_MHZ = 300
           EOF
         destination = "local/vmck.env"
         env = true
