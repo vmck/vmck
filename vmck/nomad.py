@@ -7,7 +7,6 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG if settings.DEBUG else logging.INFO)
 
 api = urljoin(settings.NOMAD_URL, 'v1')
-consul_api = urljoin(settings.CONSUL_URL, 'v1')
 
 
 class NoAllocsFoundError(RuntimeError):
@@ -97,8 +96,3 @@ def logs(job_id, type):
             'plain': 'true',
         },
     ))
-
-
-def health(job_id):
-    service = f'vmck-{job_id}-ssh'
-    return response(requests.get(f'{consul_api}/health/checks/{service}'))

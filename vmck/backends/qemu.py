@@ -9,7 +9,6 @@ from vmck.backends import socat
 
 
 control_path = (Path(__file__).parent / 'control').resolve()
-second = 1000000000
 
 
 def random_port(start=10000, end=20000):
@@ -37,27 +36,6 @@ def resources(vm_port, options):
         'MemoryMB': options['memory'],
         'CPU': options['cpu_mhz'],
     }
-
-
-def services(job):
-    name = f'vmck-{job.id}-ssh'
-
-    return [
-        {
-            'Name': name,
-            'PortLabel': 'ssh',
-            'Checks': [
-                {
-                    'Name': f'{name} tcp',
-                    'InitialStatus': 'critical',
-                    'Type': 'tcp',
-                    'PortLabel': 'ssh',
-                    'Interval': 1 * second,
-                    'Timeout':  1 * second,
-                },
-            ],
-        },
-    ]
 
 
 def task_group(job, options):
@@ -116,10 +94,9 @@ def task_group(job, options):
             'args': qemu_args,
         },
         'resources': resources(vm_port, options),
-        'services': services(job),
     }
     tasks.append(vm_task)
-    tasks.append(socat.task())
+    tasks.append(socat.task(job))
 
     if options.get('manager', False):
         tasks.append(submission.task(job, options))
