@@ -1,16 +1,14 @@
 import logging
-import socket
 
 from django.conf import settings
 
-from .models import Job
-from . import nomad
+from vmck.models import Job
+from vmck import nomad
+from vmck import consul
 
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG if settings.DEBUG else logging.INFO)
-
-skip_ssh_signature = (settings.CHECK_SSH_SIGNATURE_TIMEOUT < 0)
 
 
 def nomad_id(job):
@@ -36,41 +34,20 @@ def create(backend, options):
     return job
 
 
-def test_ssh_signature(host, port):
-    try:
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.settimeout(settings.CHECK_SSH_SIGNATURE_TIMEOUT)
-        try:
-            log.debug(f"Connecting to {host}:{port}")
-            sock.connect((host, port))
-            log.debug(f"Successfully connected to {host}:{port}")
-            resp = sock.recv(1000)
-            log.debug(f"Received {resp}")
-            if resp.startswith(b'SSH-'):
-                return True
-        finally:
-            sock.close()
-    except Exception as e:
-        log.debug(f"Exception: {e}")
-        pass
-
-    return False
-
-
 def ssh_remote(job):
-    health = nomad.health(job.id)
+    health = consul.health(job.id)
     if health:
         check = health[0]
         log.debug(f"Healthcheck for {job.id}: {check['Status']}")
         if check['Status'] == 'passing':
-            host = check['Output'].split(':')[0].split()[-1]
-            port = int(check['Output'].split(':')[1])
-            if skip_ssh_signature or test_ssh_signature(host, port):
-                return {
-                    'host': host,
-                    'port': port,
-                    'username': settings.SSH_USERNAME,
-                }
+            service_id = check['ServiceID']
+            service = consul.service(job.id, service_id)[0]
+            log.debug(f"Service {service_id} for {job.id}: {service}")
+            return {
+                'host': service['ServiceAddress'],
+                'port': service['ServicePort'],
+                'username': settings.SSH_USERNAME,
+            }
 
 
 def poll(job):
