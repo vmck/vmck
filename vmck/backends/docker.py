@@ -1,5 +1,6 @@
 from .qemu import random_port, constraints, resources
 from .socat import services
+from .import submission
 
 
 class DockerBackend:
@@ -20,12 +21,15 @@ class DockerBackend:
             'services': services(job),
         }
 
+        tasks = [docker_vm_task]
+
+        if options.get('manager', False):
+            tasks.append(submission.task(job, options))
+
         return {
             'Name': 'test',
             'Constraints': constraints(),
-            'Tasks': [
-                docker_vm_task,
-            ],
+            'Tasks': tasks,
             'RestartPolicy': {
                 'Attempts': 0,
             },
