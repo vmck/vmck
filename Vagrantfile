@@ -18,7 +18,6 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provision "shell", path: "ci/provision-cluster.sh", binary: true
-  config.vm.provision 'shell', path: "ci/wait-cluster.sh"
 
   config.vm.provider :vmck do |vmck|
     vmck.image_path = 'imgbuild-cluster.qcow2.tar.gz'
