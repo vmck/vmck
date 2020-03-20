@@ -59,12 +59,12 @@ steps:
 kind: secret
 name: docker_username
 get:
-  path: liquid/ci/drone.docker
+  path: kv/liquid/ci/drone.docker
   name: username
 
 ---
 kind: secret
 name: docker_password
 get:
-  path: liquid/ci/drone.docker
+  path: kv/liquid/ci/drone.docker
   name: password
