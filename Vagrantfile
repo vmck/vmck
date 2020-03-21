@@ -17,10 +17,10 @@ Vagrant.configure("2") do |config|
     config.vm.provision 'shell', inline: "sudo shutdown #{ENV['SHUTDOWN']}"
   end
 
-  config.vm.provision 'shell', path: "ci/wait-cluster.sh"
+  config.vm.provision "shell", path: "ci/provision-cluster.sh", binary: true
 
   config.vm.provider :vmck do |vmck|
-    vmck.image_path = 'cluster-master.qcow2.tar.gz'
+    vmck.image_path = 'imgbuild-cluster.qcow2.tar.gz'
     vmck.vmck_url = ENV['VMCK_URL']
     vmck.memory = 1024 * 4
     vmck.name = ENV['VMCK_NAME']

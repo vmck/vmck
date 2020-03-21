@@ -54,17 +54,3 @@ steps:
       from_secret: docker_username
     password:
       from_secret: docker_password
-
----
-kind: secret
-name: docker_username
-get:
-  path: liquid/ci/drone.docker
-  name: username
-
----
-kind: secret
-name: docker_password
-get:
-  path: liquid/ci/drone.docker
-  name: password
