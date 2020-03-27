@@ -2,7 +2,7 @@ from django.conf import settings
 
 
 def task(job, options):
-    job = {
+    job_task = {
         'name': 'submission-handler',
         'driver': 'docker',
         'config': {
@@ -16,7 +16,7 @@ def task(job, options):
         },
     }
 
-    job['env']['VMCK_URL'] = settings.VMCK_URL
-    job['env']['VMCK_JOB_ID'] = str(job.id)
+    job_task['env']['VMCK_URL'] = settings.VMCK_URL
+    job_task['env']['VMCK_JOB_ID'] = str(job.id)
 
-    return job
+    return job_task
