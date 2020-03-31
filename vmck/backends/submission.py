@@ -11,7 +11,7 @@ def task(job, options):
         },
         'env': {"VMCK_" + k.upper(): v for k, v in options['env'].items()},
         'resources': {
-            'MemoryMB': options['manager']['memory'],
+            'MemoryMB': options['manager']['memory_mb'],
             'CPU': options['manager']['cpu_mhz'],
         },
     }
