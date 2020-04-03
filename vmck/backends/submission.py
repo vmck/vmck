@@ -9,7 +9,7 @@ def task(job, options):
             'image': f'vmck/vagrant-vmck:{options["manager"]["vagrant_tag"]}',
             'command': '/src/submission/launch.sh',
         },
-        'env': {"VMCK_" + k.upper(): v for k, v in options['env'].items()},
+        'env': options['env'],
         'resources': {
             'MemoryMB': options['manager']['memory_mb'],
             'CPU': options['manager']['cpu_mhz'],
