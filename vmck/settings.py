@@ -40,6 +40,13 @@ VMCK_BACKEND = os.environ.get('BACKEND', 'docker')
 QEMU_IMAGE_PATH_PREFIX = os.environ.get('QEMU_IMAGE_PATH_PREFIX')
 QEMU_CPU_MHZ = int(os.environ.get('QEMU_CPU_MHZ', QEMU_CPU_MHZ))
 
+VM_PORT_RANGE_START = int(os.environ.get('VM_PORT_RANGE_START',
+                                         10000,
+))
+VM_PORT_RANGE_STOP = int(os.environ.get('VM_PORT_RANGE_STOP',
+                                         20000,
+))
+
 _ssh_username = SSH_USERNAME
 SSH_USERNAME = os.environ.get('SSH_USERNAME', _ssh_username)
 
