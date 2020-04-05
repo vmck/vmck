@@ -109,6 +109,8 @@ job "vmck" {
           VMCK_URL = 'http://{{ env "NOMAD_ADDR_http" }}'
           BACKEND = "docker"
           QEMU_CPU_MHZ = 300
+          VM_PORT_RANGE_START = 10000
+          VM_PORT_RANGE_STOP = 20000
           EOF
         destination = "local/vmck.env"
         env = true

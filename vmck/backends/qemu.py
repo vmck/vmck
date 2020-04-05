@@ -40,8 +40,9 @@ def resources(vm_port, options):
 
 def task_group(job, options):
     tasks = []
-    vm_port = random_port(settings.VM_PORT_RANGE_START,
-                          settings.VM_PORT_RANGE_STOP,
+    vm_port = random_port(
+        settings.VM_PORT_RANGE_START,
+        settings.VM_PORT_RANGE_STOP,
     )
 
     prefix = settings.QEMU_IMAGE_PATH_PREFIX.rstrip('/') + '/'
