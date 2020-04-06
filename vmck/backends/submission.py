@@ -2,23 +2,21 @@ from django.conf import settings
 
 
 def task(job, options):
-    return {
+    job_task = {
         'name': 'submission-handler',
         'driver': 'docker',
         'config': {
-            'image': f'vmck/vagrant-vmck:{options["env"]["vagrant_tag"]}',
+            'image': f'vmck/vagrant-vmck:{options["manager"]["vagrant_tag"]}',
             'command': '/src/submission/launch.sh',
         },
-        'env': {
-            'VMCK_ARCHIVE_URL': options['env']['archive'],
-            'VMCK_SCRIPT_URL': options['env']['script'],
-            'VMCK_ARTIFACT_URL': options['env']['artifact'],
-            'VMCK_URL': settings.VMCK_URL,
-            'VMCK_CALLBACK_URL': options['env']['callback'],
-            'VMCK_JOB_ID': str(job.id),
-        },
+        'env': options['env'],
         'resources': {
-            'MemoryMB': options['env']['memory'],
-            'CPU': options['env']['cpu_mhz'],
+            'MemoryMB': options['manager']['memory_mb'],
+            'CPU': options['manager']['cpu_mhz'],
         },
     }
+
+    job_task['env']['VMCK_URL'] = settings.VMCK_URL
+    job_task['env']['VMCK_JOB_ID'] = str(job.id)
+
+    return job_task
