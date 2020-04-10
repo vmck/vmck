@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from vmck.wsgi import application
+from vmck.wsgi import app
 from vmck.settings import APP_THREAD_COUNT
 
 from waitress import serve
