@@ -43,6 +43,8 @@ QEMU_CPU_MHZ = int(os.environ.get('QEMU_CPU_MHZ', QEMU_CPU_MHZ))
 _ssh_username = SSH_USERNAME
 SSH_USERNAME = os.environ.get('SSH_USERNAME', _ssh_username)
 
+APP_THREAD_COUNT = int(os.environ.get('APP_THREAD_COUNT', 8))
+
 SENTRY_DSN = os.environ.get('SENTRY_DSN')
 sentry_sdk.init(
     dsn=SENTRY_DSN,
