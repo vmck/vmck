@@ -1,5 +1,5 @@
 #!/bin/bash -ex
 
-cd "$( dirname "${BASH_SOURCE[0]}" )" 
+cd "$( dirname "${BASH_SOURCE[0]}" )"
 pipenv run ./manage.py migrate
-exec pipenv run python ./server.py 
+exec pipenv run ./manage.py waitress
