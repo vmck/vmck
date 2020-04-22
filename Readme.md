@@ -1,3 +1,5 @@
+[![Build Status](https://frisbee.vmchecker.cs.pub.ro/api/badges/vmck/vmck/status.svg)](https://frisbee.vmchecker.cs.pub.ro/vmck/vmck)
+
 # Vmck
 Vmck is a virtual machine service that runs QEMU and Docker images in a Nomad
 cluster.
