@@ -1,11 +1,9 @@
 import random
-from urllib.parse import urljoin
 from pathlib import Path
 
 from django.conf import settings
 
 from vmck.backends import submission
-from vmck.backends import socat
 
 
 control_path = (Path(__file__).parent / 'control').resolve()
@@ -44,8 +42,6 @@ def task_group(job, options):
         settings.VM_PORT_RANGE_START,
         settings.VM_PORT_RANGE_STOP,
     )
-
-    assert image.startswith(prefix)
 
     image_filename = options['image_path'].split('/')[-1]
     if image_filename.endswith('.qcow2'):
