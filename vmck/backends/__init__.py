@@ -1,8 +1,9 @@
 from django.conf import settings
 
 
-def get_backend():
-    backend = settings.VMCK_BACKEND
+def get_backend(backend=None):
+    if not backend:
+        backend = settings.VMCK_BACKEND
 
     if backend == 'qemu':
         from .qemu import QemuBackend
