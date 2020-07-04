@@ -13,4 +13,8 @@ def get_backend(backend=None):
         from .docker import DockerBackend
         return DockerBackend()
 
+    if backend == 'raw_qemu':
+        from .raw_qemu import RawQemuBackend
+        return RawQemuBackend()
+
     raise KeyError(f"Unknown backend {backend}")
