@@ -65,7 +65,7 @@ def task_group(job, options):
         '-m', str(options['memory']),
         '-snapshot',
         '-enable-kvm',
-        '-nographic'
+        '-nographic',
         f'/opt/volumes/vmck-images/{image_filename}',
     ]
 
