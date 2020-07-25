@@ -1,4 +1,5 @@
 import random
+import logging
 from pathlib import Path
 
 from django.conf import settings
@@ -7,6 +8,8 @@ from vmck.backends import socat
 from vmck.backends import submission
 
 
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG if settings.DEBUG else logging.INFO)
 control_path = (Path(__file__).parent / 'control').resolve()
 
 
@@ -103,4 +106,6 @@ def task_group(job, options):
 class RawQemuBackend:
 
     def task_group(self, job, options):
-        return task_group(job, options)
+        a = task_group(job, options)
+        log.debug(a)
+        return a
