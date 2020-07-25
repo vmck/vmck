@@ -3,6 +3,7 @@ from pathlib import Path
 
 from django.conf import settings
 
+from vmck.backends import socat
 from vmck.backends import submission
 
 
