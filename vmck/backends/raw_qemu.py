@@ -44,8 +44,6 @@ def task_group(job, options):
     )
 
     image_filename = options['image_path'].split('/')[-1]
-    if image_filename.endswith('.qcow2'):
-        image_filename = image_filename[:-len('.qcow2')]
 
     netdev = (
         'user'
