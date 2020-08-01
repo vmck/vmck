@@ -4,13 +4,21 @@ from pathlib import Path
 
 from django.conf import settings
 
-from vmck.backends import socat
 from vmck.backends import submission
 
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG if settings.DEBUG else logging.INFO)
 control_path = (Path(__file__).parent / 'control').resolve()
+
+second = 1000000000
+
+check_script = '''\
+(
+    set -x
+    echo | nc $NOMAD_IP_ssh $NOMAD_PORT_ssh | grep -q 'SSH-'
+) 2>&1
+'''
 
 
 def random_port(start=10000, end=20000):
@@ -38,6 +46,29 @@ def resources(vm_port, options):
         'MemoryMB': options['memory'],
         'CPU': options['cpu_mhz'],
     }
+
+
+def services(job):
+    name = f'vmck-{job.id}-ssh'
+
+    return [
+        {
+            'Name': name,
+            'PortLabel': 'ssh',
+            'Checks': [
+                {
+                    'Name': f'{name} ssh',
+                    'InitialStatus': 'critical',
+                    'Type': 'script',
+                    'Command': '/bin/sh',
+                    'Args': ['-c', check_script],
+                    'PortLabel': 'ssh',
+                    'Interval': 1 * second,
+                    'Timeout': 1 * second,
+                },
+            ],
+        },
+    ]
 
 
 def task_group(job, options):
@@ -84,7 +115,6 @@ def task_group(job, options):
         'resources': resources(vm_port, options),
     }
     tasks.append(vm_task)
-    tasks.append(socat.task(job))
 
     if options.get('manager', False):
         tasks.append(submission.task(job, options))
@@ -100,6 +130,7 @@ def task_group(job, options):
             'Attempts': 0,
             'Unlimited': False,
         },
+        'services': services(job),
     }
 
 
