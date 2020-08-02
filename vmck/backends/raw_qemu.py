@@ -54,7 +54,7 @@ def task_group(job, options):
         ',id=user'
         ',net=192.168.1.0/24'
         ',hostname=vmck'
-        ',hostfwd=tcp:${attr.unique.network.ip-address}:${NOMAD_PORT_ssh}-:22'
+        ',hostfwd=tcp:${attr.unique.network.ip-address}:${NOMAD_PORT_ssh}-0.0.0.0:22'
     )
 
     if options['restrict_network']:
