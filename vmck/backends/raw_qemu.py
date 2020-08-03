@@ -54,7 +54,7 @@ def task_group(job, options):
         ',id=user'
         ',net=192.168.1.0/24'
         ',hostname=vmck'
-        ',hostfwd=tcp:${attr.unique.network.ip-address}:${NOMAD_PORT_ssh}-0.0.0.0:22'
+        ',hostfwd=tcp::${NOMAD_PORT_ssh}-:22'
     )
 
     if options['restrict_network']:
@@ -74,17 +74,28 @@ def task_group(job, options):
     vm_task = {
         'name': 'vm',
         'driver': 'raw_exec',
-        'port_map': {
-            'ssh': '22',
-        },
         'config': {
             'command': '/usr/bin/qemu-system-x86_64',
             'args': qemu_args,
         },
         'resources': resources(vm_port, options),
+    }
+
+    socat_task = {
+        'name': 'socat',
+        'driver': 'raw_exec',
+        'config': {
+            'command': '/usr/bin/socat',
+            'args': [
+                'tcp-listen:${NOMAD_PORT_vm_ssh},bind=${attr.unique.network.ip-address},reuseaddr,fork',  # noqa: E501
+                'tcp:127.0.0.1:${NOMAD_PORT_vm_ssh}',
+            ]
+        },
         'services': services(job),
     }
+
     tasks.append(vm_task)
+    tasks.append(socat_task)
 
     if options.get('manager', False):
         tasks.append(submission.task(job, options))
