@@ -85,7 +85,7 @@ def task_group(job, options):
     }
 
     tasks.append(vm_task)
-    tasks.append(socat.task())
+    tasks.append(socat.task(job))
 
     if options.get('manager', False):
         tasks.append(submission.task(job, options))
