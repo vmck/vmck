@@ -87,8 +87,8 @@ def task_group(job, options):
         'config': {
             'command': '/usr/bin/socat',
             'args': [
-                'tcp-listen:${NOMAD_PORT_vm_ssh},bind=${attr.unique.network.ip-address},reuseaddr,fork',  # noqa: E501
-                'tcp:127.0.0.1:${NOMAD_PORT_vm_ssh}',
+                f'tcp-listen:{vm_port},bind=''${attr.unique.network.ip-address},reuseaddr,fork',  # noqa: E501
+                f'tcp:127.0.0.1:{vm_port}',
             ]
         },
         'services': services(job),
