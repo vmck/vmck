@@ -4,8 +4,8 @@ from pathlib import Path
 
 from django.conf import settings
 
+from vmck.backends import socat
 from vmck.backends import submission
-from vmck.backends.socat import services
 
 
 log = logging.getLogger(__name__)
@@ -74,6 +74,9 @@ def task_group(job, options):
     vm_task = {
         'name': 'vm',
         'driver': 'raw_exec',
+        'port_map': {
+            'ssh': '22',
+        },
         'config': {
             'command': '/usr/bin/qemu-system-x86_64',
             'args': qemu_args,
@@ -81,21 +84,8 @@ def task_group(job, options):
         'resources': resources(vm_port, options),
     }
 
-    socat_task = {
-        'name': 'socat',
-        'driver': 'raw_exec',
-        'config': {
-            'command': '/usr/bin/socat',
-            'args': [
-                f'tcp-listen:{vm_port},bind=''${attr.unique.network.ip-address},reuseaddr,fork',  # noqa: E501
-                f'tcp:127.0.0.1:{vm_port}',
-            ]
-        },
-        'services': services(job),
-    }
-
     tasks.append(vm_task)
-    tasks.append(socat_task)
+    tasks.append(socat.task())
 
     if options.get('manager', False):
         tasks.append(submission.task(job, options))
