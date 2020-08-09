@@ -14,6 +14,7 @@ def services(job):
     return [
         {
             'Name': name,
+            'PortLabel': 'ssh',
             'Checks': [
                 {
                     'Name': f'{name} ssh',
@@ -21,6 +22,7 @@ def services(job):
                     'Type': 'script',
                     'Command': '/bin/sh',
                     'Args': ['-c', check_script],
+                    'PortLabel': 'ssh',
                     'Interval': 1 * second,
                     'Timeout': 1 * second,
                 },

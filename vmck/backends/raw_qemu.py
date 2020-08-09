@@ -74,18 +74,18 @@ def task_group(job, options):
     vm_task = {
         'name': 'vm',
         'driver': 'raw_exec',
-        'port_map': {
-            'ssh': '22',
-        },
         'config': {
             'command': '/usr/bin/qemu-system-x86_64',
             'args': qemu_args,
         },
         'resources': resources(vm_port, options),
+        'services': socat.services(job),
     }
 
     tasks.append(vm_task)
-    tasks.append(socat.task(job))
+    socat_task = socat.task(job)
+    del socat_task['services']
+    tasks.append(socat_task)
 
     if options.get('manager', False):
         tasks.append(submission.task(job, options))
