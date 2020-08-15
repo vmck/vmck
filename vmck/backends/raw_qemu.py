@@ -107,6 +107,4 @@ def task_group(job, options):
 class RawQemuBackend:
 
     def task_group(self, job, options):
-        a = task_group(job, options)
-        log.debug(a)
-        return a
+        return task_group(job, options)
