@@ -4,33 +4,36 @@ from pathlib import Path
 import tempfile
 from django.conf import settings
 
-ssh_config = Path(__file__).parent / 'backends' / 'ssh_config'
+ssh_config = Path(__file__).parent / "backends" / "ssh_config"
 
 
 def ssh_args(remote, args):
     yield from [
-        'ssh',
-        '-F', str(ssh_config),
-        '-i', remote['identity_file'],
+        "ssh",
+        "-F",
+        str(ssh_config),
+        "-i",
+        remote["identity_file"],
         f"{remote['username']}@{remote['host']}",
-        '-p', str(remote['port']),
+        "-p",
+        str(remote["port"]),
     ]
     if settings.DEBUG:
-        yield '-v'
+        yield "-v"
     yield from args
 
 
 @contextmanager
 def ssh_identity():
     with tempfile.TemporaryDirectory() as tmp:
-        identity = Path(tmp) / 'ssh_identity'
+        identity = Path(tmp) / "ssh_identity"
         _key_file = os.open(identity, os.O_WRONLY | os.O_CREAT, 0o600)
-        with os.fdopen(_key_file, 'w') as key_file:
+        with os.fdopen(_key_file, "w") as key_file:
             key_file.write(VAGRANT_KEY)
         yield identity
 
 
-VAGRANT_KEY = '''\
+VAGRANT_KEY = """\
 -----BEGIN RSA PRIVATE KEY-----
 MIIEogIBAAKCAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7gHzI
 w+niNltGEFHzD8+v1I2YJ6oXevct1YeS0o9HZyN1Q9qgCgzUFtdOKLv6IedplqoP
@@ -58,4 +61,4 @@ kda/AoGANWrLCz708y7VYgAtW2Uf1DPOIYMdvo6fxIB5i9ZfISgcJ/bbCUkFrhoH
 +vq/5CIWxCPp0f85R4qxxQ5ihxJ0YDQT9Jpx4TMss4PSavPaBH3RXow5Ohe+bYoQ
 NE5OgEXk2wVfZczCZpigBKbKZHNYcelXtTt/nP3rsCuGcM4h53s=
 -----END RSA PRIVATE KEY-----
-'''
+"""

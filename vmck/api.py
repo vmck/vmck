@@ -19,31 +19,29 @@ log.setLevel(logging.DEBUG if settings.DEBUG else logging.INFO)
 
 def job_info(job):
     return {
-        'id': job.id,
-        'state': job.state,
+        "id": job.id,
+        "state": job.state,
     }
 
 
 def home(request):
-    return JsonResponse({
-        'version': '0.0.1',
-    })
+    return JsonResponse({"version": "0.0.1",})
 
 
 def process_options(options):
-    options.setdefault('cpus', 1)
-    options.setdefault('memory', 512)
-    options.setdefault('image_path', 'imgbuild-master.qcow2.tar.gz')
-    options.setdefault('restrict_network', False)
-    options['name'] = options.get('name') or 'default'
-    options['cpu_mhz'] = options['cpus'] * settings.QEMU_CPU_MHZ
+    options.setdefault("cpus", 1)
+    options.setdefault("memory", 512)
+    options.setdefault("image_path", "imgbuild-master.qcow2.tar.gz")
+    options.setdefault("restrict_network", False)
+    options["name"] = options.get("name") or "default"
+    options["cpu_mhz"] = options["cpus"] * settings.QEMU_CPU_MHZ
 
     return options
 
 
 def create_job(request):
     options = process_options(json.loads(request.body))
-    log.debug(f'Job options:\n{options}')
+    log.debug(f"Job options:\n{options}")
 
     job = jobs.create(get_backend(), options)
 
@@ -61,7 +59,7 @@ def get_job(request, pk):
 def kill_job(request, pk):
     job = get_object_or_404(models.Job, pk=pk)
     jobs.kill(job)
-    return JsonResponse({'ok': True})
+    return JsonResponse({"ok": True})
 
 
 def route(**views):
@@ -74,7 +72,7 @@ def route(**views):
 
 
 urls = [
-    path('', route(GET=home)),
-    path('jobs', route(POST=create_job)),
-    path('jobs/<int:pk>', route(GET=get_job, DELETE=kill_job)),
+    path("", route(GET=home)),
+    path("jobs", route(POST=create_job)),
+    path("jobs/<int:pk>", route(GET=get_job, DELETE=kill_job)),
 ]

@@ -4,7 +4,7 @@ from . import api
 from . import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('v0/', include(api.urls)),
-    path('', views.homepage),
+    path("admin/", admin.site.urls),
+    path("v0/", include(api.urls)),
+    path("", views.homepage),
 ]
