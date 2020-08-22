@@ -39,7 +39,7 @@ def job(id, name, taskgroups):
             "type": "batch",
             "datacenters": ["dc1"],
             "taskgroups": taskgroups,
-        },
+        }
     }
 
 
@@ -93,6 +93,6 @@ def logs(job_id, type):
     return response(
         requests.get(
             f"{api}/client/fs/logs/{alloc_id}",
-            params={"task": "vm", "type": type, "plain": "true",},
+            params={"task": "vm", "type": type, "plain": "true"},
         )
     )

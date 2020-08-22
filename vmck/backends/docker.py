@@ -10,10 +10,7 @@ class DockerBackend:
         docker_vm_task = {
             "name": "vm",
             "driver": "docker",
-            "config": {
-                "image": "vmck/mock:0.0.2",
-                "port_map": [{"ssh": 22},],
-            },
+            "config": {"image": "vmck/mock:0.0.2", "port_map": [{"ssh": 22}]},
             "resources": resources(vm_port, options),
             "services": services(job),
         }
@@ -27,5 +24,5 @@ class DockerBackend:
             "Name": "test",
             "Constraints": constraints(),
             "Tasks": tasks,
-            "RestartPolicy": {"Attempts": 0,},
+            "RestartPolicy": {"Attempts": 0},
         }
