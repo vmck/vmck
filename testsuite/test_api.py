@@ -1,14 +1,13 @@
 from time import time, sleep
 import subprocess
 import pytest
-from django.conf import settings # noqa
+from django.conf import settings  # noqa
 from vmck.ssh import ssh_args, ssh_identity
 
 pytestmark = [pytest.mark.django_db]
 
 
 class JobApi:
-
     @classmethod
     def create(cls, client):
         job = cls(client)
@@ -19,9 +18,9 @@ class JobApi:
         self.client = client
 
     def start(self):
-        resp = self.client.post('/v0/jobs', content_type='application/json')
-        self.id = resp.json()['id']
-        self.url = f'/v0/jobs/{self.id}'
+        resp = self.client.post("/v0/jobs", content_type="application/json")
+        self.id = resp.json()["id"]
+        self.url = f"/v0/jobs/{self.id}"
 
     def wait(self, timeout=900):
         t0 = time()
@@ -29,7 +28,7 @@ class JobApi:
         while time() < t0 + timeout:
             data = self.client.get(self.url).json()
 
-            if data.get('ssh'):
+            if data.get("ssh"):
                 return data
 
             assert time() < t0 + timeout, f"Job {self.id} timeout"
@@ -43,13 +42,13 @@ def ssh(remote, args):
     with ssh_identity() as identity_file:
         remote = dict(remote, identity_file=identity_file)
         cmd = list(ssh_args(remote, args))
-        print('+', *cmd)
-        return subprocess.check_output(cmd).decode('latin1')
+        print("+", *cmd)
+        return subprocess.check_output(cmd).decode("latin1")
 
 
 def test_api_home(client):
-    resp = client.get('/v0/').json()
-    assert resp['version'] == '0.0.1'
+    resp = client.get("/v0/").json()
+    assert resp["version"] == "0.0.1"
 
 
 def test_api_job_lifecycle(client, after_test):
@@ -59,6 +58,6 @@ def test_api_job_lifecycle(client, after_test):
     job_state = job.wait()
     print(job_state)
 
-    remote = dict(job_state['ssh'])
-    out = ssh(remote, ['echo', 'hello', 'world'])
-    assert out.strip() == 'hello world'
+    remote = dict(job_state["ssh"])
+    out = ssh(remote, ["echo", "hello", "world"])
+    assert out.strip() == "hello world"
