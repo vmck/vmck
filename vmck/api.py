@@ -25,7 +25,7 @@ def job_info(job):
 
 
 def home(request):
-    return JsonResponse({"version": "0.0.1",})
+    return JsonResponse({"version": "0.0.1"})
 
 
 def process_options(options):

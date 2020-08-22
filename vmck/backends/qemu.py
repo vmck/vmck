@@ -27,7 +27,7 @@ def constraints():
 
 def resources(vm_port, options):
     network = {
-        "ReservedPorts": [{"Label": "ssh", "Value": vm_port},],
+        "ReservedPorts": [{"Label": "ssh", "Value": vm_port}],
     }
     return {
         "Networks": [network],
@@ -83,8 +83,8 @@ def task_group(job, options):
     vm_task = {
         "name": "vm",
         "driver": "qemu",
-        "port_map": {"ssh": "22",},
-        "artifacts": [image_artifact,],
+        "port_map": {"ssh": "22"},
+        "artifacts": [image_artifact],
         "config": {
             "image_path": f"local/{image_filename}",
             "accelerator": "kvm",
@@ -102,8 +102,8 @@ def task_group(job, options):
         "name": "test",
         "Constraints": constraints(),
         "tasks": tasks,
-        "RestartPolicy": {"Attempts": 0,},
-        "ReschedulePolicy": {"Attempts": 0, "Unlimited": False,},
+        "RestartPolicy": {"Attempts": 0},
+        "ReschedulePolicy": {"Attempts": 0, "Unlimited": False},
     }
 
 
