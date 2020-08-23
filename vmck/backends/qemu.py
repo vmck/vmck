@@ -14,8 +14,7 @@ control_path = (Path(__file__).parent / "control").resolve()
 def task_group(job, options):
     tasks = []
     vm_port = qemu_utils.random_port(
-        settings.VM_PORT_RANGE_START,
-        settings.VM_PORT_RANGE_STOP,
+        settings.VM_PORT_RANGE_START, settings.VM_PORT_RANGE_STOP,
     )
 
     prefix = settings.QEMU_IMAGE_PATH_PREFIX.rstrip("/") + "/"
@@ -66,16 +65,8 @@ def task_group(job, options):
             "accelerator": "kvm",
             "args": qemu_args,
         },
-        'artifacts': [
-            image_artifact,
-        ],
-        'config': {
-            'image_path': f'local/{image_filename}',
-            'accelerator': 'kvm',
-            'args': qemu_args,
-        },
-        'resources': qemu_utils.resources(vm_port, options),
-        'services': socat.services(job),
+        "resources": qemu_utils.resources(vm_port, options),
+        "services": socat.services(job),
     }
 
     tasks.append(vm_task)
@@ -85,16 +76,11 @@ def task_group(job, options):
         tasks.append(submission.task(job, options))
 
     return {
-        'name': 'test',
-        'Constraints': qemu_utils.constraints(),
-        'tasks': tasks,
-        'RestartPolicy': {
-            'Attempts': 0,
-        },
-        'ReschedulePolicy': {
-            'Attempts': 0,
-            'Unlimited': False,
-        },
+        "name": "test",
+        "Constraints": qemu_utils.constraints(),
+        "tasks": tasks,
+        "RestartPolicy": {"Attempts": 0},
+        "ReschedulePolicy": {"Attempts": 0, "Unlimited": False},
     }
 
 
