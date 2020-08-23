@@ -42,5 +42,4 @@ def task(job):
                 'tcp:127.0.0.1:${NOMAD_PORT_vm_ssh}',
             ]
         },
-        'services': services(job),
     }

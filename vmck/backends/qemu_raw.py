@@ -1,4 +1,3 @@
-import random
 import logging
 from pathlib import Path
 
@@ -6,6 +5,7 @@ from django.conf import settings
 
 from vmck.backends import socat
 from vmck.backends import submission
+from vmck.backends import qemu_utils
 
 
 log = logging.getLogger(__name__)
@@ -13,36 +13,9 @@ log.setLevel(logging.DEBUG if settings.DEBUG else logging.INFO)
 control_path = (Path(__file__).parent / 'control').resolve()
 
 
-def random_port(start=10000, end=20000):
-    return random.SystemRandom().randint(start, end - 1)
-
-
-def constraints():
-    return [
-        {
-            'LTarget': "${meta.vmck_worker}",
-            'RTarget': "",
-            'Operand': "is_set",
-        },
-    ]
-
-
-def resources(vm_port, options):
-    network = {
-        'ReservedPorts': [
-            {'Label': 'ssh', 'Value': vm_port},
-        ],
-    }
-    return {
-        'Networks': [network],
-        'MemoryMB': options['memory'],
-        'CPU': options['cpu_mhz'],
-    }
-
-
 def task_group(job, options):
     tasks = []
-    vm_port = random_port(
+    vm_port = qemu_utils.random_port(
         settings.VM_PORT_RANGE_START,
         settings.VM_PORT_RANGE_STOP,
     )
@@ -78,21 +51,19 @@ def task_group(job, options):
             'command': '/usr/bin/qemu-system-x86_64',
             'args': qemu_args,
         },
-        'resources': resources(vm_port, options),
+        'resources': qemu_utils.resources(vm_port, options),
         'services': socat.services(job),
     }
 
     tasks.append(vm_task)
-    socat_task = socat.task(job)
-    del socat_task['services']
-    tasks.append(socat_task)
+    tasks.append(socat.task(job))
 
     if options.get('manager', False):
         tasks.append(submission.task(job, options))
 
     return {
         'name': 'test',
-        'Constraints': constraints(),
+        'Constraints': qemu_utils.constraints(),
         'tasks': tasks,
         'RestartPolicy': {
             'Attempts': 0,
