@@ -8,7 +8,7 @@ from vmck.backends import socat
 from vmck.backends import qemu_utils
 
 
-control_path = (Path(__file__).parent / 'control').resolve()
+control_path = (Path(__file__).parent / "control").resolve()
 
 
 def task_group(job, options):
@@ -18,48 +18,53 @@ def task_group(job, options):
         settings.VM_PORT_RANGE_STOP,
     )
 
-    prefix = settings.QEMU_IMAGE_PATH_PREFIX.rstrip('/') + '/'
-    image = urljoin(prefix, options['image_path'])
+    prefix = settings.QEMU_IMAGE_PATH_PREFIX.rstrip("/") + "/"
+    image = urljoin(prefix, options["image_path"])
 
     assert image.startswith(prefix)
 
     image_artifact = {
-        'getterSource': image,
-        'relativeDest': 'local/',
+        "getterSource": image,
+        "relativeDest": "local/",
     }
 
-    image_filename = options['image_path'].split('/')[-1]
-    if image_filename.endswith('.tar.gz'):
-        image_filename = image_filename[:-len('.tar.gz')]
+    image_filename = options["image_path"].split("/")[-1]
+    if image_filename.endswith(".tar.gz"):
+        image_filename = image_filename[: -len(".tar.gz")]
 
     netdev = (
-        'user'
-        ',id=user'
-        ',net=192.168.1.0/24'
-        ',hostname=vmck'
-        ',hostfwd=tcp:127.0.0.1:${NOMAD_PORT_ssh}-:22'
+        "user"
+        ",id=user"
+        ",net=192.168.1.0/24"
+        ",hostname=vmck"
+        ",hostfwd=tcp:127.0.0.1:${NOMAD_PORT_ssh}-:22"
     )
 
-    if options['restrict_network']:
-        netdev += ',restrict=on'
+    if options["restrict_network"]:
+        netdev += ",restrict=on"
 
     qemu_args = [
-        '-smp', str(options['cpus']),
-        '-netdev', netdev,
-        '-device', (
-            'virtio-net-pci'
-            ',netdev=user'
-            ',romfile='
-        ),
-        '-fsdev', 'local,id=vmck,security_model=none,path=../alloc/data',
-        '-device', 'virtio-9p-pci,fsdev=vmck,mount_tag=vmck',
+        "-smp",
+        str(options["cpus"]),
+        "-netdev",
+        netdev,
+        "-device",
+        ("virtio-net-pci" ",netdev=user" ",romfile="),
+        "-fsdev",
+        "local,id=vmck,security_model=none,path=../alloc/data",
+        "-device",
+        "virtio-9p-pci,fsdev=vmck,mount_tag=vmck",
     ]
 
     vm_task = {
-        'name': 'vm',
-        'driver': 'qemu',
-        'port_map': {
-            'ssh': '22',
+        "name": "vm",
+        "driver": "qemu",
+        "port_map": {"ssh": "22"},
+        "artifacts": [image_artifact],
+        "config": {
+            "image_path": f"local/{image_filename}",
+            "accelerator": "kvm",
+            "args": qemu_args,
         },
         'artifacts': [
             image_artifact,
@@ -76,7 +81,7 @@ def task_group(job, options):
     tasks.append(vm_task)
     tasks.append(socat.task(job))
 
-    if options.get('manager', False):
+    if options.get("manager", False):
         tasks.append(submission.task(job, options))
 
     return {
@@ -94,6 +99,5 @@ def task_group(job, options):
 
 
 class QemuBackend:
-
     def task_group(self, job, options):
         return task_group(job, options)

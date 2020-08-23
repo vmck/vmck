@@ -13,13 +13,13 @@ log.setLevel(logging.DEBUG if settings.DEBUG else logging.INFO)
 
 def nomad_id(job):
     prefix = settings.NOMAD_JOB_PREFIX
-    return f'{prefix}{job.id}'
+    return f"{prefix}{job.id}"
 
 
 def create(backend, options):
     job = Job.objects.create()
     job.state = job.STATE_RUNNING
-    job.name = options['name']
+    job.name = options["name"]
 
     nomad.launch(
         nomad.job(
@@ -39,14 +39,14 @@ def ssh_remote(job):
     if health:
         check = health[0]
         log.debug(f"Healthcheck for {job.id}: {check['Status']}")
-        if check['Status'] == 'passing':
-            service_id = check['ServiceID']
+        if check["Status"] == "passing":
+            service_id = check["ServiceID"]
             service = consul.service(job.id, service_id)[0]
             log.debug(f"Service {service_id} for {job.id}: {service}")
             return {
-                'host': service['ServiceAddress'],
-                'port': service['ServicePort'],
-                'username': settings.SSH_USERNAME,
+                "host": service["ServiceAddress"],
+                "port": service["ServicePort"],
+                "username": settings.SSH_USERNAME,
             }
 
 
@@ -56,17 +56,17 @@ def poll(job):
         return
 
     status = nomad.status(nomad_id(job))
-    log.debug(f'{job.id} status: {status}')
+    log.debug(f"{job.id} status: {status}")
 
-    if status in [None, 'pending']:
+    if status in [None, "pending"]:
         return
 
-    elif status == 'running':
+    elif status == "running":
         job.state = job.STATE_RUNNING
         job.save()
         return ssh_remote(job)
 
-    elif status in ['complete', 'failed']:
+    elif status in ["complete", "failed"]:
         job.state = job.STATE_DONE
         job.save()
 

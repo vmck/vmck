@@ -5,7 +5,7 @@ from pathlib import Path
 import json
 import os
 
-NOMAD_URL = os.environ.get('NOMAD_URL', 'http://10.66.60.1:4646')
+NOMAD_URL = os.environ.get("NOMAD_URL", "http://10.66.60.1:4646")
 
 
 def request(method, url, data=None, headers=None):
@@ -23,36 +23,35 @@ def request(method, url, data=None, headers=None):
         if isinstance(data, bytes):
             body = data
         else:
-            headers['Content-Type'] = 'application/json'
-            body = json.dumps(data).encode('utf8')
+            headers["Content-Type"] = "application/json"
+            body = json.dumps(data).encode("utf8")
 
     req = Request(url, body, headers, method=method)
 
     with urlopen(req) as res:
         if 200 <= res.status < 300:
-            if res.headers.get('Content-Type') == 'application/json':
+            if res.headers.get("Content-Type") == "application/json":
                 content = res.read()
                 return json.loads(content)
             else:
                 return None
         else:
-            raise RuntimeError(f'POST failed. {url}, {res.status}, {res.msg}')
+            raise RuntimeError(f"POST failed. {url}, {res.status}, {res.msg}")
 
 
 def main():
     here = Path(__file__).resolve().parents[0]
-    with open(here / 'vmck.nomad') as f:
+    with open(here / "vmck.nomad") as f:
         job_hcl = f.read()
 
-    vmck_json = request(method='POST', url=f'{NOMAD_URL}/v1/jobs/parse',
-                        data={
-                            'Canonicalize': True,
-                            'JobHCL': job_hcl,
-                        })
+    vmck_json = request(
+        method="POST",
+        url=f"{NOMAD_URL}/v1/jobs/parse",
+        data={"Canonicalize": True, "JobHCL": job_hcl},
+    )
 
-    request(method='POST', url=f'{NOMAD_URL}/v1/jobs',
-            data={'Job': vmck_json})
+    request(method="POST", url=f"{NOMAD_URL}/v1/jobs", data={"Job": vmck_json})
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
