@@ -91,7 +91,7 @@ class QemuBackend:
 
 def services(job, port):
     name = f"vmck-{job.id}-ssh"
-    check_script = f"set-x; echo | nc 10.42.2.3 ${port}|grep 'SSH-'"
+    check_script = f"set-x; echo | nc 10.42.2.3 {port}|grep 'SSH-'"
 
     return [
         {
