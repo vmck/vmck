@@ -1,6 +1,6 @@
 second = 1000000000
 
-check_script = "set -x; echo | nc ${NOMAD_IP_ssh} ${NOMAD_PORT_ssh}|grep 'SSH-'"
+check_script = "set -x; echo|nc ${NOMAD_IP_ssh} ${NOMAD_PORT_ssh}|grep 'SSH-'"
 
 
 def services(job):
