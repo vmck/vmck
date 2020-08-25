@@ -1,11 +1,6 @@
 second = 1000000000
 
-check_script = """\
-(
-    set -x
-    echo | nc $NOMAD_IP_ssh $NOMAD_PORT_ssh | grep -q 'SSH-'
-) 2>&1
-"""
+check_script = "echo | nc $NOMAD_IP_ssh $NOMAD_PORT_ssh | grep -q 'SSH-'"
 
 
 def services(job):
