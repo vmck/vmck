@@ -66,7 +66,7 @@ def task_group(job, options):
             "args": qemu_args,
         },
         "resources": qemu_utils.resources(vm_port, options),
-        "services": services(job, vm_port),
+        # "services": services(job, vm_port),
     }
 
     tasks.append(vm_task)
