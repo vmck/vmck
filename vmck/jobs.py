@@ -37,7 +37,7 @@ def create(backend, options):
 def test_ssh_signature(host, port):
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.settimeout(settings.CHECK_SSH_SIGNATURE_TIMEOUT)
+        sock.settimeout(4)
         try:
             log.debug(f"Connecting to {host}:{port}")
             sock.connect((host, port))

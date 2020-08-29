@@ -66,7 +66,7 @@ def task_group(job, options):
             "args": qemu_args,
         },
         "resources": qemu_utils.resources(vm_port, options),
-        # "services": services(job, vm_port),
+        "services": services(job, vm_port),
     }
 
     tasks.append(vm_task)
@@ -91,7 +91,6 @@ class QemuBackend:
 
 def services(job, port):
     name = f"vmck-{job.id}-ssh"
-    check_script = f"set -x; echo | nc 10.42.2.3 {port}|grep 'SSH-'"
 
     return [
         {
@@ -101,9 +100,7 @@ def services(job, port):
                 {
                     "Name": f"{name} ssh",
                     "InitialStatus": "critical",
-                    "Type": "script",
-                    "Command": "/bin/sh",
-                    "Args": ["-c", check_script],
+                    "Type": "tcp",
                     "PortLabel": "ssh",
                     "Interval": 1 * 1000000000,
                     "Timeout": 1 * 1000000000,
