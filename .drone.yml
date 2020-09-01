@@ -20,7 +20,7 @@ steps:
   - export VMCK_URL=http://$VMCK_IP:$VMCK_PORT
   - export VMCK_NAME="drone $DRONE_REPO:$DRONE_BRANCH#$DRONE_BUILD_NUMBER"
   - export SHUTDOWN=15
-  - ci/deploy-vmck
+  - # ci/deploy-vmck
 
 ---
 kind: pipeline
