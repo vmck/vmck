@@ -1,11 +1,14 @@
 import socket
 import logging
+import requests
+from urllib.parse import urljoin
 
 from django.conf import settings
 
 from vmck.models import Job
 from vmck import nomad
 from vmck import consul
+from vmck.nomad import response
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG if settings.DEBUG else logging.INFO)
@@ -55,12 +58,24 @@ def test_ssh_signature(host, port):
     return False
 
 
+consul_api = urljoin(settings.CONSUL_URL, "v1")
+
+
+def serviceData(job_id, service_id):
+    service = f"vmck-{job_id}-ssh"
+    url = f"{consul_api}/catalog/service/{service}?ServiceID={service_id}"
+    return response(requests.get(url))
+
+
 def ssh_remote(job):
     health = consul.health(job.id)
     if health:
         check = health[0]
         log.debug(f"Healthcheck for {job.id}: {check['Status']}")
-        if check["Status"] == "passing":
+        if (
+            check["Status"] == "passing"
+            and settings.VMCK_BACKEND != "raw_qemu"
+        ):
             host = check["Output"].split(":")[0].split()[-1]
             port = int(check["Output"].split(":")[1])
             if test_ssh_signature(host, port):
@@ -69,6 +84,15 @@ def ssh_remote(job):
                     "port": port,
                     "username": settings.SSH_USERNAME,
                 }
+        else:
+            service_id = check["ServiceID"]
+            service = serviceData(job.id, service_id)[0]
+            log.debug(f"Service {service_id} for {job.id}: {service}")
+            return {
+                "host": service["ServiceAddress"],
+                "port": service["ServicePort"],
+                "username": settings.SSH_USERNAME,
+            }
 
 
 def poll(job):
