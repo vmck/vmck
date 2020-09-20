@@ -74,5 +74,7 @@ def task_group(job, options):
 
 
 class RawQemuBackend:
+    name = "raw_qemu"
+
     def task_group(self, job, options):
         return task_group(job, options)

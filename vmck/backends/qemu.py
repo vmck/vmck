@@ -66,7 +66,7 @@ def task_group(job, options):
             "args": qemu_args,
         },
         "resources": qemu_utils.resources(vm_port, options),
-        # "services": services(job, vm_port),
+        "services": services(job),
     }
 
     tasks.append(vm_task)
@@ -81,16 +81,17 @@ def task_group(job, options):
         "tasks": tasks,
         "RestartPolicy": {"Attempts": 0},
         "ReschedulePolicy": {"Attempts": 0, "Unlimited": False},
-        "services": socat.services(job),
     }
 
 
 class QemuBackend:
+    name = "qemu"
+
     def task_group(self, job, options):
         return task_group(job, options)
 
 
-def services(job, port):
+def services(job):
     name = f"vmck-{job.id}-ssh"
 
     return [

@@ -5,7 +5,7 @@ from .base_settings import *  # noqa
 from .base_settings import QEMU_CPU_MHZ, SSH_USERNAME, base_dir
 from sentry_sdk.integrations.django import DjangoIntegration
 
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = os.environ.get("SECRET_KEY", "changeme")
 
 DEBUG = is_true(os.environ.get("DEBUG"))
 
