@@ -66,7 +66,7 @@ def task_group(job, options):
             "args": qemu_args,
         },
         "resources": qemu_utils.resources(vm_port, options),
-        "services": services(job, vm_port),
+        # "services": services(job, vm_port),
     }
 
     tasks.append(vm_task)
@@ -81,6 +81,7 @@ def task_group(job, options):
         "tasks": tasks,
         "RestartPolicy": {"Attempts": 0},
         "ReschedulePolicy": {"Attempts": 0, "Unlimited": False},
+        "services": socat.services(job),
     }
 
 
