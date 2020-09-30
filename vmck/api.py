@@ -35,6 +35,7 @@ def process_options(options):
     options.setdefault('memory', 512)
     options.setdefault('image_path', 'imgbuild-master.qcow2.tar.gz')
     options.setdefault('restrict_network', False)
+    options.setdefault('kill_timeout', '15m')
     options['name'] = options.get('name') or 'default'
     options['cpu_mhz'] = options['cpus'] * settings.QEMU_CPU_MHZ
 
