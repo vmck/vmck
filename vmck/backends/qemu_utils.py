@@ -12,7 +12,6 @@ def constraints():
             "RTarget": "",
             "Operand": "is_set",
         },
-        {"LTarget": "${meta.acs_job}", "RTarget": "", "Operand": "is_set"},
     ]
 
 

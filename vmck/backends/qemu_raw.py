@@ -44,7 +44,7 @@ def task_group(job, options):
         "-snapshot",
         "-enable-kvm",
         "-nographic",
-        f"/opt/volumes/vmck-images/{image_filename}",
+        "${meta.volumes}/opt/volumes/vmck-images/" + str(image_filename),
     ]
 
     vm_task = {
@@ -55,7 +55,7 @@ def task_group(job, options):
             "args": qemu_args,
         },
         "resources": qemu_utils.resources(vm_port, options),
-        "services": socat.services(job),
+        "services": services(job),
     }
 
     tasks.append(vm_task)
@@ -78,3 +78,30 @@ class RawQemuBackend:
 
     def task_group(self, job, options):
         return task_group(job, options)
+
+
+def services(job):
+    second = 1000000000
+    name = f"vmck-{job.id}-ssh"
+    check_script = (
+        "set -x; echo | nc ${NOMAD_IP_ssh} ${NOMAD_PORT_ssh} | grep 'SSH-'"
+    )
+
+    return [
+        {
+            "Name": name,
+            "PortLabel": "ssh",
+            "Checks": [
+                {
+                    "Name": f"{name} ssh",
+                    "InitialStatus": "critical",
+                    "Type": "script",
+                    "Command": "/bin/sh",
+                    "Args": ["-c", check_script],
+                    "PortLabel": "ssh",
+                    "Interval": 1 * second,
+                    "Timeout": 1 * second,
+                },
+            ],
+        },
+    ]

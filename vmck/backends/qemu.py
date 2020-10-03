@@ -91,6 +91,7 @@ class QemuBackend:
         return task_group(job, options)
 
 
+# Qemu driver does not allow script checks
 def services(job):
     name = f"vmck-{job.id}-ssh"
 

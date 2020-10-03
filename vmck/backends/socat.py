@@ -1,31 +1,3 @@
-second = 1000000000
-
-check_script = "set -x; echo|nc ${NOMAD_IP_ssh} ${NOMAD_PORT_ssh}|grep 'SSH-'"
-
-
-def services(job):
-    name = f"vmck-{job.id}-ssh"
-
-    return [
-        {
-            "Name": name,
-            "PortLabel": "ssh",
-            "Checks": [
-                {
-                    "Name": f"{name} ssh",
-                    "InitialStatus": "critical",
-                    "Type": "script",
-                    "Command": "/bin/sh",
-                    "Args": ["-c", check_script],
-                    "PortLabel": "ssh",
-                    "Interval": 1 * second,
-                    "Timeout": 1 * second,
-                },
-            ],
-        },
-    ]
-
-
 def task(job):
     return {
         "name": "socat",
