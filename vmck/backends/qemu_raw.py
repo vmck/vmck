@@ -44,7 +44,7 @@ def task_group(job, options):
         "-snapshot",
         "-enable-kvm",
         "-nographic",
-        "${meta.volumes}/opt/volumes/vmck-images/" + str(image_filename),
+        "${meta.volumes}/vmck-images/" + str(image_filename),
     ]
 
     vm_task = {
