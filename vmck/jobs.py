@@ -62,7 +62,7 @@ def ssh_remote(job):
         check = health[0]
         log.debug(f"Healthcheck for {job.id}: {check['Status']}")
         if check["Status"] == "passing":
-            if job.backend == "qemu":
+            if job.backend in ["qemu", "docker"]:
                 host = check["Output"].split(":")[0].split()[-1]
                 port = int(check["Output"].split(":")[1])
                 if test_ssh_signature(host, port):
