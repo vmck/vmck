@@ -4,6 +4,8 @@ from vmck.backends.qemu_utils import random_port, constraints, resources
 
 
 class DockerBackend:
+    name = "docker"
+
     def task_group(self, job, options):
         vm_port = random_port()
 
