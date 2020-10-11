@@ -1,5 +1,5 @@
 from vmck.backends import submission
-from vmck.backends.socat import services
+from vmck.backends.qemu import services
 from vmck.backends.qemu_utils import random_port, constraints, resources
 
 
