@@ -1,13 +1,15 @@
-from urllib.parse import urljoin
+import logging
 from pathlib import Path
 
 from django.conf import settings
 
-from vmck.backends import submission
 from vmck.backends import socat
+from vmck.backends import submission
 from vmck.backends import qemu_utils
 
 
+log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG if settings.DEBUG else logging.INFO)
 control_path = (Path(__file__).parent / "control").resolve()
 
 
@@ -17,19 +19,7 @@ def task_group(job, options):
         settings.VM_PORT_RANGE_START, settings.VM_PORT_RANGE_STOP,
     )
 
-    prefix = settings.QEMU_IMAGE_PATH_PREFIX.rstrip("/") + "/"
-    image = urljoin(prefix, options["image_path"])
-
-    assert image.startswith(prefix)
-
-    image_artifact = {
-        "getterSource": image,
-        "relativeDest": "local/",
-    }
-
     image_filename = options["image_path"].split("/")[-1]
-    if image_filename.endswith(".tar.gz"):
-        image_filename = image_filename[: -len(".tar.gz")]
 
     netdev = (
         "user"
@@ -43,26 +33,25 @@ def task_group(job, options):
         netdev += ",restrict=on"
 
     qemu_args = [
-        "-smp",
-        str(options["cpus"]),
         "-netdev",
         netdev,
         "-device",
-        ("virtio-net-pci" ",netdev=user" ",romfile="),
-        "-fsdev",
-        "local,id=vmck,security_model=none,path=../alloc/data",
-        "-device",
-        "virtio-9p-pci,fsdev=vmck,mount_tag=vmck",
+        "virtio-net-pci,netdev=user,romfile=",
+        "-smp",
+        str(options["cpus"]),
+        "-m",
+        str(options["memory"]),
+        "-snapshot",
+        "-enable-kvm",
+        "-nographic",
+        "${meta.volumes}/vmck-images/" + str(image_filename),
     ]
 
     vm_task = {
         "name": "vm",
-        "driver": "qemu",
-        "port_map": {"ssh": "22"},
-        "artifacts": [image_artifact],
+        "driver": "raw_exec",
         "config": {
-            "image_path": f"local/{image_filename}",
-            "accelerator": "kvm",
+            "command": "/usr/bin/qemu-system-x86_64",
             "args": qemu_args,
         },
         "resources": qemu_utils.resources(vm_port, options),
@@ -84,16 +73,19 @@ def task_group(job, options):
     }
 
 
-class QemuBackend:
-    name = "qemu"
+class RawQemuBackend:
+    name = "raw_qemu"
 
     def task_group(self, job, options):
         return task_group(job, options)
 
 
-# Qemu driver does not allow script checks
 def services(job):
+    second = 1000000000
     name = f"vmck-{job.id}-ssh"
+    check_script = (
+        "set -x; echo | nc ${NOMAD_IP_ssh} ${NOMAD_PORT_ssh} | grep 'SSH-'"
+    )
 
     return [
         {
@@ -103,10 +95,12 @@ def services(job):
                 {
                     "Name": f"{name} ssh",
                     "InitialStatus": "critical",
-                    "Type": "tcp",
+                    "Type": "script",
+                    "Command": "/bin/sh",
+                    "Args": ["-c", check_script],
                     "PortLabel": "ssh",
-                    "Interval": 1 * 1000000000,
-                    "Timeout": 1 * 1000000000,
+                    "Interval": 1 * second,
+                    "Timeout": 1 * second,
                 },
             ],
         },

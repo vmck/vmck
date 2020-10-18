@@ -43,7 +43,7 @@ def create_job(request):
     options = process_options(json.loads(request.body))
     log.debug(f"Job options:\n{options}")
 
-    backend = get_backend(options.get('backend'))
+    backend = get_backend(options.get("backend"))
     job = jobs.create(backend, options)
 
     return JsonResponse(job_info(job))
